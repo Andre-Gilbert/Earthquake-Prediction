@@ -2,7 +2,8 @@
     "compilerOptions": {
         "baseUrl": "./src",
         "paths": {
-            "@styles/*": ["styles/*"]
+            "@styles/*": ["styles/*"],
+            "@layout/*": ["components/layout/*"]
         },
         "target": "es5",
         "lib": ["dom", "dom.iterable", "esnext"],
