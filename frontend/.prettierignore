@@ -3,4 +3,5 @@ generated/
 lib/
 dist/
 /site/
+.next
 *.scss

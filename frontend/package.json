@@ -1,28 +1,34 @@
 {
-  "name": "earthquake-prediction",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@blueprintjs/core": "^4.8.0",
-    "@tanstack/react-query": "^4.1.3",
-    "@tanstack/react-query-devtools": "^4.0.10",
-    "next": "12.2.5",
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
-  },
-  "devDependencies": {
-    "@types/node": "18.7.4",
-    "@types/react": "18.0.17",
-    "@types/react-dom": "18.0.6",
-    "eslint": "8.22.0",
-    "eslint-config-next": "12.2.5",
-    "sass": "^1.54.4",
-    "typescript": "4.7.4"
-  }
+    "name": "earthquake-prediction",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint",
+        "format": "prettier --write .",
+        "format-check": "prettier --check .",
+        "type-check": "tsc --pretty --noEmit",
+        "prepare": "cd .. && husky install frontend/.husky"
+    },
+    "dependencies": {
+        "@blueprintjs/core": "^4.8.0",
+        "@tanstack/react-query": "^4.1.3",
+        "@tanstack/react-query-devtools": "^4.0.10",
+        "next": "12.2.5",
+        "react": "18.2.0",
+        "react-dom": "18.2.0"
+    },
+    "devDependencies": {
+        "@types/node": "18.7.4",
+        "@types/react": "18.0.17",
+        "@types/react-dom": "18.0.6",
+        "eslint": "8.22.0",
+        "eslint-config-next": "12.2.5",
+        "husky": "^8.0.1",
+        "prettier": "^2.7.1",
+        "sass": "^1.54.4",
+        "typescript": "4.7.4"
+    }
 }

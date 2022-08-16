@@ -1,4 +1,5 @@
 /** The layout component of the app. */
+import { Footer } from '@ui/Footer/Footer';
 import { ReactNode } from 'react';
 
 type LayoutProps = {
@@ -6,5 +7,10 @@ type LayoutProps = {
 };
 
 export const Layout = ({ children }: LayoutProps) => {
-    return <>{children}</>;
+    return (
+        <>
+            {children}
+            <Footer />
+        </>
+    );
 };
