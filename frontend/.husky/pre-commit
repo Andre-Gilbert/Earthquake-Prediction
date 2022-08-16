@@ -9,9 +9,8 @@ echo ''
 echo 'Checking for formatting problems. 🧪'
 npm run format-check || (
     echo ''
-    echo "Prettier Check Failed, we'll get 'em next time. Run npm run format, add changes and try commit again. 🙁";
+    echo "Prettier check failed, formatting code. 🙁";
     echo ''
-    echo 'Formatting code.'
     npm run format
 )
 
@@ -20,7 +19,7 @@ echo ''
 echo 'Checking for linting problems. 🧪'
 npm run lint --fix || (
     echo ''
-    echo "ESLint Check Failed, we'll get 'em next time. Make the required changes listed above, add changes and try to commit again. ☹️"
+    echo "ESLint check failed, we'll get 'em next time. Make the required changes listed above, add changes and try to commit again. ☹️"
     echo ''
     false;
 )
@@ -30,7 +29,7 @@ echo ''
 echo 'Checking for TypeScript errors. 🧪'
 npm run type-check || (
     echo ''
-    echo "Failed Type check, we'll get 'em next time. Make the required changes listed above, add changes and try to commit again. 🙃"
+    echo "Failed type check, we'll get 'em next time. Make the required changes listed above, add changes and try to commit again. 🙃"
     false;
 )
 
