@@ -1,12 +1,16 @@
 /** The landing page. */
 import { Layout } from '@layout/Layout';
-import styles from '@styles/Home.module.scss';
+import { HeroSection } from '@sections/HeroSection/HeroSection';
 import { Navbar } from '@ui/Navbar/Navbar';
 import { ReactElement } from 'react';
 import { NextPageWithLayout } from './_app';
 
 const Home: NextPageWithLayout = () => {
-    return <div className={styles.container}></div>;
+    return (
+        <>
+            <HeroSection />
+        </>
+    );
 };
 
 Home.getLayout = function getLayout(page: ReactElement) {
