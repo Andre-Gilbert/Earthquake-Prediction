@@ -1,18 +1,24 @@
-
-@import "~@blueprintjs/core/lib/scss/variables";
+@import '~@blueprintjs/core/lib/scss/variables';
 
 .hero {
     width: 100%;
     padding: 10rem 1.2rem;
 }
 
+.title {
+    text-align: center;
+}
 
-.title {text-align: center}
+.subtitle {
+    text-align: center;
+}
 
-.subtitle {text-align: center}
-
-.btn {width:100%;display:flex;justify-content:center;}
-.login{
+.btn {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.login {
     padding: 0;
     display: inline-flex;
     align-items: center;
@@ -22,7 +28,7 @@
     border: none;
     border-radius: 2px;
 
-    background-color: #4285F4;
+    background-color: #4285f4;
     box-shadow: 0 10px 20px rgb(0, 0, 0, 0.15);
 }
 
