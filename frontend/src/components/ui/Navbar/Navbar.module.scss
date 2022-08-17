@@ -1,0 +1,23 @@
+.navbar {
+    width: 100%;
+    padding-inline: 1.2rem;
+}
+
+.container {
+    width: min(100%, 120rem);
+    padding-block: 1rem;
+    margin-inline: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    img {
+        cursor: pointer;
+    }
+}
+
+.logo {
+    font-size: 2rem;
+    margin-bottom: 0;
+}
