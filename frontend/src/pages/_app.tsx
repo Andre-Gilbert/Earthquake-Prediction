@@ -5,6 +5,7 @@ import '@styles/globals.scss';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { NextPage } from 'next';
+import { SessionProvider } from 'next-auth/react';
 import { AppProps } from 'next/app';
 import 'normalize.css/normalize.css';
 import { ReactElement, ReactNode, useState } from 'react';
@@ -17,13 +18,13 @@ type AppPropsWithLayout = AppProps & {
     Component: NextPageWithLayout;
 };
 
-function App({ Component, pageProps }: AppPropsWithLayout) {
+function App({ Component, pageProps: { session, ...pageProps } }: AppPropsWithLayout) {
     const [queryClient] = useState(() => new QueryClient());
     const getLayout = Component.getLayout ?? (page => page);
 
     return (
         <QueryClientProvider client={queryClient}>
-            {getLayout(<Component {...pageProps} />)}
+            <SessionProvider session={session}>{getLayout(<Component {...pageProps} />)}</SessionProvider>
             <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
     );
