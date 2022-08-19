@@ -10,7 +10,9 @@ export const Navbar = () => {
             <div className={`${Classes.DARK} ${styles.container}`}>
                 <p className={styles.logo}>Earthquake Prediction</p>
                 <Link href="https://github.com/Andre-Gilbert/Earthquake-Prediction.git">
-                    <Image src={GitHub} alt="GitHub Logo" priority />
+                    <a className={styles.github}>
+                        <Image src={GitHub} alt="GitHub Logo" priority />
+                    </a>
                 </Link>
             </div>
         </div>
