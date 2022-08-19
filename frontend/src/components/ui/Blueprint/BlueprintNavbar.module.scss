@@ -1,0 +1,35 @@
+@import '../../../styles/variables.module.scss';
+
+.btn {
+    display: none;
+
+    @media (min-width: $breakpoint-sm) {
+        display: block;
+    }
+}
+
+.btnUser {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+
+    cursor: pointer;
+    outline: none;
+    border: none;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.userMenu {
+    position: absolute;
+    top: 45px;
+    right: 15px;
+}
+
+.menu {
+    margin-right: 1rem;
+
+    @media (min-width: $breakpoint-sm) {
+        display: none;
+    }
+}

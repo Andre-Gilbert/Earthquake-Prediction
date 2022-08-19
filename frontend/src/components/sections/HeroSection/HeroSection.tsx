@@ -2,7 +2,7 @@ import { Classes, H1 } from '@blueprintjs/core';
 import Google from '@images/google-logo.svg';
 import { signIn } from 'next-auth/react';
 import Image from 'next/image';
-import styles from './HeroSection.module.scss';
+import styles from './Hero.module.scss';
 
 export const HeroSection = () => {
     const handleSignIn = () => signIn('google', { callbackUrl: '/dashboard' });

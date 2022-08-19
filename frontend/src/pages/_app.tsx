@@ -1,6 +1,7 @@
 /** The app component to initialize pages. */
 import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/icons/lib/css/blueprint-icons.css';
+import '@blueprintjs/popover2/lib/css/blueprint-popover2.css';
 import '@styles/globals.scss';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';

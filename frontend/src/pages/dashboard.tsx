@@ -1,18 +1,24 @@
 /** The dashboard page. */
 import { Layout } from '@layout/Layout';
+import { EarthquakesKPIsSection } from '@sections/EarthquakesKPIsSection/EarthquakesKPIsSection';
+import { EarthquakesMapSection } from '@sections/EarthquakesMapSection/EarthquakesMapSection';
 import { BlueprintNavbar } from '@ui/Blueprint/BlueprintNavbar';
 import { GetServerSidePropsContext } from 'next';
-import { unstable_getServerSession } from 'next-auth';
 import { ReactElement } from 'react';
-import { authOptions } from './api/auth/[...nextauth]';
+import { getAuthSession } from './api/auth/[...nextauth]';
 import { NextPageWithLayout } from './_app';
 
 const Dashboard: NextPageWithLayout = () => {
-    return <div>Dashboard</div>;
+    return (
+        <>
+            <EarthquakesKPIsSection />
+            <EarthquakesMapSection />
+        </>
+    );
 };
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    const session = await unstable_getServerSession(ctx.req, ctx.res, authOptions);
+    const session = await getAuthSession(ctx);
 
     if (!session) {
         return {
