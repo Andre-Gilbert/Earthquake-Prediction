@@ -6,7 +6,7 @@ export const Footer = () => {
         <div className={styles.footer}>
             <div className={styles.container}>
                 <p className={`${Classes.TEXT_MUTED} ${styles.copyright}`}>
-                    Copyright © 2022 Earthquake Prediction, All rights reserved.
+                    © 2022 Earthquake Prediction, All rights reserved.
                 </p>
             </div>
         </div>

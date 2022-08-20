@@ -5,6 +5,7 @@ import '@blueprintjs/popover2/lib/css/blueprint-popover2.css';
 import '@styles/globals.scss';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import 'leaflet/dist/leaflet.css';
 import { NextPage } from 'next';
 import { SessionProvider } from 'next-auth/react';
 import { AppProps } from 'next/app';
