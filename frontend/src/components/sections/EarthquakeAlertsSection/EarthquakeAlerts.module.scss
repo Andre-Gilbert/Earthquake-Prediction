@@ -1,7 +1,8 @@
 @import '~@blueprintjs/core/lib/scss/variables';
 
-.location {
+.alerts {
     width: 100%;
+    padding-top: 2rem;
     padding-inline: 2rem;
 }
 
@@ -12,7 +13,6 @@
 
 .card {
     width: 100%;
-    height: 100rem;
     padding: 0;
 }
 
@@ -20,9 +20,10 @@
     padding: 1rem 1.5rem;
     display: flex;
     justify-content: space-between;
+    border-bottom: 1px solid $pt-divider-black;
 }
 
-.mapTitle {
+.alertsTitle {
     display: flex;
     align-items: center;
 
@@ -36,7 +37,10 @@
     }
 }
 
-.map {
-    width: 100%;
-    height: calc(100rem - 5rem);
+.alert {
+    padding: 1rem 1.5rem;
+
+    &:not(:last-of-type) {
+        border-bottom: 1px solid $pt-divider-black;
+    }
 }

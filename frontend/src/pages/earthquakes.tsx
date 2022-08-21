@@ -5,11 +5,11 @@ import { ReactElement } from 'react';
 import { getAuthSession } from './api/auth/[...nextauth]';
 import { NextPageWithLayout } from './_app';
 
-const Alerts: NextPageWithLayout = () => {
-    return <div>Alerts</div>;
+const Earthquakes: NextPageWithLayout = () => {
+    return <div>Earthquakes</div>;
 };
 
-Alerts.getLayout = function getLayout(page: ReactElement) {
+Earthquakes.getLayout = function getLayout(page: ReactElement) {
     return (
         <Layout>
             <BlueprintNavbar />
@@ -33,4 +33,4 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     return { props: { session } };
 }
 
-export default Alerts;
+export default Earthquakes;

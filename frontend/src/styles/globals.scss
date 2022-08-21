@@ -1,7 +1,10 @@
+@import '~@blueprintjs/core/lib/scss/variables';
+
 html {
     font-size: 62.5%;
 }
 
 body {
     font-size: 1.4rem;
+    background-color: $pt-app-background-color;
 }

@@ -1,18 +1,32 @@
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import { Button, Card, H5, Icon } from '@blueprintjs/core';
+import dynamic from 'next/dynamic';
 import styles from './EarthquakesMap.module.scss';
+
+const Map = dynamic<{}>(() => import('@sections/EarthquakesMapSection/Map').then(module => module.Map), {
+    ssr: false,
+});
 
 export const EarthquakesMapSection = () => {
     return (
-        <MapContainer className={styles.map} center={[38.907132, -77.036546]} zoom={10000}>
-            <TileLayer
-                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <Marker position={[38.907132, -77.036546]}>
-                <Popup>
-                    A pretty CSS3 popup. <br /> Easily customizable.
-                </Popup>
-            </Marker>
-        </MapContainer>
+        <div className={styles.location}>
+            <div className={styles.container}>
+                <Card className={styles.card}>
+                    <Header />
+                    <Map />
+                </Card>
+            </div>
+        </div>
+    );
+};
+
+const Header = () => {
+    return (
+        <div className={styles.header}>
+            <div className={styles.mapTitle}>
+                <Icon icon="map-marker" />
+                <H5>Location</H5>
+            </div>
+            <Button icon="filter" minimal />
+        </div>
     );
 };

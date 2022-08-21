@@ -6,11 +6,18 @@
 }
 
 .container {
+    width: min(100%, 200rem);
+    margin-inline: auto;
     display: flex;
     flex-direction: column;
+    gap: 2rem;
 
     @media (min-width: $breakpoint-sm) {
         flex-direction: row;
         justify-content: center;
     }
+}
+
+.card {
+    flex: 1 1 auto;
 }

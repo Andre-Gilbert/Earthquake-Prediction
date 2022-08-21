@@ -28,10 +28,10 @@ export const BlueprintNavbar = () => {
                 <MobileDrawer />
                 <Navbar.Heading className={styles.title}>Earthquake Prediction</Navbar.Heading>
                 <Link href="/dashboard" passHref>
-                    <AnchorButton className={styles.btn} text="Earthquakes" icon="globe" minimal />
+                    <AnchorButton className={styles.btn} icon="geolocation" text="Overview" minimal />
                 </Link>
-                <Link href="/alerts" passHref>
-                    <AnchorButton className={styles.btn} text="Alerts" icon="warning-sign" minimal />
+                <Link href="/earthquakes" passHref>
+                    <AnchorButton className={styles.btn} icon="globe" text="Earthquakes" minimal />
                 </Link>
             </Navbar.Group>
             <Navbar.Group align={Alignment.RIGHT}>

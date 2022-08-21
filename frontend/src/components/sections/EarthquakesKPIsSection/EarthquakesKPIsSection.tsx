@@ -1,12 +1,19 @@
-import { Card } from '@blueprintjs/core';
+import { Card, Classes } from '@blueprintjs/core';
 import styles from './EarthquakesKPIs.module.scss';
 
 export const EarthquakesKPIsSection = () => {
     return (
         <div className={styles.KPIs}>
             <div className={styles.container}>
-                <Card>Card 1</Card>
-                <Card>Card 2</Card>
+                <Card className={styles.card}>
+                    <div className={Classes.SKELETON}>Card</div>
+                </Card>
+                <Card className={styles.card}>
+                    <div className={Classes.SKELETON}>Card</div>
+                </Card>
+                <Card className={styles.card}>
+                    <div className={Classes.SKELETON}>Card</div>
+                </Card>
             </div>
         </div>
     );
