@@ -2,7 +2,7 @@
 
 .KPIs {
     width: 100%;
-    padding: 2rem;
+    padding: 1.5rem;
 }
 
 .container {
@@ -10,7 +10,7 @@
     margin-inline: auto;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.5rem;
 
     @media (min-width: $breakpoint-sm) {
         flex-direction: row;

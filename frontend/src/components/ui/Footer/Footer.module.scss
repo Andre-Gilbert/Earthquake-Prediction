@@ -1,12 +1,15 @@
+@import '~@blueprintjs/core/lib/scss/variables';
+
 .footer {
     width: 100%;
-    padding-inline: 2rem;
+    padding-inline: 1.5rem;
 }
 
 .container {
     width: min(100%, 120rem);
     margin-inline: auto;
-    padding-block: 2rem;
+    padding-block: 1.5rem;
+    border-top: 1px solid $pt-divider-black;
 }
 
 .copyright {
