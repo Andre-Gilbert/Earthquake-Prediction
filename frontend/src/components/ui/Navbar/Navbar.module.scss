@@ -1,6 +1,8 @@
+@import '../../../styles/variables.module.scss';
+
 .navbar {
     width: 100%;
-    padding-inline: 1.5rem;
+    padding-inline: $pt-padding;
 }
 
 .container {

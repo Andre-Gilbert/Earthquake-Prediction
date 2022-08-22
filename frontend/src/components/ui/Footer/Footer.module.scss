@@ -1,8 +1,9 @@
 @import '~@blueprintjs/core/lib/scss/variables';
+@import '../../../styles/variables.module.scss';
 
 .footer {
     width: 100%;
-    padding-inline: 1.5rem;
+    padding-inline: $pt-padding;
 }
 
 .container {

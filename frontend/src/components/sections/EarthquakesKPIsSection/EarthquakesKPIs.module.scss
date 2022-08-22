@@ -2,17 +2,17 @@
 
 .KPIs {
     width: 100%;
-    padding: 1.5rem;
+    padding: $pt-padding;
 }
 
 .container {
-    width: min(100%, 200rem);
+    width: min(100%, $pt-max-width);
     margin-inline: auto;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 
-    @media (min-width: $breakpoint-sm) {
+    @media (min-width: $pt-breakpoint-sm) {
         flex-direction: row;
         justify-content: center;
     }

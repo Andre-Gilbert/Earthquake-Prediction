@@ -3,7 +3,7 @@
 .btn {
     display: none;
 
-    @media (min-width: $breakpoint-sm) {
+    @media (min-width: $pt-breakpoint-sm) {
         display: block;
     }
 }
@@ -34,7 +34,7 @@
 .menu {
     margin-right: 1rem;
 
-    @media (min-width: $breakpoint-sm) {
+    @media (min-width: $pt-breakpoint-sm) {
         display: none;
     }
 }

@@ -1,12 +1,13 @@
 @import '~@blueprintjs/core/lib/scss/variables';
+@import '../../../styles/variables.module.scss';
 
 .alerts {
     width: 100%;
-    padding: 1.5rem;
+    padding: $pt-padding;
 }
 
 .container {
-    width: min(100%, 200rem);
+    width: min(100%, $pt-max-width);
     margin-inline: auto;
 }
 
