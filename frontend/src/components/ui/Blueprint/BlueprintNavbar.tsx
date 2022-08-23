@@ -88,10 +88,10 @@ const MobileDrawer = () => {
             >
                 <div className={Classes.DRAWER_BODY}>
                     <Link href="/dashboard" passHref>
-                        <AnchorButton text="Earthquakes" icon="globe" minimal />
+                        <AnchorButton text="Overview" icon="geolocation" minimal onClick={handleClose} />
                     </Link>
-                    <Link href="/alerts" passHref>
-                        <AnchorButton text="Alerts" icon="warning-sign" minimal />
+                    <Link href="/earthquakes" passHref>
+                        <AnchorButton text="Earthquakes" icon="globe" minimal onClick={handleClose} />
                     </Link>
                 </div>
             </Drawer>

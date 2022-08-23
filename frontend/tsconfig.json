@@ -6,7 +6,8 @@
             "@layout/*": ["components/layout/*"],
             "@sections/*": ["components/sections/*"],
             "@ui/*": ["components/ui/*"],
-            "@images/*": ["images/*"]
+            "@images/*": ["images/*"],
+            "@queries/*": ["components/queries/*"]
         },
         "target": "es5",
         "lib": ["dom", "dom.iterable", "esnext"],

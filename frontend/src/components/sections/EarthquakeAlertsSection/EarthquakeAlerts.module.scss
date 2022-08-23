@@ -38,7 +38,7 @@
 }
 
 .alert {
-    padding: 1rem 1.5rem;
+    padding: $pt-padding;
 
     &:not(:last-of-type) {
         border-bottom: 1px solid $pt-divider-black;

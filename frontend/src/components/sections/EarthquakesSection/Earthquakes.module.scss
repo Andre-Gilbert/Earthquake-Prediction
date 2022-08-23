@@ -1,0 +1,48 @@
+@import '~@blueprintjs/core/lib/scss/variables';
+@import '../../../styles/variables.module.scss';
+
+.earthquakes {
+    width: 100%;
+    padding-bottom: $pt-padding;
+}
+
+.header {
+    padding: $pt-padding;
+    background-color: #ffffff;
+}
+
+.headerContainer {
+    width: min(100%, 120rem);
+    margin-inline: auto;
+}
+
+.title,
+.subtitle {
+    text-align: center;
+
+    @media (min-width: $pt-breakpoint-sm) {
+        text-align: left;
+    }
+}
+
+.container {
+    width: min(100%, $pt-max-width);
+    margin-inline: auto;
+}
+
+.earthquakesList {
+    padding-top: $pt-padding;
+    padding-inline: $pt-padding;
+}
+
+.card {
+    padding: 0;
+}
+
+.listItem {
+    padding: $pt-padding;
+
+    &:not(:last-of-type) {
+        border-bottom: 1px solid $pt-divider-black;
+    }
+}
