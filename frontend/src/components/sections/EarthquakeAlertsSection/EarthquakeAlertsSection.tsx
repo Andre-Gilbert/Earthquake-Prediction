@@ -1,13 +1,17 @@
 import { Button, Card, Classes, H5, Icon } from '@blueprintjs/core';
+import { UseQueryResult } from '@tanstack/react-query';
+import { useEarthquakeAlerts } from 'queries/earthquakes';
 import styles from './EarthquakeAlerts.module.scss';
 
 export const EarthquakeAlertsSection = () => {
+    const earthquakeAlertsQuery = useEarthquakeAlerts(30);
+
     return (
         <div className={styles.alerts}>
             <div className={styles.container}>
                 <Card className={styles.card}>
                     <Header />
-                    <Alerts />
+                    <Alerts query={earthquakeAlertsQuery} />
                 </Card>
             </div>
         </div>
@@ -29,7 +33,13 @@ const Header = () => {
     );
 };
 
-const Alerts = () => {
+type QueryProps = {
+    query: UseQueryResult<any, unknown>;
+};
+
+const Alerts = ({ query }: QueryProps) => {
+    console.log(query.data);
+
     return (
         <>
             <Alert />

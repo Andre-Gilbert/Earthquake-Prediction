@@ -1,4 +1,4 @@
-import { Card, Classes, H2 } from '@blueprintjs/core';
+import { Card, Classes, H1 } from '@blueprintjs/core';
 import styles from './Earthquakes.module.scss';
 
 export const EarthquakesSection = () => {
@@ -6,7 +6,7 @@ export const EarthquakesSection = () => {
         <div className={styles.earthquakes}>
             <div className={`${Classes.ELEVATION_0} ${styles.header}`}>
                 <div className={styles.headerContainer}>
-                    <H2 className={styles.title}>Explore Earthquakes</H2>
+                    <H1 className={styles.title}>Explore Earthquakes</H1>
                     <p className={styles.subtitle}>Allows one to explore ...</p>
                 </div>
             </div>
