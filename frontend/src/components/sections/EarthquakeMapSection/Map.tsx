@@ -10,6 +10,8 @@ L.Icon.Default.mergeOptions({
     iconRetinaUrl: iconRetinaUrl.src,
     iconUrl: iconUrl.src,
     shadowUrl: shadowUrl.src,
+    iconSize: [16],
+    shadowSize: [16],
 });
 
 export type MapProps = {

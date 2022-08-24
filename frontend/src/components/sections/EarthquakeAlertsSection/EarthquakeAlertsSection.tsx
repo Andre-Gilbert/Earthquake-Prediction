@@ -1,17 +1,24 @@
 import { Button, Card, Classes, H5, Icon } from '@blueprintjs/core';
 import { UseQueryResult } from '@tanstack/react-query';
 import { useEarthquakeAlerts } from 'queries/earthquakes';
+import { useState } from 'react';
 import styles from './EarthquakeAlerts.module.scss';
 
 export const EarthquakeAlertsSection = () => {
-    const earthquakeAlertsQuery = useEarthquakeAlerts(30);
+    const [alertLevels, setAlertLevels] = useState(['green', 'yellow', 'orange', 'red']);
+    const earthquakeAlertsQueries = useEarthquakeAlerts(alertLevels, 30);
+
+    let alerts = [];
+    for (let i = 0; i < earthquakeAlertsQueries.length; i++) {
+        alerts.push(earthquakeAlertsQueries[i].data);
+    }
 
     return (
         <div className={styles.alerts}>
             <div className={styles.container}>
                 <Card className={styles.card}>
                     <Header />
-                    <Alerts query={earthquakeAlertsQuery} />
+                    <Alerts alerts={alerts} />
                 </Card>
             </div>
         </div>
@@ -33,13 +40,12 @@ const Header = () => {
     );
 };
 
-type QueryProps = {
-    query: UseQueryResult<any, unknown>;
+type AlertsProps = {
+    alerts: UseQueryResult<any, unknown>[];
 };
 
-const Alerts = ({ query }: QueryProps) => {
-    console.log(query.data);
-
+const Alerts = ({ alerts }: AlertsProps) => {
+    console.log(alerts);
     return (
         <>
             <Alert />
