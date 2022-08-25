@@ -1,4 +1,4 @@
-import { Button, Card, H5, Icon } from '@blueprintjs/core';
+import { Button, Card, H5, Icon, Intent } from '@blueprintjs/core';
 import { UseQueryResult } from '@tanstack/react-query';
 import { useEarthquakeAlerts } from 'queries/earthquakes';
 import { useMemo, useState } from 'react';
@@ -43,14 +43,36 @@ type AlertsProps = {
     alerts: UseQueryResult<any, unknown>[];
 };
 
+const getIntent = (alertLevel: string) => {
+    switch (alertLevel) {
+        case 'green':
+            return Intent.SUCCESS;
+        case 'yellow':
+            return Intent.PRIMARY;
+        case 'orange':
+            return Intent.WARNING;
+        case 'red':
+            return Intent.DANGER;
+        default:
+            return Intent.NONE;
+    }
+};
+
 const Alerts = ({ alerts }: AlertsProps) => {
     return (
         <>
+            <div className={styles.alert}>Labels</div>
             {alerts.map(alert =>
                 alert.data.features.map(
                     (earthquake: any) =>
                         earthquake.properties.place && (
-                            <Alert key={earthquake.id} title={earthquake.properties.place} />
+                            <Alert
+                                key={earthquake.id}
+                                time={earthquake.properties.time}
+                                place={earthquake.properties.place}
+                                magnitude={earthquake.properties.mag}
+                                intent={getIntent(earthquake.properties.alert)}
+                            />
                         ),
                 ),
             )}
@@ -58,12 +80,17 @@ const Alerts = ({ alerts }: AlertsProps) => {
     );
 };
 
-type AlertProps = { title: string };
+type AlertProps = { time: number; place: string; magnitude: string; intent: Intent };
 
-const Alert = ({ title }: AlertProps) => {
+const Alert = ({ time, place, magnitude, intent }: AlertProps) => {
+    const date = new Date(time);
+
     return (
         <div className={styles.alert}>
-            <div>{title}</div>
+            <Icon icon="info-sign" intent={intent} />
+            <div className={styles.alertDate}>{date.toLocaleString()}</div>
+            <div className={styles.alertPlace}>{place}</div>
+            <div className={styles.alertMagnitude}>Magnitude: {magnitude}</div>
         </div>
     );
 };
