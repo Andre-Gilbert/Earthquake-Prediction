@@ -20,7 +20,7 @@ export const useEarthquakes = (cacheName: string, days: number, limit: number = 
 };
 
 export const useEarthquakeAlerts = (alertLevels: string[], days: number) => {
-    const query = useQueries({
+    const queries = useQueries({
         queries: alertLevels.map(alertLevel => {
             return {
                 queryKey: [`alert-${alertLevel}`, alertLevel, days],
@@ -38,7 +38,7 @@ export const useEarthquakeAlerts = (alertLevels: string[], days: number) => {
         }),
     });
 
-    return query;
+    return queries;
 };
 
 interface EarthquakeKPI {

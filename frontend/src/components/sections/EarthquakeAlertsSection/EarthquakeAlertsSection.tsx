@@ -1,17 +1,16 @@
-import { Button, Card, Classes, H5, Icon } from '@blueprintjs/core';
+import { Button, Card, H5, Icon } from '@blueprintjs/core';
 import { UseQueryResult } from '@tanstack/react-query';
 import { useEarthquakeAlerts } from 'queries/earthquakes';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import styles from './EarthquakeAlerts.module.scss';
 
 export const EarthquakeAlertsSection = () => {
     const [alertLevels, setAlertLevels] = useState(['green', 'yellow', 'orange', 'red']);
     const earthquakeAlertsQueries = useEarthquakeAlerts(alertLevels, 30);
 
-    let alerts = [];
-    for (let i = 0; i < earthquakeAlertsQueries.length; i++) {
-        alerts.push(earthquakeAlertsQueries[i].data);
-    }
+    const alerts = useMemo(() => {
+        return earthquakeAlertsQueries.map((query: any) => query.data).filter(data => data !== undefined);
+    }, [earthquakeAlertsQueries]);
 
     return (
         <div className={styles.alerts}>
@@ -45,22 +44,26 @@ type AlertsProps = {
 };
 
 const Alerts = ({ alerts }: AlertsProps) => {
-    console.log(alerts);
     return (
         <>
-            <Alert />
-            <Alert />
-            <Alert />
-            <Alert />
-            <Alert />
+            {alerts.map(alert =>
+                alert.data.features.map(
+                    (earthquake: any) =>
+                        earthquake.properties.place && (
+                            <Alert key={earthquake.id} title={earthquake.properties.place} />
+                        ),
+                ),
+            )}
         </>
     );
 };
 
-const Alert = () => {
+type AlertProps = { title: string };
+
+const Alert = ({ title }: AlertProps) => {
     return (
         <div className={styles.alert}>
-            <div className={Classes.SKELETON}>Content</div>
+            <div>{title}</div>
         </div>
     );
 };
