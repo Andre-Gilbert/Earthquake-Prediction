@@ -10,16 +10,12 @@ export const EarthquakeAlertsSection = () => {
     const [alertLevels, setAlertLevels] = useState(['green', 'yellow', 'orange', 'red']);
     const earthquakeAlertsQueries = useEarthquakeAlerts(alertLevels, 30);
 
-    const alerts = useMemo(() => {
-        return earthquakeAlertsQueries.map((query: any) => query.data).filter(data => data !== undefined);
-    }, [earthquakeAlertsQueries]);
-
     return (
         <div className={styles.alerts}>
             <div className={styles.container}>
                 <Card className={styles.card}>
                     <Header />
-                    <Alerts alerts={alerts} />
+                    <Alerts queries={earthquakeAlertsQueries} />
                 </Card>
             </div>
         </div>
@@ -53,10 +49,36 @@ const FilterMenu = () => {
 };
 
 type AlertsProps = {
-    alerts: UseQueryResult<any, unknown>[];
+    queries: UseQueryResult<any, unknown>[];
 };
 
-const Alerts = ({ alerts }: AlertsProps) => {
+const Alerts = ({ queries }: AlertsProps) => {
+    const isLoading = queries.some(query => query.isLoading);
+    const alerts = useMemo(
+        () =>
+            queries
+                .map((query: any) => query.data)
+                .filter(data => data !== undefined)
+                .map(alert =>
+                    alert.data.features.map(
+                        (earthquake: any) =>
+                            earthquake.properties.place && (
+                                <Alert
+                                    key={earthquake.id}
+                                    time={earthquake.properties.time}
+                                    place={earthquake.properties.place}
+                                    magnitude={earthquake.properties.mag}
+                                    magnitudeType={earthquake.properties.magType}
+                                    magnitudeTypeTooltip={getMagnitudeTypeTooltip(earthquake.properties.magType)}
+                                    depth={earthquake.geometry.coordinates[2]}
+                                    intent={getIntent(earthquake.properties.alert)}
+                                />
+                            ),
+                    ),
+                ),
+        [queries],
+    );
+
     return (
         <>
             <div className={styles.alertLabels}>
@@ -66,23 +88,7 @@ const Alerts = ({ alerts }: AlertsProps) => {
                 <p className={Classes.TEXT_MUTED}>Magnitude Type</p>
                 <p className={Classes.TEXT_MUTED}>Depth</p>
             </div>
-            {alerts.map(alert =>
-                alert.data.features.map(
-                    (earthquake: any) =>
-                        earthquake.properties.place && (
-                            <Alert
-                                key={earthquake.id}
-                                time={earthquake.properties.time}
-                                place={earthquake.properties.place}
-                                magnitude={earthquake.properties.mag}
-                                magnitudeType={earthquake.properties.magType}
-                                magnitudeTypeTooltip={getMagnitudeTypeTooltip(earthquake.properties.magType)}
-                                depth={earthquake.geometry.coordinates[2]}
-                                intent={getIntent(earthquake.properties.alert)}
-                            />
-                        ),
-                ),
-            )}
+            {isLoading ? <Loading /> : alerts}
         </>
     );
 };
@@ -106,9 +112,11 @@ const Alert = ({ time, place, magnitude, magnitudeType, magnitudeTypeTooltip, de
             <div className={styles.alertContent}>{date.toLocaleString()}</div>
             <div className={styles.alertContent}>{place}</div>
             <div className={styles.alertContent}>{magnitude}</div>
-            <Tooltip2 className={styles.alertContent} content={<TooltipContent {...magnitudeTypeTooltip} />}>
-                {magnitudeType}
-            </Tooltip2>
+            <div className={styles.alertContent}>
+                <Tooltip2 position="left" content={<TooltipContent {...magnitudeTypeTooltip} />}>
+                    {magnitudeType}
+                </Tooltip2>
+            </div>
             <div className={styles.alertContent}>{depth}</div>
         </div>
     );
@@ -124,6 +132,34 @@ const TooltipContent = ({ magnitudeRange, distanceRange }: TooltipContentProps) 
         <>
             <p className={styles.tooltip}>Magnitude range: {magnitudeRange}</p>
             <p className={styles.tooltip}>Distance range: {distanceRange}</p>
+        </>
+    );
+};
+
+const Loading = () => {
+    return (
+        <>
+            <div className={styles.alertLoading}>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+            </div>
+            <div className={styles.alertLoading}>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+            </div>
+            <div className={styles.alertLoading}>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+            </div>
         </>
     );
 };

@@ -29,7 +29,11 @@ export const Map = ({ query }: MapProps) => {
             {query.data?.features.map((earthquake: any) => (
                 <Marker
                     key={earthquake.id}
-                    position={[earthquake.geometry.coordinates[1], earthquake.geometry.coordinates[0]]}
+                    position={{
+                        lat: earthquake.geometry.coordinates[1],
+                        lng: earthquake.geometry.coordinates[0],
+                        alt: earthquake.geometry.coordinates[2],
+                    }}
                 >
                     <Popup>{earthquake.properties.place}</Popup>
                 </Marker>
