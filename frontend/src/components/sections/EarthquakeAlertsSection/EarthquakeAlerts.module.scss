@@ -32,7 +32,7 @@
     }
 
     h5 {
-        margin-left: 1rem;
+        margin-left: 10px;
         margin-bottom: 0;
     }
 }
@@ -47,17 +47,27 @@
     }
 }
 
-.alertDate {
-    flex: 1 1 30%;
-    margin-left: 2rem;
+.alertContent {
+    flex: 1 1 20%;
+    margin-left: 10px;
 }
 
-.alertPlace {
-    flex: 1 1 30%;
-    margin-left: 2rem;
+.alertLabels {
+    padding-block: 1rem;
+    padding-left: 31px;
+    padding-right: $pt-padding;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid $pt-divider-black;
+
+    p {
+        flex: 1 1 20%;
+        margin-left: 10px;
+        margin-bottom: 0;
+        font-weight: 500;
+    }
 }
 
-.alertMagnitude {
-    flex: 1 1 30%;
-    margin-left: 2rem;
+.tooltip {
+    margin-bottom: 0;
 }
