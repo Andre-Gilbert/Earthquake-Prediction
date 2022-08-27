@@ -1,7 +1,7 @@
 import { Button, Card, Checkbox, Classes, H5, Icon, Intent, Menu, MenuDivider } from '@blueprintjs/core';
 import { Popover2, Tooltip2 } from '@blueprintjs/popover2';
 import { UseQueryResult } from '@tanstack/react-query';
-import { useEarthquakes } from 'queries/earthquakes';
+import { Earthquakes, useEarthquakes } from 'queries/earthquakes';
 import { useMemo, useState } from 'react';
 import styles from './EarthquakesAlerts.module.scss';
 import { getIntent, getMagnitudeTypeTooltip } from './utils';
@@ -49,7 +49,7 @@ const FilterMenu = () => {
 };
 
 type AlertsProps = {
-    query: UseQueryResult<any, unknown>;
+    query: UseQueryResult<Earthquakes, Error>;
     alertLevels: string[];
 };
 

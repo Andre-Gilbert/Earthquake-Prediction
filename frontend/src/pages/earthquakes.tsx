@@ -1,5 +1,5 @@
 import { Layout } from '@layout/Layout';
-import { EarthquakesSection } from '@sections/EarthquakesSection/EarthquakesSection';
+import { EarthquakesPredictionSection } from '@sections/EarthquakesPredictionSection/EarthquakesPredictionSection';
 import { BlueprintNavbar } from '@ui/Blueprint/BlueprintNavbar';
 import { GetServerSidePropsContext } from 'next';
 import { ReactElement } from 'react';
@@ -9,7 +9,7 @@ import { NextPageWithLayout } from './_app';
 const Earthquakes: NextPageWithLayout = () => {
     return (
         <>
-            <EarthquakesSection />
+            <EarthquakesPredictionSection />
         </>
     );
 };

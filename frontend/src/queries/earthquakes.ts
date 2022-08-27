@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { usgsInstance } from './config';
 
-interface Earthquakes {
+export interface Earthquakes {
     type: 'FeatureCollection';
     metadata: {
         generated: number;

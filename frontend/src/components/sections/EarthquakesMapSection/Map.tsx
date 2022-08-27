@@ -17,7 +17,7 @@ L.Icon.Default.mergeOptions({
 });
 
 export type MapProps = {
-    query: UseQueryResult<any, unknown>;
+    query: UseQueryResult<any, Error>;
 };
 
 export const Map = ({ query }: MapProps) => {

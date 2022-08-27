@@ -2,7 +2,7 @@
 import { Layout } from '@layout/Layout';
 import { EarthquakesKPIsSection } from '@sections/EarthquakeKPIsSection/EarthquakeKPIsSection';
 import { EarthquakesAlertsSection } from '@sections/EarthquakesAlertsSection/EarthquakesAlertsSection';
-import { EarthquakesMapSection } from '@sections/EarthquakesMapSection/EarthquakeMapSection';
+import { EarthquakesMapSection } from '@sections/EarthquakesMapSection/EarthquakesMapSection';
 import { BlueprintNavbar } from '@ui/Blueprint/BlueprintNavbar';
 import { GetServerSidePropsContext } from 'next';
 import { ReactElement } from 'react';

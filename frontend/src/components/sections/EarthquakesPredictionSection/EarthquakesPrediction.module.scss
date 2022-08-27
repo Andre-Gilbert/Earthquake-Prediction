@@ -1,0 +1,87 @@
+@import '~@blueprintjs/core/lib/scss/variables';
+@import '../../../styles/variables.module.scss';
+
+.header {
+    padding: $pt-padding;
+    background-color: #ffffff;
+}
+
+.headerContainer {
+    width: min(100%, 120rem);
+    margin-inline: auto;
+}
+
+.title,
+.subtitle {
+    text-align: center;
+
+    @media (min-width: $pt-breakpoint-sm) {
+        text-align: left;
+    }
+}
+
+.container {
+    width: min(100%, $pt-max-width);
+    padding: $pt-padding;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: $pt-padding;
+
+    @media (min-width: $pt-breakpoint-md) {
+        flex-direction: row;
+    }
+}
+
+.earthquakesList {
+    flex: 1 1 50%;
+    width: min(100%, 120rem);
+    margin-inline: auto;
+}
+
+.earthquakesListCard {
+    padding: 0;
+}
+
+.listItem {
+    padding: $pt-padding;
+
+    &:not(:last-of-type) {
+        border-bottom: 1px solid $pt-divider-black;
+    }
+}
+
+.cardMap {
+    flex: 1 1 50%;
+    width: min(100%, 120rem);
+    margin-inline: auto;
+    min-height: 50rem;
+    padding: 0;
+}
+
+.header {
+    min-height: 5rem;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.mapTitle {
+    display: flex;
+    align-items: center;
+
+    span {
+        color: $pt-text-color-muted;
+    }
+
+    h5 {
+        margin-left: 10px;
+        margin-bottom: 0;
+    }
+}
+
+.map {
+    width: 100%;
+    min-height: calc(50rem - 5rem);
+    z-index: 0;
+}
