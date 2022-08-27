@@ -42,3 +42,11 @@
     height: calc(100rem - 5rem);
     z-index: 0;
 }
+
+.spinner {
+    width: 100%;
+    height: calc(100rem - 5rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -1,15 +1,15 @@
 import { Button, Card, H5, Icon, Menu } from '@blueprintjs/core';
 import { MenuItem2, Popover2 } from '@blueprintjs/popover2';
-import { MapProps } from '@sections/EarthquakeMapSection/Map';
+import { MapProps } from '@sections/EarthquakesMapSection/Map';
 import dynamic from 'next/dynamic';
 import { useEarthquakes } from 'queries/earthquakes';
-import styles from './EarthquakeMap.module.scss';
+import styles from './EarthquakesMap.module.scss';
 
-const Map = dynamic<MapProps>(() => import('@sections/EarthquakeMapSection/Map').then(module => module.Map), {
+const Map = dynamic<MapProps>(() => import('@sections/EarthquakesMapSection/Map').then(module => module.Map), {
     ssr: false,
 });
 
-export const EarthquakeMapSection = () => {
+export const EarthquakesMapSection = () => {
     const earthquakesQuery = useEarthquakes('map', 30, 1000);
 
     return (

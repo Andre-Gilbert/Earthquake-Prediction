@@ -1,69 +1,94 @@
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { usgsInstance } from './config';
 
-export const useEarthquakes = (cacheName: string, days: number, limit: number = 20000) => {
-    const query = useQuery([`earthquake-${cacheName}`, days, limit], async (): Promise<any> => {
-        return await usgsInstance
-            .get('query', {
-                params: {
-                    format: 'geojson',
-                    starttime: getDate(Date.now(), days),
-                    endtime: getDate(Date.now(), 0),
-                    eventtype: 'earthquake',
-                    limit: limit,
-                },
-            })
-            .then(response => response.data);
-    });
+interface Earthquakes {
+    type: 'FeatureCollection';
+    metadata: {
+        generated: number;
+        url: string;
+        title: string;
+        api: string;
+        count: number;
+        status: number;
+    };
+    bbox: number[];
+    features: EarthquakeFeature[];
+}
 
-    return query;
+interface EarthquakeFeature {
+    type: 'Feature';
+    properties: {
+        mag: number;
+        place: string;
+        time: number;
+        updated: number;
+        tz: number;
+        url: string;
+        detail: string;
+        felt: number;
+        cdi: number;
+        mmi: number;
+        alert: string;
+        status: string;
+        tsunami: number;
+        sig: number;
+        net: string;
+        code: string;
+        ids: string;
+        sources: string;
+        types: string;
+        nst: number;
+        dmin: number;
+        rms: number;
+        gap: number;
+        magType: string;
+        type: string;
+    };
+    geometry: {
+        type: 'Point';
+        coordinates: number[];
+    };
+    id: string;
+}
+
+export const useEarthquakes = (cacheName: string, days: number, limit: number) => {
+    return useQuery<Earthquakes, Error>([`earthquake-${cacheName}`, days, limit], () => fetchEarthquakes(days, limit));
 };
 
-export const useEarthquakeAlerts = (alertLevels: string[], days: number) => {
-    const queries = useQueries({
-        queries: alertLevels.map(alertLevel => {
-            return {
-                queryKey: [`alert-${alertLevel}`, alertLevel, days],
-                queryFn: async (): Promise<any> => {
-                    return await usgsInstance.get('query', {
-                        params: {
-                            format: 'geojson',
-                            starttime: getDate(Date.now(), days),
-                            endtime: getDate(Date.now(), 0),
-                            alertlevel: alertLevel,
-                        },
-                    });
-                },
-            };
-        }),
-    });
-
-    return queries;
+const fetchEarthquakes = async (days: number, limit: number): Promise<Earthquakes> => {
+    return await usgsInstance
+        .get('query', {
+            params: {
+                format: 'geojson',
+                starttime: getDate(Date.now(), days),
+                endtime: getDate(Date.now(), 0),
+                eventtype: 'earthquake',
+                limit: limit,
+            },
+        })
+        .then(response => response.data);
 };
 
-interface EarthquakeKPI {
+interface EarthquakesKPI {
     count: number;
     maxAllowed: number;
 }
 
-export const useEarthquakeKPI = (days: number) => {
-    const query = useQuery<EarthquakeKPI, Error>(
-        [`earthquake-last-${days}-days`, days],
-        async (): Promise<EarthquakeKPI> => {
-            return await usgsInstance
-                .get('count', {
-                    params: {
-                        format: 'geojson',
-                        starttime: getDate(Date.now(), days),
-                        endtime: getDate(Date.now(), 0),
-                        eventtype: 'earthquake',
-                    },
-                })
-                .then(response => response.data);
-        },
-    );
+export const useEarthquakesKPI = (days: number) => {
+    return useQuery<EarthquakesKPI, Error>([`earthquake-last-${days}-days`, days], () => fetchEarthquakesCount(days));
+};
 
-    return query;
+const fetchEarthquakesCount = async (days: number): Promise<EarthquakesKPI> => {
+    return await usgsInstance
+        .get('count', {
+            params: {
+                format: 'geojson',
+                starttime: getDate(Date.now(), days),
+                endtime: getDate(Date.now(), 0),
+                eventtype: 'earthquake',
+            },
+        })
+        .then(response => response.data);
 };
 
 const getDate = (currentDate: number, days: number) => {

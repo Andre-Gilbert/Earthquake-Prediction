@@ -1,21 +1,21 @@
 import { Button, Card, Checkbox, Classes, H5, Icon, Intent, Menu, MenuDivider } from '@blueprintjs/core';
 import { Popover2, Tooltip2 } from '@blueprintjs/popover2';
 import { UseQueryResult } from '@tanstack/react-query';
-import { useEarthquakeAlerts } from 'queries/earthquakes';
+import { useEarthquakes } from 'queries/earthquakes';
 import { useMemo, useState } from 'react';
-import styles from './EarthquakeAlerts.module.scss';
+import styles from './EarthquakesAlerts.module.scss';
 import { getIntent, getMagnitudeTypeTooltip } from './utils';
 
-export const EarthquakeAlertsSection = () => {
+export const EarthquakesAlertsSection = () => {
     const [alertLevels, setAlertLevels] = useState(['green', 'yellow', 'orange', 'red']);
-    const earthquakeAlertsQueries = useEarthquakeAlerts(alertLevels, 30);
+    const earthquakesQuery = useEarthquakes('alerts', 30, 20000);
 
     return (
         <div className={styles.alerts}>
             <div className={styles.container}>
                 <Card className={styles.card}>
                     <Header />
-                    <Alerts queries={earthquakeAlertsQueries} />
+                    <Alerts query={earthquakesQuery} alertLevels={alertLevels} />
                 </Card>
             </div>
         </div>
@@ -49,34 +49,30 @@ const FilterMenu = () => {
 };
 
 type AlertsProps = {
-    queries: UseQueryResult<any, unknown>[];
+    query: UseQueryResult<any, unknown>;
+    alertLevels: string[];
 };
 
-const Alerts = ({ queries }: AlertsProps) => {
-    const isLoading = queries.some(query => query.isLoading);
+const Alerts = ({ query, alertLevels }: AlertsProps) => {
     const alerts = useMemo(
         () =>
-            queries
-                .map((query: any) => query.data)
-                .filter(data => data !== undefined)
-                .map(alert =>
-                    alert.data.features.map(
-                        (earthquake: any) =>
-                            earthquake.properties.place && (
-                                <Alert
-                                    key={earthquake.id}
-                                    time={earthquake.properties.time}
-                                    place={earthquake.properties.place}
-                                    magnitude={earthquake.properties.mag}
-                                    magnitudeType={earthquake.properties.magType}
-                                    magnitudeTypeTooltip={getMagnitudeTypeTooltip(earthquake.properties.magType)}
-                                    depth={earthquake.geometry.coordinates[2]}
-                                    intent={getIntent(earthquake.properties.alert)}
-                                />
-                            ),
+            query.data?.features.map(
+                (earthquake: any) =>
+                    alertLevels.includes(earthquake.properties.alert) &&
+                    earthquake.properties.place && (
+                        <Alert
+                            key={earthquake.id}
+                            time={earthquake.properties.time}
+                            place={earthquake.properties.place}
+                            magnitude={earthquake.properties.mag}
+                            magnitudeType={earthquake.properties.magType}
+                            magnitudeTypeTooltip={getMagnitudeTypeTooltip(earthquake.properties.magType)}
+                            depth={earthquake.geometry.coordinates[2]}
+                            intent={getIntent(earthquake.properties.alert)}
+                        />
                     ),
-                ),
-        [queries],
+            ),
+        [query.data, alertLevels],
     );
 
     return (
@@ -88,7 +84,7 @@ const Alerts = ({ queries }: AlertsProps) => {
                 <p className={Classes.TEXT_MUTED}>Magnitude Type</p>
                 <p className={Classes.TEXT_MUTED}>Depth</p>
             </div>
-            {isLoading ? <Loading /> : alerts}
+            {query.isLoading ? <Loading /> : alerts}
         </>
     );
 };

@@ -1,10 +1,10 @@
 import { Card, Classes, H1, H5 } from '@blueprintjs/core';
-import { useEarthquakeKPI } from 'queries/earthquakes';
-import styles from './EarthquakeKPIs.module.scss';
+import { useEarthquakesKPI } from 'queries/earthquakes';
+import styles from './EarthquakesKPIs.module.scss';
 
-export const EarthquakeKPIsSection = () => {
-    const earthquakesLastWeek = useEarthquakeKPI(7);
-    const earthquakesLastMonth = useEarthquakeKPI(30);
+export const EarthquakesKPIsSection = () => {
+    const earthquakesLastWeek = useEarthquakesKPI(7);
+    const earthquakesLastMonth = useEarthquakesKPI(30);
 
     return (
         <div className={styles.KPIs}>

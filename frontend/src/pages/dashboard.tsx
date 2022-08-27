@@ -1,8 +1,8 @@
 /** The dashboard page. */
 import { Layout } from '@layout/Layout';
-import { EarthquakeAlertsSection } from '@sections/EarthquakeAlertsSection/EarthquakeAlertsSection';
-import { EarthquakeKPIsSection } from '@sections/EarthquakeKPIsSection/EarthquakeKPIsSection';
-import { EarthquakeMapSection } from '@sections/EarthquakeMapSection/EarthquakeMapSection';
+import { EarthquakesKPIsSection } from '@sections/EarthquakeKPIsSection/EarthquakeKPIsSection';
+import { EarthquakesAlertsSection } from '@sections/EarthquakesAlertsSection/EarthquakesAlertsSection';
+import { EarthquakesMapSection } from '@sections/EarthquakesMapSection/EarthquakeMapSection';
 import { BlueprintNavbar } from '@ui/Blueprint/BlueprintNavbar';
 import { GetServerSidePropsContext } from 'next';
 import { ReactElement } from 'react';
@@ -12,9 +12,9 @@ import { NextPageWithLayout } from './_app';
 const Dashboard: NextPageWithLayout = () => {
     return (
         <>
-            <EarthquakeKPIsSection />
-            <EarthquakeMapSection />
-            <EarthquakeAlertsSection />
+            <EarthquakesKPIsSection />
+            <EarthquakesMapSection />
+            <EarthquakesAlertsSection />
         </>
     );
 };
