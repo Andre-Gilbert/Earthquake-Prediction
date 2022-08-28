@@ -20,6 +20,10 @@
     }
 }
 
+.btnSelect {
+    outline: none;
+}
+
 .container {
     width: min(100%, $pt-max-width);
     padding: $pt-padding;
@@ -59,9 +63,9 @@
     padding: 0;
 }
 
-.header {
+.mapHeader {
     min-height: 5rem;
-    padding: 1rem 1.5rem;
+    padding: $pt-padding;
     display: flex;
     justify-content: space-between;
 }

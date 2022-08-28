@@ -5,6 +5,11 @@
 
     @media (min-width: $pt-breakpoint-sm) {
         display: block;
+        outline: none;
+
+        &:first-of-type {
+            margin-right: 1rem;
+        }
     }
 }
 

@@ -6,6 +6,7 @@ import {
     Classes,
     Drawer,
     DrawerSize,
+    Intent,
     Menu,
     MenuDivider,
     Navbar,
@@ -16,11 +17,13 @@ import Profile from '@images/profile.svg';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import styles from './BlueprintNavbar.module.scss';
 
 export const BlueprintNavbar = () => {
     const { data: session, status } = useSession();
+    const router = useRouter();
 
     return (
         <Navbar>
@@ -28,10 +31,24 @@ export const BlueprintNavbar = () => {
                 <MobileDrawer />
                 <Navbar.Heading className={styles.title}>Earthquake Prediction</Navbar.Heading>
                 <Link href="/dashboard" passHref>
-                    <AnchorButton className={styles.btn} icon="geolocation" text="Overview" minimal />
+                    <AnchorButton
+                        className={styles.btn}
+                        type="button"
+                        icon="geolocation"
+                        text="Overview"
+                        intent={router.pathname === '/dashboard' ? Intent.PRIMARY : Intent.NONE}
+                        minimal
+                    />
                 </Link>
                 <Link href="/earthquakes" passHref>
-                    <AnchorButton className={styles.btn} icon="globe" text="Earthquakes" minimal />
+                    <AnchorButton
+                        className={styles.btn}
+                        type="button"
+                        icon="globe"
+                        text="Earthquakes"
+                        intent={router.pathname === '/earthquakes' ? Intent.PRIMARY : Intent.NONE}
+                        minimal
+                    />
                 </Link>
             </Navbar.Group>
             <Navbar.Group align={Alignment.RIGHT}>

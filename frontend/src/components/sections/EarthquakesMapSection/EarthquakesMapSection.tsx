@@ -32,7 +32,7 @@ const Header = () => {
                 <H5>Location</H5>
             </div>
             <Popover2 content={<FilterMenu />} placement="bottom-end">
-                <Button icon="filter" minimal />
+                <Button type="button" icon="filter" minimal />
             </Popover2>
         </div>
     );
