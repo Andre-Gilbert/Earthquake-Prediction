@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import { usgsInstance } from './config';
 
 export interface Earthquakes {
@@ -64,6 +64,31 @@ const fetchEarthquakes = async (days: number, limit: number): Promise<Earthquake
                 endtime: getDate(Date.now(), 0),
                 eventtype: 'earthquake',
                 limit: limit,
+            },
+        })
+        .then(response => response.data);
+};
+
+export const useEarthquakesAlert = (days: number, alertLevels: string[]) => {
+    return useQueries({
+        queries: alertLevels.map(alertLevel => {
+            return {
+                queryKey: [`alert-level-${alertLevel}`, days, alertLevel],
+                queryFn: () => fetchEarthquakesAlert(days, alertLevel),
+            };
+        }),
+    });
+};
+
+const fetchEarthquakesAlert = async (days: number, alertLevel: string): Promise<Earthquakes> => {
+    return await usgsInstance
+        .get('query', {
+            params: {
+                format: 'geojson',
+                starttime: getDate(Date.now(), days),
+                endtime: getDate(Date.now(), 0),
+                eventtype: 'earthquake',
+                alertlevel: alertLevel,
             },
         })
         .then(response => response.data);

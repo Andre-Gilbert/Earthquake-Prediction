@@ -1,21 +1,21 @@
 import { Button, Card, Checkbox, Classes, H5, Icon, Intent, Menu, MenuDivider } from '@blueprintjs/core';
 import { Popover2, Tooltip2 } from '@blueprintjs/popover2';
 import { UseQueryResult } from '@tanstack/react-query';
-import { Earthquakes, useEarthquakes } from 'queries/earthquakes';
-import { useMemo, useState } from 'react';
+import { Earthquakes, useEarthquakesAlert } from 'queries/earthquakes';
+import { useState } from 'react';
 import styles from './EarthquakesAlerts.module.scss';
 import { getIntent, getMagnitudeTypeTooltip } from './utils';
 
 export const EarthquakesAlertsSection = () => {
     const [alertLevels, setAlertLevels] = useState(['green', 'yellow', 'orange', 'red']);
-    const earthquakesQuery = useEarthquakes('alerts', 30, 20000);
+    const earthquakesAlertQueries = useEarthquakesAlert(30, alertLevels);
 
     return (
         <div className={styles.alerts}>
             <div className={styles.container}>
                 <Card className={styles.card}>
                     <Header />
-                    <Alerts query={earthquakesQuery} alertLevels={alertLevels} />
+                    <Alerts queries={earthquakesAlertQueries} />
                 </Card>
             </div>
         </div>
@@ -44,37 +44,18 @@ const FilterMenu = () => {
             <Checkbox>Yellow</Checkbox>
             <Checkbox>Orange</Checkbox>
             <Checkbox>Red</Checkbox>
+            <MenuDivider />
+            <Checkbox>Last 7 Days</Checkbox>
+            <Checkbox>Last 30 Days</Checkbox>
         </Menu>
     );
 };
 
 type AlertsProps = {
-    query: UseQueryResult<Earthquakes, Error>;
-    alertLevels: string[];
+    queries: UseQueryResult<Earthquakes, unknown>[];
 };
 
-const Alerts = ({ query, alertLevels }: AlertsProps) => {
-    const alerts = useMemo(
-        () =>
-            query.data?.features.map(
-                (earthquake: any) =>
-                    alertLevels.includes(earthquake.properties.alert) &&
-                    earthquake.properties.place && (
-                        <Alert
-                            key={earthquake.id}
-                            time={earthquake.properties.time}
-                            place={earthquake.properties.place}
-                            magnitude={earthquake.properties.mag}
-                            magnitudeType={earthquake.properties.magType}
-                            magnitudeTypeTooltip={getMagnitudeTypeTooltip(earthquake.properties.magType)}
-                            depth={earthquake.geometry.coordinates[2]}
-                            intent={getIntent(earthquake.properties.alert)}
-                        />
-                    ),
-            ),
-        [query.data, alertLevels],
-    );
-
+const Alerts = ({ queries }: AlertsProps) => {
     return (
         <>
             <div className={styles.alertLabels}>
@@ -84,7 +65,26 @@ const Alerts = ({ query, alertLevels }: AlertsProps) => {
                 <p className={Classes.TEXT_MUTED}>Magnitude Type</p>
                 <p className={Classes.TEXT_MUTED}>Depth</p>
             </div>
-            {query.isLoading ? <Loading /> : alerts}
+            {queries.some(query => query.isLoading) ? (
+                <Loading />
+            ) : (
+                queries.map(query =>
+                    query.data?.features.map(
+                        earthquake =>
+                            earthquake.properties.place && (
+                                <Alert
+                                    time={earthquake.properties.time}
+                                    place={earthquake.properties.place}
+                                    magnitude={earthquake.properties.mag}
+                                    magnitudeType={earthquake.properties.magType}
+                                    magnitudeTypeTooltip={getMagnitudeTypeTooltip(earthquake.properties.magType)}
+                                    depth={earthquake.geometry.coordinates[2]}
+                                    intent={getIntent(earthquake.properties.alert)}
+                                />
+                            ),
+                    ),
+                )
+            )}
         </>
     );
 };
@@ -92,7 +92,7 @@ const Alerts = ({ query, alertLevels }: AlertsProps) => {
 type AlertProps = {
     time: number;
     place: string;
-    magnitude: string;
+    magnitude: number;
     magnitudeType: string;
     magnitudeTypeTooltip: { magnitudeRange: string; distanceRange: string };
     depth: number;
