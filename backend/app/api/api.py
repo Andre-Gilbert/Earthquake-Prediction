@@ -1,6 +1,6 @@
 """API routers."""
-from app.api.endpoints import earthquake
+from app.api.endpoints import earthquakes
 from fastapi import APIRouter
 
 router = APIRouter()
-router.include_router(earthquake.router, prefix='/earthquake', tags=['Earthquake'])
+router.include_router(earthquakes.router, prefix='/earthquakes', tags=['Earthquakes'])

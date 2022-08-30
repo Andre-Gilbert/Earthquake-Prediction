@@ -7,7 +7,7 @@ import pandas as pd
 _PARAMS = {'format': 'csv', 'eventtype': 'earthquake'}
 
 
-def get_earthquake_data(base_url: str) -> pd.DataFrame:
+def get_earthquakes_data(base_url: str) -> pd.DataFrame:
     url = build_url(base_url, _PARAMS)
     return pd.read_csv(url)
 
