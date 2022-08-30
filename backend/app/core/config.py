@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     API_V1_STR: str = '/api/v1'
     PROJECT_NAME: str = 'Earthquake Prediction'
     BACKEND_CORS_ORIGINS: list[AnyHttpUrl] = []
-    USGS_EARTHQUAKE_API_URL: str = 'https://earthquake.usgs.gov/fdsnws/event/1/'
+    USGS_EARTHQUAKE_API_URL: str = 'https://earthquake.usgs.gov/fdsnws/event/1/query?'
 
     @classmethod
     @validator('BACKEND_CORS_ORIGINS', pre=True)
