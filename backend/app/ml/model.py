@@ -1,18 +1,36 @@
 """ML model."""
+import pickle
+
+import pandas as pd
 
 
-class Model:
+class MLModel:
     """ML model that predicts the magnitude of earthquakes."""
-    FEATURES = []
+    _FEATURES = [
+        'latitude',
+        'longitude',
+        'nst',
+        'gap',
+        'dmin',
+        'place',
+        'net',
+        'locationSource',
+        'status',
+    ]
+    _TARGET = 'mag'
 
-    def __init__(self):
-        self._model = None
+    def __init__(self) -> None:
+        self._model = self._load_model('')
 
-    def load(self):
-        pass
+    def _load_model(self, filepath: str) -> None:
+        with open(filepath, 'rb') as file:
+            model = pickle.load(file)
+            return model
 
-    def predict(self):
-        pass
+    def predict(self, df: pd.DataFrame) -> pd.DataFrame:
+        predictions = self._model.predict(df[self._FEATURES])
+        df['predictions'] = predictions
+        return df
 
 
-model = Model()
+ml_model = MLModel()
