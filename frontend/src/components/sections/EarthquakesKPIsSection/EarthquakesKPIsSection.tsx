@@ -1,6 +1,6 @@
 import { Card, Classes, H1, H5 } from '@blueprintjs/core';
-import { useEarthquakesKPI } from 'queries/earthquakes';
 import styles from './EarthquakesKPIs.module.scss';
+import { useEarthquakesKPI } from './queries';
 
 export const EarthquakesKPIsSection = () => {
     const earthquakesLastWeek = useEarthquakesKPI(7);

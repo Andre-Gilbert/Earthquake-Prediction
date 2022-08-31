@@ -7,7 +7,8 @@
             "@sections/*": ["components/sections/*"],
             "@ui/*": ["components/ui/*"],
             "@images/*": ["images/*"],
-            "@queries/*": ["components/queries/*"]
+            "@config/*": ["config/*"],
+            "@utils/*": ["utils/*"]
         },
         "target": "es5",
         "lib": ["dom", "dom.iterable", "esnext"],

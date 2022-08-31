@@ -1,7 +1,7 @@
 /** The dashboard page. */
 import { Layout } from '@layout/Layout';
-import { EarthquakesKPIsSection } from '@sections/EarthquakeKPIsSection/EarthquakeKPIsSection';
 import { EarthquakesAlertsSection } from '@sections/EarthquakesAlertsSection/EarthquakesAlertsSection';
+import { EarthquakesKPIsSection } from '@sections/EarthquakesKPIsSection/EarthquakesKPIsSection';
 import { EarthquakesMapSection } from '@sections/EarthquakesMapSection/EarthquakesMapSection';
 import { BlueprintNavbar } from '@ui/Blueprint/BlueprintNavbar';
 import { GetServerSidePropsContext } from 'next';

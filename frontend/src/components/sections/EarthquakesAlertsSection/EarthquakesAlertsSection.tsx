@@ -1,9 +1,10 @@
 import { Button, Card, Checkbox, Classes, H5, Icon, Intent, Menu, MenuDivider } from '@blueprintjs/core';
 import { Popover2, Tooltip2 } from '@blueprintjs/popover2';
 import { UseQueryResult } from '@tanstack/react-query';
-import { Earthquakes, useEarthquakesAlert } from 'queries/earthquakes';
 import { useState } from 'react';
+import { Earthquakes } from 'types/earthquakes';
 import styles from './EarthquakesAlerts.module.scss';
+import { useEarthquakesAlert } from './queries';
 import { getIntent, getMagnitudeTypeTooltip } from './utils';
 
 export const EarthquakesAlertsSection = () => {

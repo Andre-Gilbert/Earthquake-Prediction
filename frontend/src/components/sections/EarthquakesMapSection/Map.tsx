@@ -1,29 +1,19 @@
 import { Spinner, SpinnerSize } from '@blueprintjs/core';
+import { ICON } from '@config/leaflet';
 import { UseQueryResult } from '@tanstack/react-query';
-import L from 'leaflet';
-import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
-import iconUrl from 'leaflet/dist/images/marker-icon.png';
-import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
 import { useMemo } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, ZoomControl } from 'react-leaflet';
+import { Earthquakes } from 'types/earthquakes';
 import styles from './EarthquakesMap.module.scss';
 
-L.Icon.Default.mergeOptions({
-    iconRetinaUrl: iconRetinaUrl.src,
-    iconUrl: iconUrl.src,
-    shadowUrl: shadowUrl.src,
-    iconSize: [16],
-    shadowSize: [8],
-});
-
 export type MapProps = {
-    query: UseQueryResult<any, Error>;
+    query: UseQueryResult<Earthquakes, Error>;
 };
 
 export const Map = ({ query }: MapProps) => {
     const markers = useMemo(
         () =>
-            query.data?.features.map((earthquake: any) => (
+            query.data?.features.map(earthquake => (
                 <Marker
                     key={earthquake.id}
                     position={{
@@ -31,6 +21,7 @@ export const Map = ({ query }: MapProps) => {
                         lng: earthquake.geometry.coordinates[0],
                         alt: earthquake.geometry.coordinates[2],
                     }}
+                    icon={ICON}
                 >
                     <Popup>{earthquake.properties.place}</Popup>
                 </Marker>
