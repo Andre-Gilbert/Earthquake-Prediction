@@ -10,7 +10,7 @@ const Map = dynamic<MapProps>(() => import('@sections/EarthquakesMapSection/Map'
 });
 
 export const EarthquakesMapSection = () => {
-    const earthquakesQuery = useEarthquakes('map', 30, 1000);
+    const earthquakesQuery = useEarthquakes(30, 1000);
 
     return (
         <div className={styles.location}>

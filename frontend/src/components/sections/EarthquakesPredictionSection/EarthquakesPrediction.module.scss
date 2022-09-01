@@ -63,11 +63,20 @@
     padding: 0;
 }
 
+.mapHeader,
+.earthquakesHeader {
+    display: flex;
+    justify-content: space-between;
+}
+
 .mapHeader {
     min-height: 5rem;
     padding: $pt-padding;
-    display: flex;
-    justify-content: space-between;
+}
+
+.earthquakesHeader {
+    border-bottom: 1px solid $pt-divider-black;
+    padding: 1rem $pt-padding;
 }
 
 .mapTitle {

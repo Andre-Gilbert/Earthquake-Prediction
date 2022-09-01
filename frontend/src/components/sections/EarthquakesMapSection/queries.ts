@@ -3,8 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { getDate } from '@utils/date';
 import { Earthquakes } from 'types/earthquakes';
 
-export const useEarthquakes = (cacheName: string, days: number, limit: number) => {
-    return useQuery<Earthquakes, Error>([`earthquake-${cacheName}`, days, limit], () => fetchEarthquakes(days, limit));
+export const useEarthquakes = (days: number, limit: number) => {
+    return useQuery<Earthquakes, Error>([`earthquakes-map`, days, limit], () => fetchEarthquakes(days, limit));
 };
 
 const fetchEarthquakes = async (days: number, limit: number): Promise<Earthquakes> => {

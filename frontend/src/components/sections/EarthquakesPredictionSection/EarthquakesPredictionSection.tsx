@@ -1,15 +1,19 @@
 import { Alignment, Button, Card, Classes, H1, H5, Icon, Menu } from '@blueprintjs/core';
-import { MenuItem2 } from '@blueprintjs/popover2';
+import { MenuItem2, Popover2 } from '@blueprintjs/popover2';
 import { ItemPredicate, ItemRenderer, Select2 } from '@blueprintjs/select';
+import { UseQueryResult } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import styles from './EarthquakesPrediction.module.scss';
+import { EarthquakesPrediction, useEarthquakesPrediction } from './queries';
 
 const Map = dynamic<{}>(() => import('@sections/EarthquakesPredictionSection/Map').then(module => module.Map), {
     ssr: false,
 });
 
 export const EarthquakesPredictionSection = () => {
+    const earthquakesPredictionQuery = useEarthquakesPrediction();
+
     return (
         <div>
             <Header />
@@ -18,7 +22,7 @@ export const EarthquakesPredictionSection = () => {
                     <MapHeader />
                     <Map />
                 </Card>
-                <Earthquakes />
+                <Earthquakes query={earthquakesPredictionQuery} />
             </div>
         </div>
     );
@@ -108,23 +112,22 @@ const MapHeader = () => {
     );
 };
 
-const FilterMenu = () => {
-    return (
-        <Menu>
-            <MenuItem2 text="Filters" />
-        </Menu>
-    );
+type EarthquakesProps = {
+    query: UseQueryResult<EarthquakesPrediction, Error>;
 };
 
-const Earthquakes = () => {
+const Earthquakes = ({ query }: EarthquakesProps) => {
+    const predictions = useMemo(() => query.data?.predictions.map(prediction => prediction.id), [query.data]);
+
     return (
         <div className={styles.earthquakesList}>
             <Card className={styles.earthquakesListCard}>
+                <EarthquakesHeader />
                 <ListItem></ListItem>
                 <ListItem></ListItem>
                 <ListItem></ListItem>
                 <ListItem></ListItem>
-                <ListItem></ListItem>
+                {predictions}
             </Card>
         </div>
     );
@@ -135,5 +138,27 @@ const ListItem = () => {
         <div className={styles.listItem}>
             <div className={Classes.SKELETON}>Item</div>
         </div>
+    );
+};
+
+const EarthquakesHeader = () => {
+    return (
+        <div className={styles.earthquakesHeader}>
+            <div className={styles.mapTitle}>
+                <Icon icon="area-of-interest" />
+                <H5>Location</H5>
+            </div>
+            <Popover2 content={<FilterMenu />} placement="bottom-end">
+                <Button type="button" icon="filter" minimal />
+            </Popover2>
+        </div>
+    );
+};
+
+const FilterMenu = () => {
+    return (
+        <Menu>
+            <MenuItem2 text="Filters" />
+        </Menu>
     );
 };

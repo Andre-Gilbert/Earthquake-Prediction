@@ -8,7 +8,7 @@ interface EarthquakesKPI {
 }
 
 export const useEarthquakesKPI = (days: number) => {
-    return useQuery<EarthquakesKPI, Error>([`earthquake-last-${days}-days`, days], () => fetchEarthquakesCount(days));
+    return useQuery<EarthquakesKPI, Error>([`earthquakes-last-${days}-days`, days], () => fetchEarthquakesCount(days));
 };
 
 const fetchEarthquakesCount = async (days: number): Promise<EarthquakesKPI> => {
