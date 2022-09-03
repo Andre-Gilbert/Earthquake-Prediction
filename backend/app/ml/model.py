@@ -50,7 +50,7 @@ class MLModel:
             ],
             inplace=True,
         )
-        df = normalized_df(df, columns=['prediction'], revert=True)
+        df = normalize_df(df, columns=['prediction'], revert=True)
         df = df[::-1]
         return df
 
