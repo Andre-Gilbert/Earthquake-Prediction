@@ -30,8 +30,8 @@ class MLModel:
         df.dropna(axis=0, inplace=True)
         normalized_df = normalize_df(df, columns=['latitude', 'longitude', 'nst', 'gap', 'dmin', self._TARGET])
         prediction = self._model.predict(normalized_df[self._FEATURES])
-        normalized_df['prediction'] = prediction
-        normalized_df.drop(
+        df['prediction'] = prediction
+        df.drop(
             columns=[
                 'updated',
                 'type',
@@ -50,7 +50,7 @@ class MLModel:
             ],
             inplace=True,
         )
-        df = df(normalized_df, columns=['latitude', 'longitude', 'nst', 'gap', 'dmin', self._TARGET], revert=True)
+        df = normalized_df(df, columns=['prediction'], revert=True)
         df = df[::-1]
         return df
 
