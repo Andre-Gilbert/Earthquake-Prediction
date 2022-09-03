@@ -28,7 +28,7 @@ class MLModel:
 
     def predict(self, df: pd.DataFrame) -> pd.DataFrame:
         df.dropna(axis=0, inplace=True)
-        normalized_df = normalize_df(df, columns=['latitude', 'longitude', 'nst', 'gap', 'dmin', self._TARGET])
+        normalized_df = normalize_df(df, columns=['latitude', 'longitude', 'nst', 'gap', 'dmin'])
         prediction = self._model.predict(normalized_df[self._FEATURES])
         df['prediction'] = prediction
         df.drop(
@@ -50,7 +50,6 @@ class MLModel:
             ],
             inplace=True,
         )
-        df = normalize_df(df, columns=['prediction'], revert=True)
         df = df[::-1]
         return df
 
