@@ -3,10 +3,7 @@ import pandas as pd
 import pytest
 from app.ml.utils import normalize_df
 
-_DATA = [pd.DataFrame(data={
-    'col1': list(range(1, 11)),
-    'col2': list(range(-10, 0)),
-})]
+_DATA = [pd.DataFrame(data={'col1': list(range(1, 11)), 'col2': list(range(-10, 0)), 'col3': list(range(-5, 5))})]
 
 
 @pytest.mark.parametrize('df', _DATA)
