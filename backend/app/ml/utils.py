@@ -18,3 +18,16 @@ def build_url(base_url: str, params: dict[str, str]) -> str:
 
 def parse_df(df: pd.DataFrame) -> dict[str, Any]:
     return df.to_dict(orient='records')
+
+
+def normalize_df(df: pd.DataFrame, columns: list[str], revert: bool = False) -> pd.DataFrame:
+    if not columns: return df
+
+    def min_max_scaling(series: pd.Series, revert: bool) -> pd.Series:
+        if revert: return (series * (series.max() - series.min())) + series.min()
+        return (series - series.min()) / (series.max() - series.min())
+
+    for col in columns:
+        df[col] = min_max_scaling(col, revert)
+
+    return df

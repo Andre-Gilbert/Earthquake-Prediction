@@ -2,6 +2,7 @@
 import os
 
 import pandas as pd
+from app.ml.utils import normalize_df
 from catboost import CatBoostRegressor
 
 _MODEL_FILE = os.path.join(os.path.dirname(__file__), 'model')
@@ -27,9 +28,10 @@ class MLModel:
 
     def predict(self, df: pd.DataFrame) -> pd.DataFrame:
         df.dropna(axis=0, inplace=True)
-        prediction = self._model.predict(df[self._FEATURES])
-        df['prediction'] = prediction
-        df.drop(
+        normalized_df = normalize_df(df, columns=['latitude', 'longitude', 'nst', 'gap', 'dmin', self._TARGET])
+        prediction = self._model.predict(normalized_df[self._FEATURES])
+        normalized_df['prediction'] = prediction
+        normalized_df.drop(
             columns=[
                 'updated',
                 'type',
@@ -48,6 +50,7 @@ class MLModel:
             ],
             inplace=True,
         )
+        df = df(normalized_df, columns=['latitude', 'longitude', 'nst', 'gap', 'dmin', self._TARGET], revert=True)
         df = df[::-1]
         return df
 

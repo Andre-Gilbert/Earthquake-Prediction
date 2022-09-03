@@ -1,4 +1,5 @@
 """API configuration."""
+
 from pydantic import AnyHttpUrl, BaseSettings, validator
 
 
@@ -12,7 +13,7 @@ class Settings(BaseSettings):
     @classmethod
     @validator('BACKEND_CORS_ORIGINS', pre=True)
     def assemble_cors_origins(cls, value: list[str]) -> list[str]:
-        if not isinstance(value, (list)): raise ValueError(value)
+        if not isinstance(value, list): raise ValueError(value)
         return value
 
     class Config:
