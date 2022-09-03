@@ -7,7 +7,7 @@
 
 .container {
     width: min(100%, 120rem);
-    padding-block: 1rem;
+    min-height: 5rem;
     margin-inline: auto;
 
     display: flex;

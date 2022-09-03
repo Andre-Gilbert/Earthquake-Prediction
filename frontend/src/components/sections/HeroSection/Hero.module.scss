@@ -1,8 +1,9 @@
 @import '~@blueprintjs/core/lib/scss/variables';
+@import '../../../styles/variables.module.scss';
 
 .hero {
     width: 100%;
-    min-height: 30rem;
+    min-height: 55rem;
     padding: 10rem 1.5rem;
 }
 
@@ -29,7 +30,7 @@
     border: none;
     border-radius: 2px;
 
-    background-color: #4285f4;
+    background-color: $pt-blue;
     box-shadow: 0 10px 20px rgb(0, 0, 0, 0.15);
 }
 

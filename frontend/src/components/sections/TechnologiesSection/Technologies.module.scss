@@ -1,3 +1,5 @@
+@import '../../../styles/variables.module.scss';
+
 .technologies {
     width: 100%;
     padding-inline: 1.5rem;
@@ -6,9 +8,175 @@
 
 .container {
     width: min(100%, 120rem);
+    min-height: 50rem;
     margin-inline: auto;
+}
+
+.flex {
+    display: flex;
+    flex-direction: column-reverse;
+    width: min(100%, 120rem);
+    margin-inline: auto;
+
+    @media (min-width: $pt-breakpoint-md) {
+        flex-direction: row;
+        grid-gap: 5rem;
+    }
+}
+
+.grid {
+    display: grid;
+    grid-gap: 2rem;
+    margin-inline: 0.8rem;
+
+    @media (min-width: $pt-breakpoint-md) {
+        flex: 1 1 50%;
+    }
 }
 
 .title {
     text-align: center;
+    margin-bottom: 2rem;
+}
+
+.subtitle {
+    text-align: center;
+    margin-bottom: 5rem;
+}
+
+.cubeAnimation {
+    margin-bottom: 5rem;
+    flex: 0 0 250px;
+    display: flex;
+    justify-content: center;
+
+    @media (min-width: $pt-breakpoint-md) {
+        flex: 1 1 50%;
+        align-items: flex-start;
+    }
+}
+
+.cube {
+    display: block;
+}
+
+.cubeContainer {
+    perspective: 800px;
+    perspective-origin: 50% 100px;
+}
+
+.cubeFaces {
+    position: relative;
+    transform-style: preserve-3d;
+    width: 200px;
+
+    @media (min-width: $pt-breakpoint-md) {
+        width: 250px;
+    }
+}
+
+.cubeFaceFront,
+.cubeFaceBack,
+.cubeFaceTop,
+.cubeFaceBottom,
+.cubeFaceLeft,
+.cubeFaceRight {
+    width: 200px;
+    height: 200px;
+    outline: 1px solid #000;
+    position: absolute;
+    opacity: 0.9;
+    box-shadow: inset 0px 0px 100px #000;
+    display: grid;
+    place-items: center;
+
+    @media (min-width: $pt-breakpoint-md) {
+        width: 250px;
+        height: 250px;
+    }
+}
+
+.cubeFaceFront {
+    transform: translateZ(100px);
+    background: $pt-blue;
+
+    @media (min-width: $pt-breakpoint-md) {
+        transform: translateZ(125px);
+    }
+}
+
+.cubeFaceBack {
+    transform: translateZ(-100px) rotateY(180deg);
+    background: $pt-blue;
+
+    @media (min-width: $pt-breakpoint-md) {
+        transform: translateZ(-125px) rotateY(180deg);
+    }
+}
+
+.cubeFaceLeft {
+    transform: rotateY(270deg) translateX(-100px);
+    transform-origin: center left;
+    background: $pt-blue;
+
+    @media (min-width: $pt-breakpoint-md) {
+        transform: rotateY(270deg) translateX(-125px);
+    }
+}
+
+.cubeFaceRight {
+    transform: rotateY(-270deg) translateX(100px);
+    transform-origin: top right;
+    background: $pt-blue;
+
+    @media (min-width: $pt-breakpoint-md) {
+        transform: rotateY(-270deg) translateX(125px);
+    }
+}
+
+.cubeFaceTop {
+    transform: rotateX(-90deg) translateY(-100px);
+    transform-origin: top center;
+    background-color: $pt-blue;
+
+    @media (min-width: $pt-breakpoint-md) {
+        transform: rotateX(-90deg) translateY(-125px);
+    }
+}
+
+.cubeFaceBottom {
+    transform: rotateX(90deg) translateY(100px);
+    transform-origin: bottom center;
+    background-color: $pt-blue;
+
+    @media (min-width: $pt-breakpoint-md) {
+        transform: rotateX(90deg) translateY(125px);
+    }
+}
+
+.cubeShadow {
+    position: relative;
+    width: 200px;
+    transform-style: preserve-3d;
+
+    @media (min-width: $pt-breakpoint-md) {
+        width: 250px;
+    }
+
+    div {
+        width: 200px;
+        height: 200px;
+        transform: rotateX(90deg) translateY(100px);
+        position: absolute;
+        top: 0px;
+        opacity: 0.9;
+        box-shadow: 0px 0px 100px $pt-blue;
+        transform-origin: bottom center;
+
+        @media (min-width: $pt-breakpoint-md) {
+            width: 250px;
+            height: 250px;
+            transform: rotateX(90deg) translateY(125px);
+        }
+    }
 }
