@@ -3,8 +3,10 @@ from typing import Any
 from urllib import parse
 
 import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
 
 _PARAMS = {'format': 'csv', 'eventtype': 'earthquake'}
+_SCALER = MinMaxScaler()
 
 
 def get_earthquakes_data(base_url: str) -> pd.DataFrame:
@@ -21,13 +23,11 @@ def parse_df(df: pd.DataFrame) -> dict[str, Any]:
 
 
 def normalize_df(df: pd.DataFrame, columns: list[str], revert: bool = False) -> pd.DataFrame:
-    if not columns: return df
+    if df is None or columns is None: return df
 
-    def min_max_scaling(series: pd.Series, revert: bool) -> pd.Series:
-        if revert: return (series * (series.max() - series.min())) + series.min()
-        return (series - series.min()) / (series.max() - series.min())
-
-    for col in columns:
-        df[col] = min_max_scaling(col, revert)
+    if revert:
+        df[columns] = _SCALER.inverse_transform(df[columns])
+    else:
+        df[columns] = _SCALER.fit_transform(df[columns])
 
     return df
