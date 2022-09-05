@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 from app.ml.utils import normalize_df
 
-_DATA = [pd.DataFrame(data={
+_DATA = [pd.DataFrame({
     'col1': list(range(1, 11)),
     'col2': list(range(-10, 0)),
     'col3': list(range(-5, 5)),
