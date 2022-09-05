@@ -4,9 +4,9 @@ import { EarthquakesAlertsSection } from '@sections/EarthquakesAlertsSection/Ear
 import { EarthquakesKPIsSection } from '@sections/EarthquakesKPIsSection/EarthquakesKPIsSection';
 import { EarthquakesMapSection } from '@sections/EarthquakesMapSection/EarthquakesMapSection';
 import { BlueprintNavbar } from '@ui/Blueprint/BlueprintNavbar';
+import { getServerAuthSession } from '@utils/get-server-auth-session';
 import { GetServerSidePropsContext } from 'next';
 import { ReactElement } from 'react';
-import { getAuthSession } from './api/auth/[...nextauth]';
 import { NextPageWithLayout } from './_app';
 
 const Dashboard: NextPageWithLayout = () => {
@@ -29,7 +29,7 @@ Dashboard.getLayout = function getLayout(page: ReactElement) {
 };
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    const session = await getAuthSession(ctx);
+    const session = await getServerAuthSession(ctx);
 
     if (!session) {
         return {

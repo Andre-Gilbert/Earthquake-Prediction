@@ -1,9 +1,9 @@
 import { Layout } from '@layout/Layout';
 import { EarthquakesPredictionSection } from '@sections/EarthquakesPredictionSection/EarthquakesPredictionSection';
 import { BlueprintNavbar } from '@ui/Blueprint/BlueprintNavbar';
+import { getServerAuthSession } from '@utils/get-server-auth-session';
 import { GetServerSidePropsContext } from 'next';
 import { ReactElement } from 'react';
-import { getAuthSession } from './api/auth/[...nextauth]';
 import { NextPageWithLayout } from './_app';
 
 const Earthquakes: NextPageWithLayout = () => {
@@ -24,7 +24,7 @@ Earthquakes.getLayout = function getLayout(page: ReactElement) {
 };
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    const session = await getAuthSession(ctx);
+    const session = await getServerAuthSession(ctx);
 
     if (!session) {
         return {
