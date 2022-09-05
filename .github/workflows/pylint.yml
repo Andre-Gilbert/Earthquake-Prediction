@@ -32,4 +32,4 @@ jobs:
         pip install pylint
     - name: Run Pylint on changed files
       run: |
-        echo "${{ steps.get_file_changes.outputs.files}}" | tr " " "\n" | grep ".py$" | xargs pylint --rcfile=backend/.pylintrc
+        echo "${{ steps.get_file_changes.outputs.files}}" | tr " " "\n" | grep ".py$" | xargs pylint --rcfile=app/backend/.pylintrc
