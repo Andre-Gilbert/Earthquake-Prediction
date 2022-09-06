@@ -23,6 +23,25 @@
     border-bottom: 1px solid $pt-divider-black;
 }
 
+.headerFlex {
+    display: flex;
+    align-items: center;
+}
+
+.switch {
+    display: none;
+
+    @media (min-width: $pt-breakpoint-sm) {
+        display: block;
+        margin-right: 1rem;
+        margin-bottom: 0;
+    }
+}
+
+.btn {
+    margin-right: 1rem;
+}
+
 .alertsTitle {
     display: flex;
     align-items: center;
@@ -111,4 +130,12 @@
 
     flex: 1 1 20%;
     margin-left: 10px;
+}
+
+.checkbox {
+    margin-left: 9px;
+
+    &:last-of-type {
+        margin-bottom: 5px;
+    }
 }

@@ -10,7 +10,7 @@ export type MapProps = {
     query: UseQueryResult<Earthquakes, Error>;
 };
 
-export const Map = ({ query }: MapProps) => {
+const Map = ({ query }: MapProps) => {
     const markers = useMemo(
         () =>
             query.data?.features.map(earthquake => (
@@ -48,3 +48,5 @@ export const Map = ({ query }: MapProps) => {
         </MapContainer>
     );
 };
+
+export default Map;

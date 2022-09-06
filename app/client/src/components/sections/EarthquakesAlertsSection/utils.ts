@@ -1,17 +1,26 @@
-import { Intent } from '@blueprintjs/core';
+import { Colors } from '@blueprintjs/core';
+import { getDate } from '@utils/date';
 
-export const getIntent = (alertLevel: string) => {
+export const getLastDate = (isChecked7Days: boolean) => {
+    return isChecked7Days ? new Date(getDate(Date.now(), 7)) : new Date(getDate(Date.now(), 30));
+};
+
+export const filterDate = (time: number, lastDate: Date) => {
+    return new Date(time) >= lastDate;
+};
+
+export const getColor = (alertLevel: string) => {
     switch (alertLevel) {
         case 'green':
-            return Intent.SUCCESS;
+            return Colors.GREEN3;
         case 'yellow':
-            return Intent.PRIMARY;
+            return '#FFE20B';
         case 'orange':
-            return Intent.WARNING;
+            return Colors.ORANGE3;
         case 'red':
-            return Intent.DANGER;
+            return Colors.RED3;
         default:
-            return Intent.NONE;
+            return Colors.BLUE3;
     }
 };
 

@@ -1,8 +1,8 @@
 /** The cube spinning animation of the tech overview section. */
-import FastAPI from '@images/fastapi.svg';
-import NextJS from '@images/nextjs.svg';
-import Python from '@images/python.svg';
-import TypeScript from '@images/typescript.svg';
+import FastAPI from '@assets/fastapi.svg';
+import NextJS from '@assets/nextjs.svg';
+import Python from '@assets/python.svg';
+import TypeScript from '@assets/typescript.svg';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import styles from './Technologies.module.scss';

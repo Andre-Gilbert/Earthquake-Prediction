@@ -1,7 +1,7 @@
+import Analytics from '@assets/analytics.svg';
+import Location from '@assets/location.svg';
+import World from '@assets/world.svg';
 import { H1 } from '@blueprintjs/core';
-import Analytics from '@images/analytics.svg';
-import Location from '@images/location.svg';
-import World from '@images/world.svg';
 import Image from 'next/image';
 import styles from './AppOverview.module.scss';
 

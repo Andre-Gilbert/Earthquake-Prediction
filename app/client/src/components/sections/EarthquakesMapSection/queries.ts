@@ -3,19 +3,27 @@ import { useQuery } from '@tanstack/react-query';
 import { getDate } from '@utils/date';
 import { Earthquakes } from 'types/earthquakes';
 
-export const useEarthquakes = (days: number, limit: number) => {
-    return useQuery<Earthquakes, Error>([`earthquakes-map`, days, limit], () => fetchEarthquakes(days, limit));
+export interface Location {
+    minlatitude: number;
+    maxlatitude: number;
+    minlongitude: number;
+    maxlongitude: number;
+}
+
+export const useEarthquakes = (location: Location) => {
+    return useQuery<Earthquakes, Error>(['earthquakes--map', location], () => fetchEarthquakes(location));
 };
 
-const fetchEarthquakes = async (days: number, limit: number): Promise<Earthquakes> => {
+const fetchEarthquakes = async (location: Location): Promise<Earthquakes> => {
     return await usgsInstance
         .get('query', {
             params: {
                 format: 'geojson',
-                starttime: getDate(Date.now(), days),
+                starttime: getDate(Date.now(), 30),
                 endtime: getDate(Date.now(), 0),
                 eventtype: 'earthquake',
-                limit: limit,
+                limit: 1000,
+                ...location,
             },
         })
         .then(response => response.data);

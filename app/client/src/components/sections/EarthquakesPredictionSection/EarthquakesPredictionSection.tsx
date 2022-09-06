@@ -7,7 +7,7 @@ import { useCallback, useMemo, useState } from 'react';
 import styles from './EarthquakesPrediction.module.scss';
 import { EarthquakesPrediction, useEarthquakesPrediction } from './queries';
 
-const Map = dynamic<{}>(() => import('@sections/EarthquakesPredictionSection/Map').then(module => module.Map), {
+const Map = dynamic(() => import('@sections/EarthquakesPredictionSection/Map'), {
     ssr: false,
 });
 

@@ -1,5 +1,5 @@
+import GitHub from '@assets/github-logo.png';
 import { Classes } from '@blueprintjs/core';
-import GitHub from '@images/github-logo.png';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './Navbar.module.scss';

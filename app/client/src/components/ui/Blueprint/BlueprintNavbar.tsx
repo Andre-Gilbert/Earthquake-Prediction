@@ -1,4 +1,5 @@
 /** The earthquake prediction app navbar. */
+import Profile from '@assets/profile.svg';
 import {
     Alignment,
     AnchorButton,
@@ -13,7 +14,6 @@ import {
     Position,
 } from '@blueprintjs/core';
 import { MenuItem2, Popover2 } from '@blueprintjs/popover2';
-import Profile from '@images/profile.svg';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -26,7 +26,7 @@ export const BlueprintNavbar = () => {
     const router = useRouter();
 
     return (
-        <Navbar>
+        <Navbar fixedToTop>
             <Navbar.Group align={Alignment.LEFT}>
                 <MobileDrawer />
                 <Navbar.Heading className={styles.title}>Earthquake Prediction</Navbar.Heading>
