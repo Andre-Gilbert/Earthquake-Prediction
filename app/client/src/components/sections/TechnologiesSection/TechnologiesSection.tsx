@@ -35,7 +35,9 @@ const TechStack = () => {
     return (
         <div>
             {TECH_STACK.map(tech => (
-                <div key={tech.id}>{tech.title}</div>
+                <div key={tech.id}>
+                    <b>{tech.title}</b>, tech.subtitle
+                </div>
             ))}
         </div>
     );
