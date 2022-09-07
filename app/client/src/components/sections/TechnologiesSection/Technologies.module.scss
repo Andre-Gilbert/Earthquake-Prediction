@@ -1,3 +1,4 @@
+@import '~@blueprintjs/core/lib/scss/variables';
 @import '../../../styles/variables.module.scss';
 
 .technologies {
@@ -83,10 +84,10 @@
 .cubeFaceRight {
     width: 200px;
     height: 200px;
-    outline: 1px solid #000;
+    outline: 1px solid $black;
     position: absolute;
-    opacity: 0.9;
-    box-shadow: inset 0px 0px 100px #000;
+    opacity: 0.8;
+    box-shadow: inset 0px 0px 100px $black;
     display: grid;
     place-items: center;
 
@@ -98,7 +99,7 @@
 
 .cubeFaceFront {
     transform: translateZ(100px);
-    background: $pt-blue;
+    background: $pt-intent-primary;
 
     @media (min-width: $pt-breakpoint-md) {
         transform: translateZ(125px);
@@ -107,7 +108,7 @@
 
 .cubeFaceBack {
     transform: translateZ(-100px) rotateY(180deg);
-    background: $pt-blue;
+    background: $pt-intent-primary;
 
     @media (min-width: $pt-breakpoint-md) {
         transform: translateZ(-125px) rotateY(180deg);
@@ -117,7 +118,7 @@
 .cubeFaceLeft {
     transform: rotateY(270deg) translateX(-100px);
     transform-origin: center left;
-    background: $pt-blue;
+    background: $pt-intent-primary;
 
     @media (min-width: $pt-breakpoint-md) {
         transform: rotateY(270deg) translateX(-125px);
@@ -127,7 +128,7 @@
 .cubeFaceRight {
     transform: rotateY(-270deg) translateX(100px);
     transform-origin: top right;
-    background: $pt-blue;
+    background: $pt-intent-primary;
 
     @media (min-width: $pt-breakpoint-md) {
         transform: rotateY(-270deg) translateX(125px);
@@ -137,7 +138,7 @@
 .cubeFaceTop {
     transform: rotateX(-90deg) translateY(-100px);
     transform-origin: top center;
-    background-color: $pt-blue;
+    background-color: $pt-intent-primary;
 
     @media (min-width: $pt-breakpoint-md) {
         transform: rotateX(-90deg) translateY(-125px);
@@ -147,7 +148,7 @@
 .cubeFaceBottom {
     transform: rotateX(90deg) translateY(100px);
     transform-origin: bottom center;
-    background-color: $pt-blue;
+    background-color: $pt-intent-primary;
 
     @media (min-width: $pt-breakpoint-md) {
         transform: rotateX(90deg) translateY(125px);
@@ -169,8 +170,8 @@
         transform: rotateX(90deg) translateY(100px);
         position: absolute;
         top: 0px;
-        opacity: 0.9;
-        box-shadow: 0px 0px 100px $pt-blue;
+        opacity: 0.98;
+        box-shadow: 0px 0px 100px $pt-intent-primary;
         transform-origin: bottom center;
 
         @media (min-width: $pt-breakpoint-md) {

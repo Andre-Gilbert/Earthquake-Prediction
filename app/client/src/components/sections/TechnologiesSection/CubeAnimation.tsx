@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import styles from './Technologies.module.scss';
 
-export const CubeAnimation = () => {
+const CubeAnimation = () => {
     return (
         <div className={styles.cubeAnimation}>
             <div className={styles.cube}>
@@ -65,3 +65,5 @@ const ANIMATION = {
     duration: 45,
     ease: 'linear',
 };
+
+export default CubeAnimation;
