@@ -1,25 +1,42 @@
-import { Alignment, Button, Card, Checkbox, Classes, H5, Icon, Menu, MenuDivider, Switch } from '@blueprintjs/core';
+import { Button, Card, Checkbox, Classes, H5, Icon, Menu, MenuDivider } from '@blueprintjs/core';
+import { DateRange, DateRangePicker } from '@blueprintjs/datetime';
 import { Popover2, Tooltip2 } from '@blueprintjs/popover2';
-import { UseQueryResult } from '@tanstack/react-query';
-import { useState } from 'react';
+import { MAX_DATE, MIN_DATE } from '@common/date';
+import { usgsInstance } from '@config/axios';
+import { useQueries, UseQueryResult } from '@tanstack/react-query';
+import moment from 'moment';
+import { FormEvent, useState } from 'react';
 import { Earthquakes } from 'types/earthquakes';
 import styles from './EarthquakesAlerts.module.scss';
-import { useEarthquakesAlert } from './queries';
-import { filterDate, getColor, getLastDate, getMagnitudeTypeTooltip } from './utils';
+import { getAlertLevelTooltip, getColor, getMagnitudeTypeTooltip } from './utils';
 
 export const EarthquakesAlertsSection = () => {
-    const [isChecked7Days, setIsChecked7Days] = useState(false);
     const [alertLevels, setAlertLevels] = useState(['green', 'yellow', 'orange', 'red']);
-    const earthquakesAlertQueries = useEarthquakesAlert(alertLevels);
+    const [dateRange, setDateRange] = useState<DateRange>([MIN_DATE, MAX_DATE]);
+    const [queryParams, setQueryParams] = useState({
+        starttime: moment(dateRange[0]).format('DD-MM-YYYY'),
+        endtime: moment(dateRange[1]).format('DD-MM-YYYY'),
+    });
+    const earthquakesAlertQueries = useEarthquakesAlert(alertLevels, queryParams);
 
-    const handle7Days = () => setIsChecked7Days(!isChecked7Days);
+    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const [startDate, endDate] = dateRange;
+        const params = {
+            starttime: moment(startDate).format('DD-MM-YYYY'),
+            endtime: moment(endDate).format('DD-MM-YYYY'),
+        };
+        setQueryParams(params);
+    };
+
+    const handleDateChange = (dateRange: DateRange) => setDateRange(dateRange);
 
     return (
         <div className={styles.alerts}>
             <div className={styles.container}>
                 <Card className={styles.card}>
-                    <Header isChecked7Days={isChecked7Days} handle7Days={handle7Days} />
-                    <Alerts queries={earthquakesAlertQueries} isChecked7Days={isChecked7Days} />
+                    <Header dateRange={dateRange} handleSubmit={handleSubmit} handleDateChange={handleDateChange} />
+                    <Alerts queries={earthquakesAlertQueries} />
                 </Card>
             </div>
         </div>
@@ -27,54 +44,56 @@ export const EarthquakesAlertsSection = () => {
 };
 
 type FilterProps = {
-    isChecked7Days: boolean;
-    handle7Days: () => void;
+    dateRange: DateRange;
+    handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
+    handleDateChange: (dateRange: DateRange) => void;
 };
 
-const Header = ({ isChecked7Days, handle7Days }: FilterProps) => {
+const Header = (props: FilterProps) => {
     return (
         <div className={styles.header}>
             <div className={styles.alertsTitle}>
                 <Icon icon="warning-sign" />
                 <H5>Earthquake Alerts</H5>
             </div>
-            <div className={styles.headerFlex}>
-                <Switch
-                    className={styles.switch}
-                    alignIndicator={Alignment.RIGHT}
-                    innerLabelChecked="7 Days"
-                    innerLabel="30 Days"
-                    checked={isChecked7Days}
-                    onChange={handle7Days}
-                />
-                <Button className={styles.btn} icon="list" minimal />
-                <Button className={styles.btn} icon="grid-view" minimal />
-                <Popover2 content={<FilterMenu />} placement="bottom-end">
-                    <Button type="button" icon="filter" minimal />
-                </Popover2>
-            </div>
+            <Popover2 content={<FilterMenu {...props} />} placement="bottom-end">
+                <Button type="button" icon="filter" minimal />
+            </Popover2>
         </div>
     );
 };
 
-const FilterMenu = () => {
+const FilterMenu = ({ dateRange, handleSubmit, handleDateChange }: FilterProps) => {
     return (
-        <Menu>
-            <MenuDivider title="Alert Levels" />
-            <Checkbox className={styles.checkbox} label="Green" />
-            <Checkbox className={styles.checkbox} label="Yellow" />
-            <Checkbox className={styles.checkbox} label="Orange" />
-            <Checkbox className={styles.checkbox} label="Red" />
+        <Menu className={styles.menu}>
+            <form onSubmit={handleSubmit}>
+                <MenuDivider title="Alert Levels" />
+                <Checkbox className={styles.checkbox} label="Green (No response needed)" />
+                <Checkbox className={styles.checkbox} label="Yellow (Local/Regional)" />
+                <Checkbox className={styles.checkbox} label="Orange (National)" />
+                <Checkbox className={styles.checkbox} label="Red (International)" />
+                <MenuDivider title="Earthquakes Date Range" />
+                <DateRangePicker
+                    defaultValue={dateRange}
+                    minDate={MIN_DATE}
+                    maxDate={MAX_DATE}
+                    singleMonthOnly
+                    shortcuts={false}
+                    onChange={handleDateChange}
+                />
+                <div className={styles.btnForm}>
+                    <Button type="submit" text="Submit" intent="primary" fill />
+                </div>
+            </form>
         </Menu>
     );
 };
 
 type AlertsProps = {
     queries: UseQueryResult<Earthquakes, unknown>[];
-    isChecked7Days: boolean;
 };
 
-const Alerts = ({ queries, isChecked7Days }: AlertsProps) => {
+const Alerts = ({ queries }: AlertsProps) => {
     return (
         <>
             <div className={styles.alertLabels}>
@@ -90,7 +109,6 @@ const Alerts = ({ queries, isChecked7Days }: AlertsProps) => {
                 queries.map(query =>
                     query.data?.features.map(
                         earthquake =>
-                            filterDate(earthquake.properties.time, getLastDate(isChecked7Days)) &&
                             earthquake.properties.place && (
                                 <Alert
                                     key={earthquake.id}
@@ -98,9 +116,8 @@ const Alerts = ({ queries, isChecked7Days }: AlertsProps) => {
                                     place={earthquake.properties.place}
                                     magnitude={earthquake.properties.mag}
                                     magnitudeType={earthquake.properties.magType}
-                                    magnitudeTypeTooltip={getMagnitudeTypeTooltip(earthquake.properties.magType)}
                                     depth={earthquake.geometry.coordinates[2]}
-                                    color={getColor(earthquake.properties.alert)}
+                                    alert={earthquake.properties.alert}
                                 />
                             ),
                     ),
@@ -115,22 +132,26 @@ type AlertProps = {
     place: string;
     magnitude: number;
     magnitudeType: string;
-    magnitudeTypeTooltip: { magnitudeRange: string; distanceRange: string };
     depth: number;
-    color: string;
+    alert: string;
 };
 
-const Alert = ({ time, place, magnitude, magnitudeType, magnitudeTypeTooltip, depth, color }: AlertProps) => {
+const Alert = ({ time, place, magnitude, magnitudeType, depth, alert }: AlertProps) => {
     const date = new Date(time);
 
     return (
         <div className={styles.alert}>
-            <Icon icon="info-sign" style={{ color: color }} />
+            <Tooltip2 position="right" content={<div>{getAlertLevelTooltip(alert)}</div>}>
+                <Icon icon="info-sign" style={{ color: getColor(alert) }} />
+            </Tooltip2>
             <div className={styles.alertContent}>{date.toLocaleString()}</div>
             <div className={styles.alertContent}>{place}</div>
             <div className={styles.alertContent}>{magnitude}</div>
             <div className={styles.alertContent}>
-                <Tooltip2 position="left" content={<TooltipContent {...magnitudeTypeTooltip} />}>
+                <Tooltip2
+                    position="left"
+                    content={<MagnitudeTooltipContent {...getMagnitudeTypeTooltip(magnitudeType)} />}
+                >
                     {magnitudeType}
                 </Tooltip2>
             </div>
@@ -139,23 +160,84 @@ const Alert = ({ time, place, magnitude, magnitudeType, magnitudeTypeTooltip, de
     );
 };
 
-type TooltipContentProps = {
+type MagnitudeTooltipContentProps = {
     magnitudeRange: string;
     distanceRange: string;
 };
 
-const TooltipContent = ({ magnitudeRange, distanceRange }: TooltipContentProps) => {
+const MagnitudeTooltipContent = ({ magnitudeRange, distanceRange }: MagnitudeTooltipContentProps) => {
     return (
         <>
-            <p className={styles.tooltip}>Magnitude range: {magnitudeRange}</p>
-            <p className={styles.tooltip}>Distance range: {distanceRange}</p>
+            <div>Magnitude range: {magnitudeRange}</div>
+            <div>Distance range: {distanceRange}</div>
         </>
     );
+};
+
+type QueryParams = { starttime: string; endtime: string };
+
+const useEarthquakesAlert = (alertLevels: string[], queryParams: QueryParams) => {
+    return useQueries({
+        queries: alertLevels.map(alertLevel => {
+            return {
+                queryKey: [`alert-level-${alertLevel}-days`, alertLevel, queryParams],
+                queryFn: () => fetchEarthquakesAlert(alertLevel, queryParams),
+            };
+        }),
+    });
+};
+
+const fetchEarthquakesAlert = async (alertLevel: string, queryParams: QueryParams): Promise<Earthquakes> => {
+    return await usgsInstance
+        .get('query', {
+            params: {
+                format: 'geojson',
+                eventtype: 'earthquake',
+                alertlevel: alertLevel,
+                ...queryParams,
+            },
+        })
+        .then(response => response.data);
 };
 
 const Loading = () => {
     return (
         <>
+            <div className={styles.alertLoading}>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+            </div>
+            <div className={styles.alertLoading}>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+            </div>
+            <div className={styles.alertLoading}>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+            </div>
+            <div className={styles.alertLoading}>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+            </div>
+            <div className={styles.alertLoading}>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+            </div>
             <div className={styles.alertLoading}>
                 <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
                 <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>

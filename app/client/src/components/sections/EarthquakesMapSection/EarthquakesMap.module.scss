@@ -40,15 +40,14 @@
 .map {
     width: 100%;
     min-height: calc(100rem - 5rem);
-    z-index: 0;
-}
-
-.spinner {
-    width: 100%;
-    min-height: calc(100rem - 5rem);
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 0;
+}
+
+.error {
+    margin-bottom: 0;
 }
 
 .input {
@@ -68,4 +67,10 @@
 .btnForm {
     margin-left: 5px;
     padding: 5px 7px 5px 3px;
+}
+
+.flex {
+    max-width: 240px;
+    display: flex;
+    align-items: center;
 }

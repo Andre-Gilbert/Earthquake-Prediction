@@ -1,5 +1,5 @@
 import { Colors } from '@blueprintjs/core';
-import { getDate } from '@utils/date';
+import { getDate } from 'common/date';
 
 export const getLastDate = (isChecked7Days: boolean) => {
     return isChecked7Days ? new Date(getDate(Date.now(), 7)) : new Date(getDate(Date.now(), 30));
@@ -21,6 +21,21 @@ export const getColor = (alertLevel: string) => {
             return Colors.RED3;
         default:
             return Colors.BLUE3;
+    }
+};
+
+export const getAlertLevelTooltip = (alertLevel: string) => {
+    switch (alertLevel.toLowerCase()) {
+        case 'green':
+            return 'No response needed';
+        case 'yellow':
+            return 'Local/Regional';
+        case 'orange':
+            return 'National';
+        case 'red':
+            return 'International';
+        default:
+            return 'No response needed';
     }
 };
 

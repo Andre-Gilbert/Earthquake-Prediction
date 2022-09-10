@@ -35,8 +35,8 @@ const TechStack = () => {
     return (
         <div>
             {TECH_STACK.map(tech => (
-                <div key={tech.id}>
-                    <b>{tech.title}</b>, tech.subtitle
+                <div className={styles.techStack} key={tech.id}>
+                    image <b>{tech.title}</b>, tech.subtitle
                 </div>
             ))}
         </div>

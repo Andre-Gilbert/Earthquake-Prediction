@@ -1,7 +1,7 @@
 import { Layout } from '@layout/Layout';
 import { EarthquakesPredictionSection } from '@sections/EarthquakesPredictionSection/EarthquakesPredictionSection';
 import { BlueprintNavbar } from '@ui/Blueprint/BlueprintNavbar';
-import { getServerAuthSession } from '@utils/get-server-auth-session';
+import { getServerAuthSession } from 'common/get-server-auth-session';
 import { GetServerSidePropsContext } from 'next';
 import { ReactElement } from 'react';
 import { NextPageWithLayout } from './_app';

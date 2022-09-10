@@ -45,6 +45,18 @@
     margin-bottom: 5rem;
 }
 
+.techStack {
+    text-align: center;
+}
+
+.title,
+.subtitle,
+.techStack {
+    @media (min-width: $pt-breakpoint-md) {
+        text-align: left;
+    }
+}
+
 .cubeAnimation {
     margin-bottom: 5rem;
     flex: 0 0 250px;

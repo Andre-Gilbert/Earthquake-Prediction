@@ -1,5 +1,9 @@
 @import '~@blueprintjs/core/lib/scss/variables';
 
+*:focus {
+    outline: none;
+}
+
 html {
     font-size: 62.5%;
 }

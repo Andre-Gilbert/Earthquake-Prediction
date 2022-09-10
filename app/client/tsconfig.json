@@ -8,7 +8,7 @@
             "@ui/*": ["components/ui/*"],
             "@assets/*": ["assets/*"],
             "@config/*": ["config/*"],
-            "@utils/*": ["utils/*"]
+            "@common/*": ["common/*"]
         },
         "target": "es5",
         "lib": ["dom", "dom.iterable", "esnext"],

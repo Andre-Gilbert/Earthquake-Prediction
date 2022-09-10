@@ -1,6 +1,9 @@
 import { Card, Classes, H1, H5 } from '@blueprintjs/core';
+import { usgsInstance } from '@config/axios';
+import { useQuery } from '@tanstack/react-query';
+import moment from 'moment';
+import { z } from 'zod';
 import styles from './EarthquakesKPIs.module.scss';
-import { useEarthquakesKPI } from './queries';
 
 export const EarthquakesKPIsSection = () => {
     const earthquakesLastWeek = useEarthquakesKPI(7);
@@ -36,4 +39,25 @@ export const EarthquakesKPIsSection = () => {
             </div>
         </div>
     );
+};
+
+const earthquakesKPI = z.object({ count: z.number().gte(0).lte(20000), maxAllowed: z.number() });
+
+type EarthquakesKPI = z.infer<typeof earthquakesKPI>;
+
+const useEarthquakesKPI = (days: number) => {
+    return useQuery<EarthquakesKPI, Error>([`earthquakes-last-${days}-days`, days], () => fetchEarthquakesCount(days));
+};
+
+const fetchEarthquakesCount = async (days: number): Promise<EarthquakesKPI> => {
+    return await usgsInstance
+        .get('count', {
+            params: {
+                format: 'geojson',
+                starttime: moment().add(-days, 'days').format('DD-MM-YYYY'),
+                endtime: moment().format('DD-MM-YYYY'),
+                eventtype: 'earthquake',
+            },
+        })
+        .then(response => earthquakesKPI.parse(response.data));
 };

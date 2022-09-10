@@ -1,4 +1,4 @@
-import { Spinner, SpinnerSize } from '@blueprintjs/core';
+import { H1, Spinner, SpinnerSize } from '@blueprintjs/core';
 import { ICON } from '@config/leaflet';
 import { UseQueryResult } from '@tanstack/react-query';
 import { useMemo } from 'react';
@@ -31,8 +31,16 @@ const Map = ({ query }: MapProps) => {
 
     if (query.isLoading) {
         return (
-            <div className={styles.spinner}>
+            <div className={styles.map}>
                 <Spinner size={SpinnerSize.LARGE} />
+            </div>
+        );
+    }
+
+    if (query.isError) {
+        return (
+            <div className={styles.map}>
+                <H1 className={styles.error}>{query.error.message}</H1>
             </div>
         );
     }
