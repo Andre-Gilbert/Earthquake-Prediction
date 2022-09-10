@@ -25,6 +25,7 @@ const queryParamsValidator = z.object({
     maxlatitude: z.number().lte(90),
     minlongitude: z.number().gte(-360),
     maxlongitude: z.number().lte(360),
+    sumlongitude: z.number().lte(360),
 });
 
 export const EarthquakesMapSection = () => {
@@ -38,47 +39,61 @@ export const EarthquakesMapSection = () => {
         minlongitude: minLongitude,
         maxlongitude: maxLongitude,
     });
+    const [sumLongitude, setSumLongitude] = useState(minLongitude + maxLongitude);
     const earthquakesQuery = useEarthquakes(queryParams);
 
-    const handleMinLatitude = (valueAsNumber: number) => setMinLatitude(valueAsNumber);
+    const handleMinLatitude = (newMinLatitude: number) => setMinLatitude(newMinLatitude);
 
-    const handleMaxLatitude = (valueAsNumber: number) => setMaxLatitude(valueAsNumber);
+    const handleMaxLatitude = (newMaxLatitude: number) => setMaxLatitude(newMaxLatitude);
 
-    const handleMinLongitude = (valueAsNumber: number) => setMinLongitude(valueAsNumber);
+    const handleMinLongitude = (newMinLongitude: number) => {
+        setMinLongitude(newMinLongitude);
+        handleSumLongitude(newMinLongitude, maxLongitude);
+    };
 
-    const handleMaxLongitude = (valueAsNumber: number) => setMaxLongitude(valueAsNumber);
+    const handleMaxLongitude = (newMaxLongitude: number) => {
+        setMaxLongitude(newMaxLongitude);
+        handleSumLongitude(minLongitude, newMaxLongitude);
+    };
+
+    const handleSumLongitude = (newMinLongitude: number, newMaxLongitude: number) => {
+        setSumLongitude(newMinLongitude + newMaxLongitude);
+    };
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        console.log(minLatitude, maxLatitude, minLongitude, maxLongitude, sumLongitude);
         const parsed = queryParamsValidator.safeParse({
-            minlatitude: minLatitude,
-            maxlatitude: maxLatitude,
-            minlongitude: minLongitude,
-            maxlongitude: maxLongitude,
+            minlatitude: minLatitude > maxLatitude ? maxLatitude : minLatitude,
+            maxlatitude: maxLatitude < minLatitude ? minLatitude : maxLatitude,
+            minlongitude: minLongitude > maxLongitude ? maxLongitude : minLongitude,
+            maxlongitude: maxLongitude < minLongitude ? minLongitude : maxLongitude,
+            sumlongitude: sumLongitude,
         });
 
         if (!parsed.success) {
-            parsed.error.issues.map((error, index) => setTimeout(() => showToast(error), 1000 * index));
-            setQueryParams({
-                minlatitude: MIN_LATITUDE,
-                maxlatitude: MAX_LATITUDE,
-                minlongitude: MIN_LONGITUDE,
-                maxlongitude: MAX_LONGITUDE,
-            });
+            parsed.error.issues.map((error, index) =>
+                setTimeout(() => showToast(error.path, error.message), 1000 * index),
+            );
+            handleMinLatitude(MIN_LATITUDE);
+            handleMaxLatitude(MAX_LATITUDE);
+            handleMinLongitude(MIN_LONGITUDE);
+            handleMaxLongitude(MAX_LONGITUDE);
+            handleSumLongitude(MIN_LONGITUDE, MAX_LONGITUDE);
         } else {
-            setQueryParams(parsed.data);
+            const { sumlongitude, ...data } = parsed.data;
+            setQueryParams(data);
         }
     };
 
-    const showToast = (error: z.ZodIssue) => {
+    const showToast = (path: (string | number)[] | string, message: string) => {
         toaster?.show({
             message: (
                 <>
-                    <b>{error.path}</b>: {error.message}
+                    <b>{path}</b>: {message}
                 </>
             ),
             intent: Intent.DANGER,
-            timeout: 10000,
         });
     };
 
@@ -88,10 +103,6 @@ export const EarthquakesMapSection = () => {
                 <Card className={styles.card}>
                     <Header
                         handleSubmit={handleSubmit}
-                        minLatitude={minLatitude}
-                        maxLatitude={maxLatitude}
-                        minLongitude={minLongitude}
-                        maxLongitude={maxLongitude}
                         handleMinLatitude={handleMinLatitude}
                         handleMaxLatitude={handleMaxLatitude}
                         handleMinLongitude={handleMinLongitude}
@@ -106,10 +117,6 @@ export const EarthquakesMapSection = () => {
 
 type FilterProps = {
     handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
-    minLatitude: number;
-    maxLatitude: number;
-    minLongitude: number;
-    maxLongitude: number;
     handleMinLatitude: (valueAsNumber: number) => void;
     handleMaxLatitude: (valueAsNumber: number) => void;
     handleMinLongitude: (valueAsNumber: number) => void;
@@ -132,10 +139,6 @@ const Header = (props: FilterProps) => {
 
 const FilterMenu = ({
     handleSubmit,
-    minLatitude,
-    maxLatitude,
-    minLongitude,
-    maxLongitude,
     handleMinLatitude,
     handleMaxLatitude,
     handleMinLongitude,
@@ -154,7 +157,7 @@ const FilterMenu = ({
                     >
                         <NumericInput
                             id="min-latitude"
-                            defaultValue={minLatitude}
+                            defaultValue={MIN_LATITUDE}
                             min={-90}
                             max={90}
                             fill
@@ -170,7 +173,7 @@ const FilterMenu = ({
                     >
                         <NumericInput
                             id="max-latitude"
-                            defaultValue={maxLatitude}
+                            defaultValue={MAX_LATITUDE}
                             min={-90}
                             max={90}
                             fill
@@ -188,7 +191,7 @@ const FilterMenu = ({
                     >
                         <NumericInput
                             id="min-longitude"
-                            defaultValue={minLongitude}
+                            defaultValue={MIN_LONGITUDE}
                             min={-360}
                             max={360}
                             fill
@@ -204,7 +207,7 @@ const FilterMenu = ({
                     >
                         <NumericInput
                             id="max-longitude"
-                            defaultValue={maxLongitude}
+                            defaultValue={MAX_LONGITUDE}
                             min={-360}
                             max={360}
                             fill
@@ -221,7 +224,7 @@ const FilterMenu = ({
     );
 };
 
-type QueryParams = z.infer<typeof queryParamsValidator>;
+type QueryParams = Omit<z.infer<typeof queryParamsValidator>, 'sumlongitude'>;
 
 const useEarthquakes = (queryParams: QueryParams) => {
     return useQuery<Earthquakes, Error>(['earthquakes-map', queryParams], () => fetchEarthquakes(queryParams));
