@@ -40,13 +40,9 @@ export const EarthquakesMapSection = () => {
         maxlongitude: maxLongitude,
     });
     const earthquakesQuery = useEarthquakes(queryParams);
-
     const handleMinLatitude = (newMinLatitude: number) => setMinLatitude(newMinLatitude);
-
     const handleMaxLatitude = (newMaxLatitude: number) => setMaxLatitude(newMaxLatitude);
-
     const handleMinLongitude = (newMinLongitude: number) => setMinLongitude(newMinLongitude);
-
     const handleMaxLongitude = (newMaxLongitude: number) => setMaxLongitude(newMaxLongitude);
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {

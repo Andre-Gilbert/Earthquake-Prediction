@@ -88,9 +88,7 @@ const UserMenu = ({ username }: UserMenuProps) => {
 
 const MobileDrawer = () => {
     const [isOpen, setIsOpen] = useState(false);
-
     const handleOpen = () => setIsOpen(true);
-
     const handleClose = () => setIsOpen(false);
 
     return (

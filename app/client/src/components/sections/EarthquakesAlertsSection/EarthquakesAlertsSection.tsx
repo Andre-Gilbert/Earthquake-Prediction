@@ -11,31 +11,57 @@ import styles from './EarthquakesAlerts.module.scss';
 import { getAlertLevelTooltip, getColor, getMagnitudeTypeTooltip } from './utils';
 
 export const EarthquakesAlertsSection = () => {
-    const [alertLevels, setAlertLevels] = useState(['green', 'yellow', 'orange', 'red']);
+    const [alertLevels, setAlertLevels] = useState(new Set(['green', 'yellow', 'orange', 'red']));
+    const [greenAlert, setGreenAlert] = useState(true);
+    const [yellowAlert, setYellowAlert] = useState(true);
+    const [orangeAlert, setOrangeAlert] = useState(true);
+    const [redAlert, setRedAlert] = useState(true);
     const [dateRange, setDateRange] = useState<DateRange>([MIN_DATE, MAX_DATE]);
     const [queryParams, setQueryParams] = useState({
         starttime: moment(dateRange[0]).format('DD-MM-YYYY'),
         endtime: moment(dateRange[1]).format('DD-MM-YYYY'),
     });
-    const earthquakesAlertQueries = useEarthquakesAlert(alertLevels, queryParams);
+    const earthquakesAlertQueries = useEarthquakesAlert(Array.from(alertLevels), queryParams);
+
+    const handleGreenAlert = () => setGreenAlert(!greenAlert);
+    const handleYellowAlert = () => setYellowAlert(!yellowAlert);
+    const handleOrangeAlert = () => setOrangeAlert(!orangeAlert);
+    const handleRedAlert = () => setRedAlert(!redAlert);
+    const handleDateChange = (dateRange: DateRange) => setDateRange(dateRange);
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        const newAlertLevels = new Set(alertLevels);
+        greenAlert ? newAlertLevels.add('green') : newAlertLevels.delete('green');
+        yellowAlert ? newAlertLevels.add('yellow') : newAlertLevels.delete('yellow');
+        orangeAlert ? newAlertLevels.add('orange') : newAlertLevels.delete('orange');
+        redAlert ? newAlertLevels.add('red') : newAlertLevels.delete('red');
+        setAlertLevels(newAlertLevels);
+
         const [startDate, endDate] = dateRange;
-        const params = {
+        setQueryParams({
             starttime: moment(startDate).format('DD-MM-YYYY'),
             endtime: moment(endDate).format('DD-MM-YYYY'),
-        };
-        setQueryParams(params);
+        });
     };
-
-    const handleDateChange = (dateRange: DateRange) => setDateRange(dateRange);
 
     return (
         <div className={styles.alerts}>
             <div className={styles.container}>
                 <Card className={styles.card}>
-                    <Header dateRange={dateRange} handleSubmit={handleSubmit} handleDateChange={handleDateChange} />
+                    <Header
+                        greenAlert={greenAlert}
+                        handleGreenAlert={handleGreenAlert}
+                        yellowAlert={yellowAlert}
+                        handleYellowAlert={handleYellowAlert}
+                        orangeAlert={orangeAlert}
+                        handleOrangeAlert={handleOrangeAlert}
+                        redAlert={redAlert}
+                        handleRedAlert={handleRedAlert}
+                        dateRange={dateRange}
+                        handleSubmit={handleSubmit}
+                        handleDateChange={handleDateChange}
+                    />
                     <Alerts queries={earthquakesAlertQueries} />
                 </Card>
             </div>
@@ -44,6 +70,14 @@ export const EarthquakesAlertsSection = () => {
 };
 
 type FilterProps = {
+    greenAlert: boolean;
+    handleGreenAlert: () => void;
+    yellowAlert: boolean;
+    handleYellowAlert: () => void;
+    orangeAlert: boolean;
+    handleOrangeAlert: () => void;
+    redAlert: boolean;
+    handleRedAlert: () => void;
     dateRange: DateRange;
     handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
     handleDateChange: (dateRange: DateRange) => void;
@@ -63,15 +97,47 @@ const Header = (props: FilterProps) => {
     );
 };
 
-const FilterMenu = ({ dateRange, handleSubmit, handleDateChange }: FilterProps) => {
+const FilterMenu = ({
+    greenAlert,
+    handleGreenAlert,
+    yellowAlert,
+    handleYellowAlert,
+    orangeAlert,
+    handleOrangeAlert,
+    redAlert,
+    handleRedAlert,
+    dateRange,
+    handleSubmit,
+    handleDateChange,
+}: FilterProps) => {
     return (
         <Menu className={styles.menu}>
             <form onSubmit={handleSubmit}>
                 <MenuDivider title="Alert Levels" />
-                <Checkbox className={styles.checkbox} label="Green (No response needed)" />
-                <Checkbox className={styles.checkbox} label="Yellow (Local/Regional)" />
-                <Checkbox className={styles.checkbox} label="Orange (National)" />
-                <Checkbox className={styles.checkbox} label="Red (International)" />
+                <Checkbox
+                    checked={greenAlert}
+                    className={styles.checkbox}
+                    label="Green (No response needed)"
+                    onChange={handleGreenAlert}
+                />
+                <Checkbox
+                    checked={yellowAlert}
+                    className={styles.checkbox}
+                    label="Yellow (Local/Regional)"
+                    onChange={handleYellowAlert}
+                />
+                <Checkbox
+                    checked={orangeAlert}
+                    className={styles.checkbox}
+                    label="Orange (National)"
+                    onChange={handleOrangeAlert}
+                />
+                <Checkbox
+                    checked={redAlert}
+                    className={styles.checkbox}
+                    label="Red (International)"
+                    onChange={handleRedAlert}
+                />
                 <MenuDivider title="Earthquakes Date Range" />
                 <DateRangePicker
                     defaultValue={dateRange}
