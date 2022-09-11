@@ -39,36 +39,24 @@ export const EarthquakesMapSection = () => {
         minlongitude: minLongitude,
         maxlongitude: maxLongitude,
     });
-    const [sumLongitude, setSumLongitude] = useState(minLongitude + maxLongitude);
     const earthquakesQuery = useEarthquakes(queryParams);
 
     const handleMinLatitude = (newMinLatitude: number) => setMinLatitude(newMinLatitude);
 
     const handleMaxLatitude = (newMaxLatitude: number) => setMaxLatitude(newMaxLatitude);
 
-    const handleMinLongitude = (newMinLongitude: number) => {
-        setMinLongitude(newMinLongitude);
-        handleSumLongitude(newMinLongitude, maxLongitude);
-    };
+    const handleMinLongitude = (newMinLongitude: number) => setMinLongitude(newMinLongitude);
 
-    const handleMaxLongitude = (newMaxLongitude: number) => {
-        setMaxLongitude(newMaxLongitude);
-        handleSumLongitude(minLongitude, newMaxLongitude);
-    };
-
-    const handleSumLongitude = (newMinLongitude: number, newMaxLongitude: number) => {
-        setSumLongitude(newMinLongitude + newMaxLongitude);
-    };
+    const handleMaxLongitude = (newMaxLongitude: number) => setMaxLongitude(newMaxLongitude);
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log(minLatitude, maxLatitude, minLongitude, maxLongitude, sumLongitude);
         const parsed = queryParamsValidator.safeParse({
             minlatitude: minLatitude > maxLatitude ? maxLatitude : minLatitude,
             maxlatitude: maxLatitude < minLatitude ? minLatitude : maxLatitude,
             minlongitude: minLongitude > maxLongitude ? maxLongitude : minLongitude,
             maxlongitude: maxLongitude < minLongitude ? minLongitude : maxLongitude,
-            sumlongitude: sumLongitude,
+            sumlongitude: Math.abs(minLongitude) + Math.abs(maxLongitude),
         });
 
         if (!parsed.success) {
@@ -79,7 +67,6 @@ export const EarthquakesMapSection = () => {
             handleMaxLatitude(MAX_LATITUDE);
             handleMinLongitude(MIN_LONGITUDE);
             handleMaxLongitude(MAX_LONGITUDE);
-            handleSumLongitude(MIN_LONGITUDE, MAX_LONGITUDE);
         } else {
             const { sumlongitude, ...data } = parsed.data;
             setQueryParams(data);
