@@ -145,3 +145,14 @@
         margin-bottom: 0;
     }
 }
+
+.noData {
+    width: 100%;
+    min-height: 49rem;
+    display: grid;
+    place-items: center;
+}
+
+.noDataTitle {
+    margin-bottom: 0;
+}

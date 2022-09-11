@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, Classes, H5, Icon, Menu, MenuDivider } from '@blueprintjs/core';
+import { Button, Card, Checkbox, Classes, H1, H5, Icon, Menu, MenuDivider } from '@blueprintjs/core';
 import { DateRange, DateRangePicker } from '@blueprintjs/datetime';
 import { Popover2, Tooltip2 } from '@blueprintjs/popover2';
 import { MAX_DATE, MIN_DATE } from '@common/date';
@@ -171,6 +171,8 @@ const Alerts = ({ queries }: AlertsProps) => {
             </div>
             {queries.some(query => query.isLoading) ? (
                 <Loading />
+            ) : queries.every(query => !query.data?.features.length) ? (
+                <NoData />
             ) : (
                 queries.map(query =>
                     query.data?.features.map(
@@ -340,5 +342,13 @@ const Loading = () => {
                 <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
             </div>
         </>
+    );
+};
+
+const NoData = () => {
+    return (
+        <div className={styles.noData}>
+            <H1 className={styles.noDataTitle}>No Data</H1>
+        </div>
     );
 };

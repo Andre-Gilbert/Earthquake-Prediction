@@ -40,9 +40,8 @@
 .map {
     width: 100%;
     min-height: calc(100rem - 5rem);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    place-items: center;
     z-index: 0;
 }
 

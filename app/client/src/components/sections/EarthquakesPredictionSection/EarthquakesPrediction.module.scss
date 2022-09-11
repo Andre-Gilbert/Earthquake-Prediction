@@ -29,7 +29,7 @@
     padding: $pt-padding;
     margin-inline: auto;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: $pt-padding;
 
     @media (min-width: $pt-breakpoint-md) {
