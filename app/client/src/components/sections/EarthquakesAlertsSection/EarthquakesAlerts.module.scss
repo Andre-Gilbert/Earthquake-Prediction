@@ -14,12 +14,21 @@
 .card {
     width: 100%;
     padding: 0;
+    overflow: auto;
+    max-height: 100rem;
 }
 
 .header {
-    padding: 1rem 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: $pt-z-index-content;
+    background-color: inherit;
+}
+
+.headerFilters {
     display: flex;
     justify-content: space-between;
+    padding: 1rem $pt-padding;
     border-bottom: 1px solid $pt-divider-black;
 }
 

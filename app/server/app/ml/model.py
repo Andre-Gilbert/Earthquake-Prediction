@@ -31,6 +31,7 @@ class MLModel:
         normalized_df = normalize_df(df, columns=['latitude', 'longitude', 'nst', 'gap', 'dmin'])
         prediction = self._model.predict(normalized_df[self._FEATURES])
         df['prediction'] = prediction
+        df['prediction'] = df['prediction'].round(6)
         df.drop(
             columns=[
                 'updated',

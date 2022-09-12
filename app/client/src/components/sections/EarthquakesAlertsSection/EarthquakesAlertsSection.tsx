@@ -2,13 +2,14 @@ import { Button, Card, Checkbox, Classes, H1, H5, Icon, Menu, MenuDivider } from
 import { DateRange, DateRangePicker } from '@blueprintjs/datetime';
 import { Popover2, Tooltip2 } from '@blueprintjs/popover2';
 import { MAX_DATE, MIN_DATE } from '@common/date';
+import { getMagnitudeTypeTooltip, MagnitudeTooltipContent } from '@common/Tooltip';
 import { usgsInstance } from '@config/axios';
-import { useQueries, UseQueryResult } from '@tanstack/react-query';
+import { useQueries } from '@tanstack/react-query';
 import moment from 'moment';
 import { FormEvent, useState } from 'react';
 import { Earthquakes } from 'types/earthquakes';
 import styles from './EarthquakesAlerts.module.scss';
-import { getAlertLevelTooltip, getColor, getMagnitudeTypeTooltip } from './utils';
+import { getAlertLevelTooltip, getColor } from './utils';
 
 export const EarthquakesAlertsSection = () => {
     const [alertLevels, setAlertLevels] = useState(new Set(['green', 'yellow', 'orange', 'red']));
@@ -62,7 +63,28 @@ export const EarthquakesAlertsSection = () => {
                         handleSubmit={handleSubmit}
                         handleDateChange={handleDateChange}
                     />
-                    <Alerts queries={earthquakesAlertQueries} />
+                    {earthquakesAlertQueries.some(query => query.isLoading) ? (
+                        <Loading />
+                    ) : earthquakesAlertQueries.every(query => !query.data?.features.length) ? (
+                        <NoData />
+                    ) : (
+                        earthquakesAlertQueries.map(query =>
+                            query.data?.features.map(
+                                earthquake =>
+                                    earthquake.properties.place && (
+                                        <Alert
+                                            key={earthquake.id}
+                                            time={earthquake.properties.time}
+                                            place={earthquake.properties.place}
+                                            magnitude={earthquake.properties.mag}
+                                            magnitudeType={earthquake.properties.magType}
+                                            depth={earthquake.geometry.coordinates[2]}
+                                            alert={earthquake.properties.alert}
+                                        />
+                                    ),
+                            ),
+                        )
+                    )}
                 </Card>
             </div>
         </div>
@@ -86,13 +108,22 @@ type FilterProps = {
 const Header = (props: FilterProps) => {
     return (
         <div className={styles.header}>
-            <div className={styles.alertsTitle}>
-                <Icon icon="warning-sign" />
-                <H5>Earthquake Alerts</H5>
+            <div className={styles.headerFilters}>
+                <div className={styles.alertsTitle}>
+                    <Icon icon="warning-sign" />
+                    <H5>Earthquake Alerts</H5>
+                </div>
+                <Popover2 content={<FilterMenu {...props} />} placement="bottom-end">
+                    <Button type="button" icon="filter" minimal />
+                </Popover2>
             </div>
-            <Popover2 content={<FilterMenu {...props} />} placement="bottom-end">
-                <Button type="button" icon="filter" minimal />
-            </Popover2>
+            <div className={styles.alertLabels}>
+                <p className={Classes.TEXT_MUTED}>Date</p>
+                <p className={Classes.TEXT_MUTED}>Place</p>
+                <p className={Classes.TEXT_MUTED}>Magnitude</p>
+                <p className={Classes.TEXT_MUTED}>Magnitude Type</p>
+                <p className={Classes.TEXT_MUTED}>Depth</p>
+            </div>
         </div>
     );
 };
@@ -155,46 +186,6 @@ const FilterMenu = ({
     );
 };
 
-type AlertsProps = {
-    queries: UseQueryResult<Earthquakes, unknown>[];
-};
-
-const Alerts = ({ queries }: AlertsProps) => {
-    return (
-        <>
-            <div className={styles.alertLabels}>
-                <p className={Classes.TEXT_MUTED}>Date</p>
-                <p className={Classes.TEXT_MUTED}>Place</p>
-                <p className={Classes.TEXT_MUTED}>Magnitude</p>
-                <p className={Classes.TEXT_MUTED}>Magnitude Type</p>
-                <p className={Classes.TEXT_MUTED}>Depth</p>
-            </div>
-            {queries.some(query => query.isLoading) ? (
-                <Loading />
-            ) : queries.every(query => !query.data?.features.length) ? (
-                <NoData />
-            ) : (
-                queries.map(query =>
-                    query.data?.features.map(
-                        earthquake =>
-                            earthquake.properties.place && (
-                                <Alert
-                                    key={earthquake.id}
-                                    time={earthquake.properties.time}
-                                    place={earthquake.properties.place}
-                                    magnitude={earthquake.properties.mag}
-                                    magnitudeType={earthquake.properties.magType}
-                                    depth={earthquake.geometry.coordinates[2]}
-                                    alert={earthquake.properties.alert}
-                                />
-                            ),
-                    ),
-                )
-            )}
-        </>
-    );
-};
-
 type AlertProps = {
     time: number;
     place: string;
@@ -225,20 +216,6 @@ const Alert = ({ time, place, magnitude, magnitudeType, depth, alert }: AlertPro
             </div>
             <div className={styles.alertContent}>{depth}</div>
         </div>
-    );
-};
-
-type MagnitudeTooltipContentProps = {
-    magnitudeRange: string;
-    distanceRange: string;
-};
-
-const MagnitudeTooltipContent = ({ magnitudeRange, distanceRange }: MagnitudeTooltipContentProps) => {
-    return (
-        <>
-            <div>Magnitude range: {magnitudeRange}</div>
-            <div>Distance range: {distanceRange}</div>
-        </>
     );
 };
 

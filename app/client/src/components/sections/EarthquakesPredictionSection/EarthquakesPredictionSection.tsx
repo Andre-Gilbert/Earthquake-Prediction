@@ -1,11 +1,12 @@
 import { Alignment, Button, Card, Classes, H1, H5, Icon, Menu } from '@blueprintjs/core';
-import { MenuItem2, Popover2 } from '@blueprintjs/popover2';
+import { MenuItem2, Popover2, Tooltip2 } from '@blueprintjs/popover2';
 import { ItemPredicate, ItemRenderer, Select2 } from '@blueprintjs/select';
-import { UseQueryResult } from '@tanstack/react-query';
+import { getMagnitudeTypeTooltip, MagnitudeTooltipContent } from '@common/Tooltip';
+import { apiInstance } from '@config/axios';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
 import { useCallback, useMemo, useState } from 'react';
 import styles from './EarthquakesPrediction.module.scss';
-import { EarthquakesPrediction, useEarthquakesPrediction } from './queries';
 
 const Map = dynamic(() => import('@sections/EarthquakesPredictionSection/Map'), {
     ssr: false,
@@ -32,7 +33,7 @@ interface Region {
     name: string;
 }
 
-const REGIONS: Region[] = [{ name: 'All' }, { name: 'USA' }, { name: 'Europe' }];
+const REGIONS: Region[] = [{ name: 'All Regions' }, { name: 'USA' }, { name: 'Europe' }];
 
 const Header = () => {
     const [regions, setRegions] = useState([...REGIONS]);
@@ -117,26 +118,55 @@ type EarthquakesProps = {
 };
 
 const Earthquakes = ({ query }: EarthquakesProps) => {
-    const predictions = useMemo(() => query.data?.predictions.map(prediction => prediction.id), [query.data]);
+    const predictions = useMemo(
+        () =>
+            query.data?.predictions.map(earthquake => (
+                <ListItem
+                    key={earthquake.id}
+                    time={earthquake.time}
+                    place={earthquake.place}
+                    prediction={earthquake.prediction}
+                    mag={earthquake.mag}
+                    magType={earthquake.magType}
+                    depth={earthquake.depth}
+                />
+            )),
+        [query.data],
+    );
 
     return (
         <div className={styles.earthquakesList}>
             <Card className={styles.earthquakesListCard}>
                 <EarthquakesHeader />
-                <ListItem></ListItem>
-                <ListItem></ListItem>
-                <ListItem></ListItem>
-                <ListItem></ListItem>
-                {predictions}
+                {query.isLoading ? <Loading /> : query.isError ? <div>error.message</div> : predictions}
             </Card>
         </div>
     );
 };
 
-const ListItem = () => {
+type EarthquakePrediction = {
+    time: string;
+    place: string;
+    prediction: number;
+    mag: number;
+    magType: string;
+    depth: number;
+};
+
+const ListItem = ({ time, place, prediction, mag, magType, depth }: EarthquakePrediction) => {
     return (
         <div className={styles.listItem}>
-            <div className={Classes.SKELETON}>Item</div>
+            <Icon icon="info-sign" intent="primary" />
+            <div className={styles.listItemContent}>{time}</div>
+            <div className={styles.listItemContent}>{place}</div>
+            <div className={styles.listItemContent}>{prediction}</div>
+            <div className={styles.listItemContent}>{mag}</div>
+            <div className={styles.listItemContent}>
+                <Tooltip2 position="left" content={<MagnitudeTooltipContent {...getMagnitudeTypeTooltip(magType)} />}>
+                    {magType}
+                </Tooltip2>
+            </div>
+            <div className={styles.listItemContent}>{depth}</div>
         </div>
     );
 };
@@ -144,13 +174,23 @@ const ListItem = () => {
 const EarthquakesHeader = () => {
     return (
         <div className={styles.earthquakesHeader}>
-            <div className={styles.mapTitle}>
-                <Icon icon="area-of-interest" />
-                <H5>Location</H5>
+            <div className={styles.earthquakesHeaderFilters}>
+                <div className={styles.mapTitle}>
+                    <Icon icon="area-of-interest" />
+                    <H5>Earthquakes Predictions</H5>
+                </div>
+                <Popover2 content={<FilterMenu />} placement="bottom-end">
+                    <Button type="button" icon="filter" minimal />
+                </Popover2>
             </div>
-            <Popover2 content={<FilterMenu />} placement="bottom-end">
-                <Button type="button" icon="filter" minimal />
-            </Popover2>
+            <div className={styles.earthquakesListLabels}>
+                <p className={Classes.TEXT_MUTED}>Date</p>
+                <p className={Classes.TEXT_MUTED}>Place</p>
+                <p className={Classes.TEXT_MUTED}>Prediction</p>
+                <p className={Classes.TEXT_MUTED}>Magnitude</p>
+                <p className={Classes.TEXT_MUTED}>Magnitude Type</p>
+                <p className={Classes.TEXT_MUTED}>Depth</p>
+            </div>
         </div>
     );
 };
@@ -160,5 +200,124 @@ const FilterMenu = () => {
         <Menu>
             <MenuItem2 text="Filters" />
         </Menu>
+    );
+};
+
+interface EarthquakesPrediction {
+    predictions: Earthquake[];
+}
+
+interface Earthquake {
+    time: string;
+    latitude: number;
+    longitude: number;
+    depth: number;
+    mag: number;
+    magType: string;
+    id: string;
+    place: string;
+    prediction: number;
+}
+
+const useEarthquakesPrediction = () => {
+    return useQuery<EarthquakesPrediction, Error>(['earthquakes-prediction'], () => fetchEarthquakesPrediction());
+};
+
+const fetchEarthquakesPrediction = async (): Promise<EarthquakesPrediction> => {
+    return await apiInstance.post('api/v1/earthquakes/predict-magnitudes').then(response => response.data);
+};
+
+const Loading = () => {
+    return (
+        <>
+            <div className={styles.listItemLoading}>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+            </div>
+            <div className={styles.listItemLoading}>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+            </div>
+            <div className={styles.listItemLoading}>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+            </div>
+            <div className={styles.listItemLoading}>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+            </div>
+            <div className={styles.listItemLoading}>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+            </div>
+            <div className={styles.listItemLoading}>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+            </div>
+            <div className={styles.listItemLoading}>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+            </div>
+            <div className={styles.listItemLoading}>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+            </div>
+            <div className={styles.listItemLoading}>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+            </div>
+            <div className={styles.listItemLoading}>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+                <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
+            </div>
+        </>
+    );
+};
+
+const NoData = () => {
+    return (
+        <div className={styles.noData}>
+            <H1 className={styles.noDataTitle}>No Data</H1>
+        </div>
     );
 };

@@ -25,7 +25,7 @@
 }
 
 .container {
-    width: min(100%, $pt-max-width);
+    width: min(100%, 192rem);
     padding: $pt-padding;
     margin-inline: auto;
     display: flex;
@@ -40,31 +40,86 @@
 .earthquakesList {
     flex: 1 1 50%;
     width: min(100%, 120rem);
+    max-height: 100rem;
     margin-inline: auto;
 }
 
 .earthquakesListCard {
     padding: 0;
+    max-height: inherit;
+    overflow: auto;
+}
+
+.earthquakesHeader {
+    position: sticky;
+    top: 0;
+    z-index: $pt-z-index-content;
+    background-color: inherit;
+}
+
+.earthquakesHeaderFilters {
+    border-bottom: 1px solid $pt-divider-black;
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem $pt-padding;
+}
+
+.earthquakesListLabels {
+    padding-block: 1rem;
+    padding-left: 31px;
+    padding-right: $pt-padding;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid $pt-divider-black;
+
+    p {
+        flex: 1 1 20%;
+        margin-left: 10px;
+        margin-bottom: 0;
+        font-weight: 500;
+
+        &:nth-child(n + 3) {
+            display: none;
+
+            @media (min-width: $pt-breakpoint-sm) {
+                display: block;
+            }
+        }
+    }
 }
 
 .listItem {
     padding: $pt-padding;
+    display: flex;
+    align-items: center;
 
     &:not(:last-of-type) {
         border-bottom: 1px solid $pt-divider-black;
     }
 }
 
+.listItemContent {
+    &:nth-child(n + 4) {
+        display: none;
+
+        @media (min-width: $pt-breakpoint-sm) {
+            display: block;
+        }
+    }
+
+    flex: 1 1 20%;
+    margin-left: 10px;
+}
+
 .cardMap {
     flex: 1 1 50%;
     width: min(100%, 120rem);
     margin-inline: auto;
-    min-height: 50rem;
+    max-height: 50rem;
     padding: 0;
 }
 
-.mapHeader,
-.earthquakesHeader {
+.mapHeader {
     display: flex;
     justify-content: space-between;
 }
@@ -72,11 +127,6 @@
 .mapHeader {
     min-height: 5rem;
     padding: $pt-padding;
-}
-
-.earthquakesHeader {
-    border-bottom: 1px solid $pt-divider-black;
-    padding: 1rem $pt-padding;
 }
 
 .mapTitle {
@@ -97,4 +147,40 @@
     width: 100%;
     min-height: calc(50rem - 5rem);
     z-index: 0;
+}
+
+.listItemLoading {
+    padding-block: $pt-padding;
+    padding-left: 31px;
+    padding-right: $pt-padding;
+    display: flex;
+    align-items: center;
+
+    &:not(:last-of-type) {
+        border-bottom: 1px solid $pt-divider-black;
+    }
+}
+
+.loading {
+    &:nth-child(n + 3) {
+        display: none;
+
+        @media (min-width: $pt-breakpoint-sm) {
+            display: block;
+        }
+    }
+
+    flex: 1 1 20%;
+    margin-left: 10px;
+}
+
+.noData {
+    width: 100%;
+    min-height: 49rem;
+    display: grid;
+    place-items: center;
+}
+
+.noDataTitle {
+    margin-bottom: 0;
 }
