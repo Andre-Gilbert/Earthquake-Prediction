@@ -40,7 +40,7 @@
 .earthquakesList {
     flex: 1 1 50%;
     width: min(100%, 120rem);
-    max-height: 100rem;
+    max-height: 120rem;
     margin-inline: auto;
 }
 
@@ -62,6 +62,11 @@
     display: flex;
     justify-content: space-between;
     padding: 1rem $pt-padding;
+}
+
+.btnForm {
+    margin-left: 5px;
+    padding: 5px 7px 5px 3px;
 }
 
 .earthquakesListLabels {
@@ -174,13 +179,13 @@
     margin-left: 10px;
 }
 
-.noData {
+.error {
     width: 100%;
     min-height: 49rem;
     display: grid;
     place-items: center;
 }
 
-.noDataTitle {
+.errorTitle {
     margin-bottom: 0;
 }

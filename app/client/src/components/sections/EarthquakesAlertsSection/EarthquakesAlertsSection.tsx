@@ -1,6 +1,6 @@
 import { Button, Card, Checkbox, Classes, H1, H5, Icon, Menu, MenuDivider } from '@blueprintjs/core';
 import { DateRange, DateRangePicker } from '@blueprintjs/datetime';
-import { Popover2, Tooltip2 } from '@blueprintjs/popover2';
+import { Classes as Popover2Classes, Popover2, Tooltip2 } from '@blueprintjs/popover2';
 import { MAX_DATE, MIN_DATE } from '@common/date';
 import { getMagnitudeTypeTooltip, MagnitudeTooltipContent } from '@common/Tooltip';
 import { usgsInstance } from '@config/axios';
@@ -18,10 +18,7 @@ export const EarthquakesAlertsSection = () => {
     const [orangeAlert, setOrangeAlert] = useState(true);
     const [redAlert, setRedAlert] = useState(true);
     const [dateRange, setDateRange] = useState<DateRange>([MIN_DATE, MAX_DATE]);
-    const [queryParams, setQueryParams] = useState({
-        starttime: moment(dateRange[0]).format('DD-MM-YYYY'),
-        endtime: moment(dateRange[1]).format('DD-MM-YYYY'),
-    });
+    const [queryParams, setQueryParams] = useState<DateRange>([dateRange[0], dateRange[1]]);
     const earthquakesAlertQueries = useEarthquakesAlert(Array.from(alertLevels), queryParams);
 
     const handleGreenAlert = () => setGreenAlert(!greenAlert);
@@ -37,13 +34,9 @@ export const EarthquakesAlertsSection = () => {
         yellowAlert ? newAlertLevels.add('yellow') : newAlertLevels.delete('yellow');
         orangeAlert ? newAlertLevels.add('orange') : newAlertLevels.delete('orange');
         redAlert ? newAlertLevels.add('red') : newAlertLevels.delete('red');
-        setAlertLevels(newAlertLevels);
 
-        const [startDate, endDate] = dateRange;
-        setQueryParams({
-            starttime: moment(startDate).format('DD-MM-YYYY'),
-            endtime: moment(endDate).format('DD-MM-YYYY'),
-        });
+        setAlertLevels(newAlertLevels);
+        setQueryParams([dateRange[0], dateRange[1]]);
     };
 
     return (
@@ -179,7 +172,13 @@ const FilterMenu = ({
                     onChange={handleDateChange}
                 />
                 <div className={styles.btnForm}>
-                    <Button type="submit" text="Submit" intent="primary" fill />
+                    <Button
+                        className={Popover2Classes.POPOVER2_DISMISS}
+                        type="submit"
+                        text="Submit"
+                        intent="primary"
+                        fill
+                    />
                 </div>
             </form>
         </Menu>
@@ -219,27 +218,26 @@ const Alert = ({ time, place, magnitude, magnitudeType, depth, alert }: AlertPro
     );
 };
 
-type QueryParams = { starttime: string; endtime: string };
-
-const useEarthquakesAlert = (alertLevels: string[], queryParams: QueryParams) => {
+const useEarthquakesAlert = (alertLevels: string[], dateRange: DateRange) => {
     return useQueries({
         queries: alertLevels.map(alertLevel => {
             return {
-                queryKey: [`alert-level-${alertLevel}-days`, alertLevel, queryParams],
-                queryFn: () => fetchEarthquakesAlert(alertLevel, queryParams),
+                queryKey: [`alert-level-${alertLevel}-days`, alertLevel, dateRange],
+                queryFn: () => fetchEarthquakesAlert(alertLevel, dateRange),
             };
         }),
     });
 };
 
-const fetchEarthquakesAlert = async (alertLevel: string, queryParams: QueryParams): Promise<Earthquakes> => {
+const fetchEarthquakesAlert = async (alertLevel: string, dateRange: DateRange): Promise<Earthquakes> => {
     return await usgsInstance
         .get('query', {
             params: {
                 format: 'geojson',
                 eventtype: 'earthquake',
                 alertlevel: alertLevel,
-                ...queryParams,
+                starttime: moment(dateRange[0]).format('DD-MM-YYYY'),
+                endtime: moment(dateRange[1]).format('DD-MM-YYYY'),
             },
         })
         .then(response => response.data);

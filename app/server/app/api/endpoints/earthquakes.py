@@ -28,8 +28,14 @@ class PredictMagnitudes(BaseModel):
     predictions: list[Earthquake]
 
 
+class DateRange(BaseModel):
+    """Request body."""
+    starttime: str
+    endtime: str
+
+
 @router.post('/predict-magnitudes', response_model=PredictMagnitudes)
-def predict_magnitudes() -> Any:
-    df = get_earthquakes_data(settings.USGS_EARTHQUAKE_API_URL)
+def predict_magnitudes(date_range: DateRange) -> Any:
+    df = get_earthquakes_data(settings.USGS_EARTHQUAKE_API_URL, date_range)
     df_pred = ml_model.predict(df)
     return {'predictions': parse_df(df_pred)}

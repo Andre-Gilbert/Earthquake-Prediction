@@ -9,8 +9,10 @@ _PARAMS = {'format': 'csv', 'eventtype': 'earthquake'}
 _SCALER = MinMaxScaler()
 
 
-def get_earthquakes_data(base_url: str) -> pd.DataFrame:
+def get_earthquakes_data(base_url: str, date_range: dict[str, str]) -> pd.DataFrame:
+    _PARAMS.update(date_range)
     url = build_url(base_url, _PARAMS)
+    print(url)
     return pd.read_csv(url)
 
 
@@ -23,8 +25,6 @@ def parse_df(df: pd.DataFrame) -> dict[str, Any]:
 
 
 def normalize_df(df: pd.DataFrame, columns: list[str], revert: bool = False) -> pd.DataFrame:
-    if df is None or columns is None: return df
-
     if revert:
         df[columns] = _SCALER.inverse_transform(df[columns])
     else:

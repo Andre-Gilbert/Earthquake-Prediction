@@ -23,7 +23,18 @@ const Map = ({ query }: MapProps) => {
                     }}
                     icon={ICON}
                 >
-                    <Popup>{earthquake.properties.place}</Popup>
+                    <Popup>
+                        <div className={styles.mapMarkerTitle}>Place</div>
+                        <div className={styles.mapMarkerText}>{earthquake.properties.place}</div>
+                        <div className={styles.mapMarkerTitle}>Latitude</div>
+                        <div className={styles.mapMarkerText}>{earthquake.geometry.coordinates[1]}</div>
+                        <div className={styles.mapMarkerTitle}>Longitude</div>
+                        <div className={styles.mapMarkerText}>{earthquake.geometry.coordinates[0]}</div>
+                        <div className={styles.mapMarkerTitle}>Depth</div>
+                        <div className={styles.mapMarkerText}>{earthquake.geometry.coordinates[2]}</div>
+                        <div className={styles.mapMarkerTitle}>Magnitude</div>
+                        <div className={styles.mapMarkerText}>{earthquake.properties.mag}</div>
+                    </Popup>
                 </Marker>
             )),
         [query.data],

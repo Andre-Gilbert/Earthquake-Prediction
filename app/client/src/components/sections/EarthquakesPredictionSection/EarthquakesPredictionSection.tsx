@@ -1,11 +1,14 @@
-import { Alignment, Button, Card, Classes, H1, H5, Icon, Menu } from '@blueprintjs/core';
-import { MenuItem2, Popover2, Tooltip2 } from '@blueprintjs/popover2';
+import { Alignment, Button, Card, Classes, H1, H5, Icon, Menu, MenuDivider } from '@blueprintjs/core';
+import { DateRange, DateRangePicker } from '@blueprintjs/datetime';
+import { Classes as Popover2Classes, MenuItem2, Popover2, Tooltip2 } from '@blueprintjs/popover2';
 import { ItemPredicate, ItemRenderer, Select2 } from '@blueprintjs/select';
+import { MAX_DATE, MIN_DATE } from '@common/date';
 import { getMagnitudeTypeTooltip, MagnitudeTooltipContent } from '@common/Tooltip';
 import { apiInstance } from '@config/axios';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import moment from 'moment';
 import dynamic from 'next/dynamic';
-import { useCallback, useMemo, useState } from 'react';
+import { FormEvent, useCallback, useMemo, useState } from 'react';
 import styles from './EarthquakesPrediction.module.scss';
 
 const Map = dynamic(() => import('@sections/EarthquakesPredictionSection/Map'), {
@@ -13,7 +16,16 @@ const Map = dynamic(() => import('@sections/EarthquakesPredictionSection/Map'), 
 });
 
 export const EarthquakesPredictionSection = () => {
-    const earthquakesPredictionQuery = useEarthquakesPrediction();
+    const [dateRange, setDateRange] = useState<DateRange>([MIN_DATE, MAX_DATE]);
+    const [queryParams, setQueryParams] = useState<DateRange>([dateRange[0], dateRange[1]]);
+    const earthquakesPredictionQuery = useEarthquakesPrediction(queryParams);
+
+    const handleDateChange = (dateRange: DateRange) => setDateRange(dateRange);
+
+    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setQueryParams([dateRange[0], dateRange[1]]);
+    };
 
     return (
         <div>
@@ -23,7 +35,12 @@ export const EarthquakesPredictionSection = () => {
                     <MapHeader />
                     <Map />
                 </Card>
-                <Earthquakes query={earthquakesPredictionQuery} />
+                <Earthquakes
+                    query={earthquakesPredictionQuery}
+                    handleSubmit={handleSubmit}
+                    dateRange={dateRange}
+                    handleDateChange={handleDateChange}
+                />
             </div>
         </div>
     );
@@ -113,11 +130,17 @@ const MapHeader = () => {
     );
 };
 
+type FilterProps = {
+    handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
+    dateRange: DateRange;
+    handleDateChange: (dateRange: DateRange) => void;
+};
+
 type EarthquakesProps = {
     query: UseQueryResult<EarthquakesPrediction, Error>;
 };
 
-const Earthquakes = ({ query }: EarthquakesProps) => {
+const Earthquakes = ({ query, ...props }: EarthquakesProps & FilterProps) => {
     const predictions = useMemo(
         () =>
             query.data?.predictions.map(earthquake => (
@@ -137,8 +160,16 @@ const Earthquakes = ({ query }: EarthquakesProps) => {
     return (
         <div className={styles.earthquakesList}>
             <Card className={styles.earthquakesListCard}>
-                <EarthquakesHeader />
-                {query.isLoading ? <Loading /> : query.isError ? <div>error.message</div> : predictions}
+                <EarthquakesHeader {...props} />
+                {query.isLoading ? (
+                    <Loading />
+                ) : query.isError ? (
+                    <div className={styles.error}>
+                        <H1 className={styles.errorTitle}>{query.error.message}</H1>
+                    </div>
+                ) : (
+                    predictions
+                )}
             </Card>
         </div>
     );
@@ -171,7 +202,7 @@ const ListItem = ({ time, place, prediction, mag, magType, depth }: EarthquakePr
     );
 };
 
-const EarthquakesHeader = () => {
+const EarthquakesHeader = (props: FilterProps) => {
     return (
         <div className={styles.earthquakesHeader}>
             <div className={styles.earthquakesHeaderFilters}>
@@ -179,7 +210,7 @@ const EarthquakesHeader = () => {
                     <Icon icon="area-of-interest" />
                     <H5>Earthquakes Predictions</H5>
                 </div>
-                <Popover2 content={<FilterMenu />} placement="bottom-end">
+                <Popover2 content={<FilterMenu {...props} />} placement="bottom-end">
                     <Button type="button" icon="filter" minimal />
                 </Popover2>
             </div>
@@ -195,10 +226,29 @@ const EarthquakesHeader = () => {
     );
 };
 
-const FilterMenu = () => {
+const FilterMenu = ({ handleSubmit, dateRange, handleDateChange }: FilterProps) => {
     return (
         <Menu>
-            <MenuItem2 text="Filters" />
+            <form onSubmit={handleSubmit}>
+                <MenuDivider title="Earthquakes Date Range" />
+                <DateRangePicker
+                    defaultValue={dateRange}
+                    minDate={MIN_DATE}
+                    maxDate={MAX_DATE}
+                    singleMonthOnly
+                    shortcuts={false}
+                    onChange={handleDateChange}
+                />
+                <div className={styles.btnForm}>
+                    <Button
+                        className={Popover2Classes.POPOVER2_DISMISS}
+                        type="submit"
+                        text="Submit"
+                        intent="primary"
+                        fill
+                    />
+                </div>
+            </form>
         </Menu>
     );
 };
@@ -219,12 +269,19 @@ interface Earthquake {
     prediction: number;
 }
 
-const useEarthquakesPrediction = () => {
-    return useQuery<EarthquakesPrediction, Error>(['earthquakes-prediction'], () => fetchEarthquakesPrediction());
+const useEarthquakesPrediction = (dateRange: DateRange) => {
+    return useQuery<EarthquakesPrediction, Error>(['earthquakes-prediction', dateRange], () =>
+        fetchEarthquakesPrediction(dateRange),
+    );
 };
 
-const fetchEarthquakesPrediction = async (): Promise<EarthquakesPrediction> => {
-    return await apiInstance.post('api/v1/earthquakes/predict-magnitudes').then(response => response.data);
+const fetchEarthquakesPrediction = async (dateRange: DateRange): Promise<EarthquakesPrediction> => {
+    return await apiInstance
+        .post('api/v1/earthquakes/predict-magnitudes', {
+            starttime: moment(dateRange[0]).format('DD-MM-YYYY'),
+            endtime: moment(dateRange[1]).format('DD-MM-YYYY'),
+        })
+        .then(response => response.data);
 };
 
 const Loading = () => {
@@ -311,13 +368,5 @@ const Loading = () => {
                 <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
             </div>
         </>
-    );
-};
-
-const NoData = () => {
-    return (
-        <div className={styles.noData}>
-            <H1 className={styles.noDataTitle}>No Data</H1>
-        </div>
     );
 };
