@@ -1,9 +1,10 @@
-type MagnitudeTooltipContentProps = {
+export const MagnitudeTooltipContent = ({
+    magnitudeRange,
+    distanceRange,
+}: {
     magnitudeRange: string;
     distanceRange: string;
-};
-
-export const MagnitudeTooltipContent = ({ magnitudeRange, distanceRange }: MagnitudeTooltipContentProps) => {
+}) => {
     return (
         <>
             <div>Magnitude range: {magnitudeRange}</div>

@@ -9,6 +9,7 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import moment from 'moment';
 import dynamic from 'next/dynamic';
 import { FormEvent, useCallback, useMemo, useState } from 'react';
+import { z } from 'zod';
 import styles from './EarthquakesPrediction.module.scss';
 
 const Map = dynamic(() => import('@sections/EarthquakesPredictionSection/Map'), {
@@ -136,11 +137,7 @@ type FilterProps = {
     handleDateChange: (dateRange: DateRange) => void;
 };
 
-type EarthquakesProps = {
-    query: UseQueryResult<EarthquakesPrediction, Error>;
-};
-
-const Earthquakes = ({ query, ...props }: EarthquakesProps & FilterProps) => {
+const Earthquakes = ({ query, ...props }: { query: UseQueryResult<EarthquakesPrediction, Error> } & FilterProps) => {
     const predictions = useMemo(
         () =>
             query.data?.predictions.map(earthquake => (
@@ -161,15 +158,7 @@ const Earthquakes = ({ query, ...props }: EarthquakesProps & FilterProps) => {
         <div className={styles.earthquakesList}>
             <Card className={styles.earthquakesListCard}>
                 <EarthquakesHeader {...props} />
-                {query.isLoading ? (
-                    <Loading />
-                ) : query.isError ? (
-                    <div className={styles.error}>
-                        <H1 className={styles.errorTitle}>{query.error.message}</H1>
-                    </div>
-                ) : (
-                    predictions
-                )}
+                {query.isLoading ? <Loading /> : query.isError ? <Error message={query.error.message} /> : predictions}
             </Card>
         </div>
     );
@@ -253,21 +242,23 @@ const FilterMenu = ({ handleSubmit, dateRange, handleDateChange }: FilterProps) 
     );
 };
 
-interface EarthquakesPrediction {
-    predictions: Earthquake[];
-}
+const earthquakesPredictionValidator = z.object({
+    predictions: z
+        .object({
+            time: z.string(),
+            latitude: z.number().gte(-90).lte(90),
+            longitude: z.number().gte(-360).lte(360),
+            depth: z.number(),
+            mag: z.number(),
+            magType: z.string(),
+            id: z.string(),
+            place: z.string(),
+            prediction: z.number(),
+        })
+        .array(),
+});
 
-interface Earthquake {
-    time: string;
-    latitude: number;
-    longitude: number;
-    depth: number;
-    mag: number;
-    magType: string;
-    id: string;
-    place: string;
-    prediction: number;
-}
+type EarthquakesPrediction = z.infer<typeof earthquakesPredictionValidator>;
 
 const useEarthquakesPrediction = (dateRange: DateRange) => {
     return useQuery<EarthquakesPrediction, Error>(['earthquakes-prediction', dateRange], () =>
@@ -281,7 +272,7 @@ const fetchEarthquakesPrediction = async (dateRange: DateRange): Promise<Earthqu
             starttime: moment(dateRange[0]).format('DD-MM-YYYY'),
             endtime: moment(dateRange[1]).format('DD-MM-YYYY'),
         })
-        .then(response => response.data);
+        .then(response => earthquakesPredictionValidator.parse(response.data));
 };
 
 const Loading = () => {
@@ -368,5 +359,13 @@ const Loading = () => {
                 <div className={`${Classes.SKELETON} ${styles.loading}`}>Loading</div>
             </div>
         </>
+    );
+};
+
+const Error = ({ message }: { message: string }) => {
+    return (
+        <div className={styles.error}>
+            <H1 className={styles.errorTitle}>{message}</H1>
+        </div>
     );
 };

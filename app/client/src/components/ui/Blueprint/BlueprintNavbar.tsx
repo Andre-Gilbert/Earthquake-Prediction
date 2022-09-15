@@ -28,7 +28,7 @@ export const BlueprintNavbar = () => {
     return (
         <Navbar fixedToTop>
             <Navbar.Group align={Alignment.LEFT}>
-                <MobileDrawer />
+                <MobileDrawer pathname={router.pathname} />
                 <Navbar.Heading className={styles.title}>Earthquake Prediction</Navbar.Heading>
                 <Link href="/dashboard" passHref>
                     <AnchorButton
@@ -71,11 +71,7 @@ export const BlueprintNavbar = () => {
     );
 };
 
-type UserMenuProps = {
-    username: string | null | undefined;
-};
-
-const UserMenu = ({ username }: UserMenuProps) => {
+const UserMenu = ({ username }: { username: string | null | undefined }) => {
     const handleSignOut = () => signOut();
 
     return (
@@ -86,7 +82,7 @@ const UserMenu = ({ username }: UserMenuProps) => {
     );
 };
 
-const MobileDrawer = () => {
+const MobileDrawer = ({ pathname }: { pathname: string }) => {
     const [isOpen, setIsOpen] = useState(false);
     const handleOpen = () => setIsOpen(true);
     const handleClose = () => setIsOpen(false);
@@ -102,12 +98,30 @@ const MobileDrawer = () => {
                 title="Earthquake Prediction"
             >
                 <div className={Classes.DRAWER_BODY}>
-                    <Link href="/dashboard" passHref>
-                        <AnchorButton text="Overview" icon="geolocation" minimal onClick={handleClose} />
-                    </Link>
-                    <Link href="/earthquakes" passHref>
-                        <AnchorButton text="Earthquakes" icon="globe" minimal onClick={handleClose} />
-                    </Link>
+                    <div className={Classes.DIALOG_BODY}>
+                        <Link href="/dashboard" passHref>
+                            <AnchorButton
+                                alignText={Alignment.LEFT}
+                                text="Overview"
+                                icon="geolocation"
+                                minimal
+                                fill
+                                intent={pathname === '/dashboard' ? Intent.PRIMARY : Intent.NONE}
+                                onClick={handleClose}
+                            />
+                        </Link>
+                        <Link href="/earthquakes" passHref>
+                            <AnchorButton
+                                alignText={Alignment.LEFT}
+                                text="Earthquakes"
+                                icon="globe"
+                                minimal
+                                fill
+                                intent={pathname === '/earthquakes' ? Intent.PRIMARY : Intent.NONE}
+                                onClick={handleClose}
+                            />
+                        </Link>
+                    </div>
                 </div>
             </Drawer>
         </>

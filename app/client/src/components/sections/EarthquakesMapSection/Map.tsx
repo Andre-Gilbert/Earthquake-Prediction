@@ -3,14 +3,10 @@ import { ICON } from '@config/leaflet';
 import { UseQueryResult } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, ZoomControl } from 'react-leaflet';
-import { Earthquakes } from 'types/earthquakes';
 import styles from './EarthquakesMap.module.scss';
+import { Earthquakes } from './EarthquakesMapSection';
 
-export type MapProps = {
-    query: UseQueryResult<Earthquakes, Error>;
-};
-
-const Map = ({ query }: MapProps) => {
+const Map = ({ query }: { query: UseQueryResult<Earthquakes, Error> }) => {
     const markers = useMemo(
         () =>
             query.data?.features.map(earthquake => (

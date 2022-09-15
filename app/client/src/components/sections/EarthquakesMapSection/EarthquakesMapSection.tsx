@@ -1,11 +1,11 @@
 import { Button, Card, FormGroup, H5, Icon, Intent, Menu, MenuDivider, NumericInput, Toaster } from '@blueprintjs/core';
 import { Classes, Popover2 } from '@blueprintjs/popover2';
 import { MAX_DATE, MIN_DATE } from '@common/date';
+
 import { usgsInstance } from '@config/axios';
 import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
 import { FormEvent, useState } from 'react';
-import { Earthquakes } from 'types/earthquakes';
 import { z } from 'zod';
 import styles from './EarthquakesMap.module.scss';
 
@@ -209,6 +209,57 @@ const FilterMenu = ({
 
 type QueryParams = Omit<z.infer<typeof queryParamsValidator>, 'sumlongitude'>;
 
+export type Earthquakes = z.infer<typeof earthquakesValidator>;
+
+export const earthquakesValidator = z.object({
+    type: z.string(),
+    metadata: z.object({
+        generated: z.number(),
+        url: z.string().url(),
+        title: z.string(),
+        api: z.string(),
+        count: z.number().gte(0).lte(20000),
+        limit: z.number().lte(20000),
+        offset: z.number().gte(1),
+        status: z.number(),
+    }),
+    bbox: z.number().array(),
+    features: z
+        .object({
+            type: z.string(),
+            properties: z.object({
+                mag: z.number(),
+                place: z.string().nullable(),
+                time: z.number(),
+                updated: z.number(),
+                tz: z.number().nullable(),
+                url: z.string().url(),
+                detail: z.string(),
+                felt: z.number().nullable(),
+                cdi: z.number().nullable(),
+                mmi: z.number().nullable(),
+                alert: z.string().nullable(),
+                status: z.string(),
+                tsunami: z.number(),
+                sig: z.number().nullable(),
+                net: z.string(),
+                code: z.string(),
+                ids: z.string(),
+                sources: z.string(),
+                types: z.string(),
+                nst: z.number().nullable(),
+                dmin: z.number().nullable(),
+                rms: z.number().nullable(),
+                gap: z.number().nullable(),
+                magType: z.string(),
+                type: z.string(),
+            }),
+            geometry: z.object({ type: z.string(), coordinates: z.number().array().length(3) }),
+            id: z.string(),
+        })
+        .array(),
+});
+
 const useEarthquakes = (queryParams: QueryParams) => {
     return useQuery<Earthquakes, Error>(['earthquakes-map', queryParams], () => fetchEarthquakes(queryParams));
 };
@@ -225,5 +276,5 @@ const fetchEarthquakes = async (queryParams: QueryParams): Promise<Earthquakes> 
                 ...queryParams,
             },
         })
-        .then(response => response.data);
+        .then(response => earthquakesValidator.parse(response.data));
 };

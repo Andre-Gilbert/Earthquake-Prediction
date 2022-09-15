@@ -7,7 +7,7 @@ import { usgsInstance } from '@config/axios';
 import { useQueries } from '@tanstack/react-query';
 import moment from 'moment';
 import { FormEvent, useState } from 'react';
-import { Earthquakes } from 'types/earthquakes';
+import { z } from 'zod';
 import styles from './EarthquakesAlerts.module.scss';
 import { getAlertLevelTooltip, getColor } from './utils';
 
@@ -218,6 +218,55 @@ const Alert = ({ time, place, magnitude, magnitudeType, depth, alert }: AlertPro
     );
 };
 
+export type EarthquakesAlerts = z.infer<typeof alertsValidator>;
+
+export const alertsValidator = z.object({
+    type: z.string(),
+    metadata: z.object({
+        generated: z.number(),
+        url: z.string().url(),
+        title: z.string(),
+        api: z.string(),
+        count: z.number().gte(0).lte(20000),
+        status: z.number(),
+    }),
+    bbox: z.number().array().optional(),
+    features: z
+        .object({
+            type: z.string(),
+            properties: z.object({
+                mag: z.number(),
+                place: z.string().nullable(),
+                time: z.number(),
+                updated: z.number(),
+                tz: z.number().nullable(),
+                url: z.string().url(),
+                detail: z.string(),
+                felt: z.number().nullable(),
+                cdi: z.number().nullable(),
+                mmi: z.number().nullable(),
+                alert: z.string(),
+                status: z.string(),
+                tsunami: z.number(),
+                sig: z.number().nullable(),
+                net: z.string(),
+                code: z.string(),
+                ids: z.string(),
+                sources: z.string(),
+                types: z.string(),
+                nst: z.number().nullable(),
+                dmin: z.number().nullable(),
+                rms: z.number().nullable(),
+                gap: z.number().nullable(),
+                magType: z.string(),
+                type: z.string(),
+            }),
+            geometry: z.object({ type: z.string(), coordinates: z.number().array().length(3) }),
+            id: z.string(),
+        })
+        .array(),
+});
+
 const useEarthquakesAlert = (alertLevels: string[], dateRange: DateRange) => {
     return useQueries({
         queries: alertLevels.map(alertLevel => {
@@ -229,7 +278,7 @@ const useEarthquakesAlert = (alertLevels: string[], dateRange: DateRange) => {
     });
 };
 
-const fetchEarthquakesAlert = async (alertLevel: string, dateRange: DateRange): Promise<Earthquakes> => {
+const fetchEarthquakesAlert = async (alertLevel: string, dateRange: DateRange): Promise<EarthquakesAlerts> => {
     return await usgsInstance
         .get('query', {
             params: {
@@ -240,7 +289,7 @@ const fetchEarthquakesAlert = async (alertLevel: string, dateRange: DateRange): 
                 endtime: moment(dateRange[1]).format('DD-MM-YYYY'),
             },
         })
-        .then(response => response.data);
+        .then(response => alertsValidator.parse(response.data));
 };
 
 const Loading = () => {
