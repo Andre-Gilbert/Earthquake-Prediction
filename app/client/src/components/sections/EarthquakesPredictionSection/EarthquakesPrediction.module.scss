@@ -25,21 +25,20 @@
 }
 
 .container {
-    width: min(100%, 192rem);
     padding: $pt-padding;
-    margin-inline: auto;
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
     gap: $pt-padding;
+}
 
-    @media (min-width: $pt-breakpoint-md) {
-        flex-direction: row;
-    }
+.earthquakesChart {
+    width: min(100%, $pt-max-width);
+    margin-inline: auto;
+    padding: $pt-padding;
 }
 
 .earthquakesList {
-    flex: 1 1 50%;
-    width: min(100%, 120rem);
+    width: min(100%, $pt-max-width);
     max-height: 120rem;
     margin-inline: auto;
 }
@@ -97,9 +96,18 @@
     padding: $pt-padding;
     display: flex;
     align-items: center;
+    cursor: pointer;
 
     &:not(:last-of-type) {
         border-bottom: 1px solid $pt-divider-black;
+    }
+
+    &:hover {
+        background-color: darken(#fff, 5%);
+    }
+
+    &.active {
+        background-color: darken(#fff, 5%);
     }
 }
 
@@ -116,11 +124,27 @@
     margin-left: 10px;
 }
 
+.drawerBodyBackgroundColor {
+    background-color: $pt-app-background-color;
+}
+
+.drawerCardKPIFlex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $pt-padding;
+}
+
+.drawerCardKPI {
+    flex: 1 1 30%;
+    padding: $pt-padding;
+}
+
+.cardSubtitle {
+    margin-bottom: 0;
+}
+
 .cardMap {
-    flex: 1 1 50%;
-    width: min(100%, 120rem);
-    margin-inline: auto;
-    max-height: 50rem;
+    margin-top: 1.5rem;
     padding: 0;
 }
 

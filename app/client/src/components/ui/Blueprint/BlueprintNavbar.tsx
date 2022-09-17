@@ -26,7 +26,7 @@ export const BlueprintNavbar = () => {
     const router = useRouter();
 
     return (
-        <Navbar fixedToTop>
+        <Navbar className={styles.navbar} fixedToTop>
             <Navbar.Group align={Alignment.LEFT}>
                 <MobileDrawer pathname={router.pathname} />
                 <Navbar.Heading className={styles.title}>Earthquake Prediction</Navbar.Heading>

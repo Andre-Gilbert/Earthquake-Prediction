@@ -1,4 +1,4 @@
-import { Alignment, Button, Card, Classes, H1, H5, Icon, Menu, MenuDivider } from '@blueprintjs/core';
+import { Alignment, Button, Card, Classes, Drawer, H1, H5, Icon, Menu, MenuDivider, Position } from '@blueprintjs/core';
 import { DateRange, DateRangePicker } from '@blueprintjs/datetime';
 import { Classes as Popover2Classes, MenuItem2, Popover2, Tooltip2 } from '@blueprintjs/popover2';
 import { ItemPredicate, ItemRenderer, Select2 } from '@blueprintjs/select';
@@ -29,13 +29,10 @@ export const EarthquakesPredictionSection = () => {
     };
 
     return (
-        <div>
+        <>
             <Header />
             <div className={styles.container}>
-                <Card className={styles.cardMap}>
-                    <MapHeader />
-                    <Map />
-                </Card>
+                <Card className={styles.earthquakesChart}>Chart</Card>
                 <Earthquakes
                     query={earthquakesPredictionQuery}
                     handleSubmit={handleSubmit}
@@ -43,7 +40,7 @@ export const EarthquakesPredictionSection = () => {
                     handleDateChange={handleDateChange}
                 />
             </div>
-        </div>
+        </>
     );
 };
 
@@ -120,15 +117,8 @@ const Header = () => {
     );
 };
 
-const MapHeader = () => {
-    return (
-        <div className={styles.mapHeader}>
-            <div className={styles.mapTitle}>
-                <Icon icon="map-marker" />
-                <H5>Location</H5>
-            </div>
-        </div>
-    );
+type EarthquakesProps = {
+    query: UseQueryResult<EarthquakesPrediction, Error>;
 };
 
 type FilterProps = {
@@ -137,20 +127,9 @@ type FilterProps = {
     handleDateChange: (dateRange: DateRange) => void;
 };
 
-const Earthquakes = ({ query, ...props }: { query: UseQueryResult<EarthquakesPrediction, Error> } & FilterProps) => {
+const Earthquakes = ({ query, ...props }: EarthquakesProps & FilterProps) => {
     const predictions = useMemo(
-        () =>
-            query.data?.predictions.map(earthquake => (
-                <ListItem
-                    key={earthquake.id}
-                    time={earthquake.time}
-                    place={earthquake.place}
-                    prediction={earthquake.prediction}
-                    mag={earthquake.mag}
-                    magType={earthquake.magType}
-                    depth={earthquake.depth}
-                />
-            )),
+        () => query.data?.predictions.map(earthquake => <ListItem key={earthquake.id} earthquake={earthquake} />),
         [query.data],
     );
 
@@ -160,33 +139,6 @@ const Earthquakes = ({ query, ...props }: { query: UseQueryResult<EarthquakesPre
                 <EarthquakesHeader {...props} />
                 {query.isLoading ? <Loading /> : query.isError ? <Error message={query.error.message} /> : predictions}
             </Card>
-        </div>
-    );
-};
-
-type EarthquakePrediction = {
-    time: string;
-    place: string;
-    prediction: number;
-    mag: number;
-    magType: string;
-    depth: number;
-};
-
-const ListItem = ({ time, place, prediction, mag, magType, depth }: EarthquakePrediction) => {
-    return (
-        <div className={styles.listItem}>
-            <Icon icon="info-sign" intent="primary" />
-            <div className={styles.listItemContent}>{time}</div>
-            <div className={styles.listItemContent}>{place}</div>
-            <div className={styles.listItemContent}>{prediction}</div>
-            <div className={styles.listItemContent}>{mag}</div>
-            <div className={styles.listItemContent}>
-                <Tooltip2 position="left" content={<MagnitudeTooltipContent {...getMagnitudeTypeTooltip(magType)} />}>
-                    {magType}
-                </Tooltip2>
-            </div>
-            <div className={styles.listItemContent}>{depth}</div>
         </div>
     );
 };
@@ -239,6 +191,93 @@ const FilterMenu = ({ handleSubmit, dateRange, handleDateChange }: FilterProps) 
                 </div>
             </form>
         </Menu>
+    );
+};
+
+type EarthquakePrediction = {
+    earthquake: {
+        time: string;
+        latitude: number;
+        longitude: number;
+        depth: number;
+        mag: number;
+        magType: string;
+        id: string;
+        place: string;
+        prediction: number;
+    };
+};
+
+const ListItem = ({ earthquake }: EarthquakePrediction) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const handleOpen = () => setIsOpen(true);
+    const handleClose = () => setIsOpen(false);
+
+    return (
+        <>
+            <div className={isOpen ? `${styles.listItem} ${styles.active}` : styles.listItem} onClick={handleOpen}>
+                <Icon icon="info-sign" intent="primary" />
+                <div className={styles.listItemContent}>{earthquake.time}</div>
+                <div className={styles.listItemContent}>{earthquake.place}</div>
+                <div className={styles.listItemContent}>{earthquake.prediction}</div>
+                <div className={styles.listItemContent}>{earthquake.mag}</div>
+                <div className={styles.listItemContent}>
+                    <Tooltip2
+                        position="left"
+                        content={<MagnitudeTooltipContent {...getMagnitudeTypeTooltip(earthquake.magType)} />}
+                    >
+                        {earthquake.magType}
+                    </Tooltip2>
+                </div>
+                <div className={styles.listItemContent}>{earthquake.depth}</div>
+            </div>
+            <Drawer
+                isOpen={isOpen}
+                onClose={handleClose}
+                position={Position.RIGHT}
+                title={`${earthquake.id} - ${earthquake.place}`}
+            >
+                <DrawerContent earthquake={earthquake} />
+            </Drawer>
+        </>
+    );
+};
+
+const DrawerContent = ({ earthquake }: EarthquakePrediction) => {
+    return (
+        <div className={`${Classes.DRAWER_BODY} ${styles.drawerBodyBackgroundColor}`}>
+            <div className={Classes.DIALOG_BODY}>
+                <div className={styles.drawerCardKPIFlex}>
+                    <Card className={styles.drawerCardKPI}>
+                        <H1>{earthquake.mag}</H1>
+                        <H5 className={styles.cardSubtitle}>Magnitude for the event</H5>
+                    </Card>
+                    <Card className={styles.drawerCardKPI}>
+                        <H1>{earthquake.prediction}</H1>
+                        <H5 className={styles.cardSubtitle}>Predicted Magnitude for the event</H5>
+                    </Card>
+                    <Card className={styles.drawerCardKPI}>
+                        <H1>{earthquake.depth}</H1>
+                        <H5 className={styles.cardSubtitle}>Depth of the event in kilometers</H5>
+                    </Card>
+                </div>
+                <Card className={styles.cardMap}>
+                    <MapHeader />
+                    <Map />
+                </Card>
+            </div>
+        </div>
+    );
+};
+
+const MapHeader = () => {
+    return (
+        <div className={styles.mapHeader}>
+            <div className={styles.mapTitle}>
+                <Icon icon="map-marker" />
+                <H5>Location</H5>
+            </div>
+        </div>
     );
 };
 

@@ -1,4 +1,9 @@
+@import '~@blueprintjs/core/lib/scss/variables';
 @import '../../../styles/variables.module.scss';
+
+.navbar {
+    z-index: $pt-z-index-overlay;
+}
 
 .btn {
     display: none;
