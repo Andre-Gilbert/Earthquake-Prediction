@@ -14,7 +14,7 @@
 .card {
     width: 100%;
     padding: 0;
-    overflow: auto;
+    overflow-y: auto;
     max-height: 100rem;
 }
 
@@ -35,16 +35,6 @@
 .headerFlex {
     display: flex;
     align-items: center;
-}
-
-.switch {
-    display: none;
-
-    @media (min-width: $pt-breakpoint-sm) {
-        display: block;
-        margin-right: 1rem;
-        margin-bottom: 0;
-    }
 }
 
 .btn {

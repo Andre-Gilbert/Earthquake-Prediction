@@ -6,16 +6,48 @@ import { MAX_DATE, MIN_DATE } from '@common/date';
 import { getMagnitudeTypeTooltip, MagnitudeTooltipContent } from '@common/Tooltip';
 import { apiInstance } from '@config/axios';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import {
+    CategoryScale,
+    Chart as ChartJS,
+    Legend,
+    LinearScale,
+    LineElement,
+    PointElement,
+    Title,
+    Tooltip,
+} from 'chart.js';
 import moment from 'moment';
-import dynamic from 'next/dynamic';
 import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { Line } from 'react-chartjs-2';
 import { z } from 'zod';
 import styles from './EarthquakesPrediction.module.scss';
 import { addScrollbarStyle } from './utils';
 
-const Map = dynamic(() => import('@sections/EarthquakesPredictionSection/Map'), {
-    ssr: false,
-});
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+
+const chartOptions = {
+    responsive: true,
+    interaction: {
+        mode: 'index' as const,
+        intersect: false,
+    },
+    stacked: false,
+    scales: {
+        y: {
+            type: 'linear' as const,
+            display: true,
+            position: 'left' as const,
+        },
+        y1: {
+            type: 'linear' as const,
+            display: true,
+            position: 'right' as const,
+            grid: {
+                drawOnChartArea: false,
+            },
+        },
+    },
+};
 
 export const EarthquakesPredictionSection = () => {
     const [dateRange, setDateRange] = useState<DateRange>([MIN_DATE, MAX_DATE]);
@@ -29,13 +61,58 @@ export const EarthquakesPredictionSection = () => {
         setQueryParams([dateRange[0], dateRange[1]]);
     };
 
+    // Prevents layout shifts
     useEffect(() => addScrollbarStyle(), []);
+
+    const labels = useMemo(
+        () =>
+            earthquakesPredictionQuery.data?.predictions.map(earthquake =>
+                moment(earthquake.time).format('DD/MM/YYYY, hh:mm:ss'),
+            ),
+        [earthquakesPredictionQuery.data],
+    );
+
+    const predictions = useMemo(
+        () => earthquakesPredictionQuery.data?.predictions.map(earthquake => earthquake.prediction),
+        [earthquakesPredictionQuery.data],
+    );
+
+    const magnitudes = useMemo(
+        () => earthquakesPredictionQuery.data?.predictions.map(earthquake => earthquake.mag),
+        [earthquakesPredictionQuery.data],
+    );
+
+    const data = {
+        labels,
+        datasets: [
+            {
+                label: 'Prediction',
+                data: predictions,
+                yAxisID: 'y',
+                borderColor: 'rgb(255, 99, 132, 0.75)',
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            },
+            {
+                label: 'Magnitude',
+                data: magnitudes,
+                yAxisID: 'y1',
+                borderColor: 'rgb(53, 162, 235, 0.75)',
+                backgroundColor: 'rgba(53, 162, 235, 0.5)',
+            },
+        ],
+    };
 
     return (
         <>
             <Header />
             <div className={styles.container}>
-                <Card className={styles.earthquakesChart}>Chart</Card>
+                <Card className={styles.earthquakesChart}>
+                    {earthquakesPredictionQuery.isLoading ? (
+                        <div>loading</div>
+                    ) : (
+                        <Line options={chartOptions} data={data} />
+                    )}
+                </Card>
                 <Earthquakes
                     query={earthquakesPredictionQuery}
                     handleSubmit={handleSubmit}
@@ -220,7 +297,7 @@ const ListItem = ({ earthquake }: EarthquakePrediction) => {
         <>
             <div className={isOpen ? `${styles.listItem} ${styles.active}` : styles.listItem} onClick={handleOpen}>
                 <Icon icon="info-sign" intent="primary" />
-                <div className={styles.listItemContent}>{earthquake.time}</div>
+                <div className={styles.listItemContent}>{moment(earthquake.time).format('DD/MM/YYYY, hh:mm:ss')}</div>
                 <div className={styles.listItemContent}>{earthquake.place}</div>
                 <div className={styles.listItemContent}>{earthquake.prediction}</div>
                 <div className={styles.listItemContent}>{earthquake.mag}</div>
@@ -266,7 +343,6 @@ const DrawerContent = ({ earthquake }: EarthquakePrediction) => {
                 </div>
                 <Card className={styles.cardMap}>
                     <MapHeader />
-                    <Map />
                 </Card>
             </div>
         </div>

@@ -195,14 +195,12 @@ type AlertProps = {
 };
 
 const Alert = ({ time, place, magnitude, magnitudeType, depth, alert }: AlertProps) => {
-    const date = new Date(time);
-
     return (
         <div className={styles.alert}>
             <Tooltip2 position="right" content={<div>{getAlertLevelTooltip(alert)}</div>}>
                 <Icon icon="info-sign" style={{ color: getColor(alert) }} />
             </Tooltip2>
-            <div className={styles.alertContent}>{date.toLocaleString()}</div>
+            <div className={styles.alertContent}>{moment(time).format('DD/MM/YYYY, hh:mm:ss')}</div>
             <div className={styles.alertContent}>{place}</div>
             <div className={styles.alertContent}>{magnitude}</div>
             <div className={styles.alertContent}>

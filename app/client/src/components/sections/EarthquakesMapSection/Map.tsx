@@ -1,10 +1,17 @@
 import { H1, Spinner, SpinnerSize } from '@blueprintjs/core';
-import { ICON } from '@config/leaflet';
 import { UseQueryResult } from '@tanstack/react-query';
+import { icon } from 'leaflet';
 import { useMemo } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, ZoomControl } from 'react-leaflet';
 import styles from './EarthquakesMap.module.scss';
 import { Earthquakes } from './EarthquakesMapSection';
+
+const CENTER = { lat: 38.907132, lng: -77.036546 };
+
+const ICON = icon({
+    iconUrl: '/map-marker.png',
+    iconSize: [16, 16],
+});
 
 const Map = ({ query }: { query: UseQueryResult<Earthquakes, Error> }) => {
     const markers = useMemo(
@@ -53,7 +60,7 @@ const Map = ({ query }: { query: UseQueryResult<Earthquakes, Error> }) => {
     }
 
     return (
-        <MapContainer className={styles.map} center={[38.907132, -77.036546]} zoom={5} zoomControl={false}>
+        <MapContainer className={styles.map} center={CENTER} zoom={5} zoomControl={false}>
             <TileLayer
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
