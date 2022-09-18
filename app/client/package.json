@@ -10,7 +10,7 @@
         "format": "prettier --write .",
         "format-check": "prettier --check .",
         "type-check": "tsc --pretty --noEmit",
-        "prepare": "cd ../.. && husky install client/.husky"
+        "prepare": "cd ../.. && husky install app/client/.husky"
     },
     "dependencies": {
         "@blueprintjs/core": "^4.8.0",
