@@ -8,9 +8,10 @@ import { apiInstance } from '@config/axios';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import moment from 'moment';
 import dynamic from 'next/dynamic';
-import { FormEvent, useCallback, useMemo, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { z } from 'zod';
 import styles from './EarthquakesPrediction.module.scss';
+import { addScrollbarStyle } from './utils';
 
 const Map = dynamic(() => import('@sections/EarthquakesPredictionSection/Map'), {
     ssr: false,
@@ -27,6 +28,8 @@ export const EarthquakesPredictionSection = () => {
         event.preventDefault();
         setQueryParams([dateRange[0], dateRange[1]]);
     };
+
+    useEffect(() => addScrollbarStyle(), []);
 
     return (
         <>
