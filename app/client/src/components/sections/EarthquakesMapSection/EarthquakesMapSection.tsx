@@ -9,7 +9,7 @@ import { FormEvent, useState } from 'react';
 import { z } from 'zod';
 import styles from './EarthquakesMap.module.scss';
 
-const Map = dynamic(() => import('@sections/EarthquakesMapSection/Map'), {
+const Map = dynamic(() => import('./Map'), {
     ssr: false,
 });
 

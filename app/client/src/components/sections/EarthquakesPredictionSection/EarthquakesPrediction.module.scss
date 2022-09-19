@@ -34,26 +34,62 @@
 .earthquakesChart {
     width: min(100%, $pt-max-width);
     margin-inline: auto;
+    padding: 0;
+}
+
+.chartHeader {
+    padding: 1rem $pt-padding;
+    border-bottom: 1px solid $pt-divider-black;
+}
+
+.chartFlex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chartTitle {
+    display: flex;
+    align-items: center;
+
+    span {
+        color: $pt-text-color-muted;
+    }
+
+    h5 {
+        margin-left: 10px;
+        margin-bottom: 0;
+    }
+}
+
+.chart {
     padding: $pt-padding;
+}
+
+.chartLoading,
+.chartError {
+    height: 72rem;
+    display: grid;
+    place-items: center;
+}
+
+.chartErrorTitle {
+    margin-bottom: 0;
 }
 
 .earthquakesList {
     width: min(100%, $pt-max-width);
-    max-height: 120rem;
     margin-inline: auto;
+    background-color: #fff;
+    border-radius: 2px;
 }
 
 .earthquakesListCard {
     padding: 0;
-    max-height: inherit;
+    max-height: calc(100rem - 5.1rem);
     overflow-y: auto;
-}
-
-.earthquakesHeader {
-    position: sticky;
-    top: 0;
-    z-index: $pt-z-index-content;
-    background-color: inherit;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 .earthquakesHeaderFilters {
@@ -69,6 +105,10 @@
 }
 
 .earthquakesListLabels {
+    position: sticky;
+    top: 0;
+    z-index: $pt-z-index-content;
+    background-color: #fff;
     padding-block: 1rem;
     padding-left: 31px;
     padding-right: $pt-padding;

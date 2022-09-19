@@ -1,4 +1,18 @@
-import { Alignment, Button, Card, Classes, Drawer, H1, H5, Icon, Menu, MenuDivider, Position } from '@blueprintjs/core';
+import {
+    Alignment,
+    Button,
+    Card,
+    Classes,
+    Drawer,
+    H1,
+    H5,
+    Icon,
+    Menu,
+    MenuDivider,
+    Position,
+    Spinner,
+    SpinnerSize,
+} from '@blueprintjs/core';
 import { DateRange, DateRangePicker } from '@blueprintjs/datetime';
 import { Classes as Popover2Classes, MenuItem2, Popover2, Tooltip2 } from '@blueprintjs/popover2';
 import { ItemPredicate, ItemRenderer, Select2 } from '@blueprintjs/select';
@@ -31,6 +45,11 @@ const chartOptions = {
         mode: 'index' as const,
         intersect: false,
     },
+    plugins: {
+        legend: {
+            position: 'bottom' as const,
+        },
+    },
     stacked: false,
     scales: {
         y: {
@@ -47,6 +66,7 @@ const chartOptions = {
             },
         },
     },
+    maintainAspectRatio: false,
 };
 
 export const EarthquakesPredictionSection = () => {
@@ -107,11 +127,39 @@ export const EarthquakesPredictionSection = () => {
             <Header />
             <div className={styles.container}>
                 <Card className={styles.earthquakesChart}>
-                    {earthquakesPredictionQuery.isLoading ? (
-                        <div>loading</div>
-                    ) : (
-                        <Line options={chartOptions} data={data} />
-                    )}
+                    <div className={styles.chartHeader}>
+                        <div className={styles.chartFlex}>
+                            <div className={styles.chartTitle}>
+                                <Icon icon="timeline-line-chart" />
+                                <H5>Magnitude vs. Prediction</H5>
+                            </div>
+                            <Popover2
+                                content={
+                                    <FilterMenu
+                                        handleSubmit={handleSubmit}
+                                        dateRange={dateRange}
+                                        handleDateChange={handleDateChange}
+                                    />
+                                }
+                                placement="bottom-end"
+                            >
+                                <Button type="button" icon="filter" minimal />
+                            </Popover2>
+                        </div>
+                    </div>
+                    <div className={styles.chart}>
+                        {earthquakesPredictionQuery.isLoading ? (
+                            <div className={styles.chartLoading}>
+                                <Spinner size={SpinnerSize.LARGE} />
+                            </div>
+                        ) : earthquakesPredictionQuery.isError ? (
+                            <div className={styles.chartError}>
+                                <H1 className={styles.chartErrorTitle}>{earthquakesPredictionQuery.error?.message}</H1>
+                            </div>
+                        ) : (
+                            <Line options={chartOptions} data={data} height={720} />
+                        )}
+                    </div>
                 </Card>
                 <Earthquakes
                     query={earthquakesPredictionQuery}
@@ -214,18 +262,7 @@ const Earthquakes = ({ query, ...props }: EarthquakesProps & FilterProps) => {
     );
 
     return (
-        <div className={styles.earthquakesList}>
-            <Card className={styles.earthquakesListCard}>
-                <EarthquakesHeader {...props} />
-                {query.isLoading ? <Loading /> : query.isError ? <Error message={query.error.message} /> : predictions}
-            </Card>
-        </div>
-    );
-};
-
-const EarthquakesHeader = (props: FilterProps) => {
-    return (
-        <div className={styles.earthquakesHeader}>
+        <div className={`${Classes.ELEVATION_0} ${styles.earthquakesList}`}>
             <div className={styles.earthquakesHeaderFilters}>
                 <div className={styles.mapTitle}>
                     <Icon icon="area-of-interest" />
@@ -235,13 +272,16 @@ const EarthquakesHeader = (props: FilterProps) => {
                     <Button type="button" icon="filter" minimal />
                 </Popover2>
             </div>
-            <div className={styles.earthquakesListLabels}>
-                <p className={Classes.TEXT_MUTED}>Date</p>
-                <p className={Classes.TEXT_MUTED}>Place</p>
-                <p className={Classes.TEXT_MUTED}>Prediction</p>
-                <p className={Classes.TEXT_MUTED}>Magnitude</p>
-                <p className={Classes.TEXT_MUTED}>Magnitude Type</p>
-                <p className={Classes.TEXT_MUTED}>Depth</p>
+            <div className={styles.earthquakesListCard}>
+                <div className={styles.earthquakesListLabels}>
+                    <p className={Classes.TEXT_MUTED}>Date</p>
+                    <p className={Classes.TEXT_MUTED}>Place</p>
+                    <p className={Classes.TEXT_MUTED}>Prediction</p>
+                    <p className={Classes.TEXT_MUTED}>Magnitude</p>
+                    <p className={Classes.TEXT_MUTED}>Magnitude Type</p>
+                    <p className={Classes.TEXT_MUTED}>Depth</p>
+                </div>
+                {query.isLoading ? <Loading /> : query.isError ? <Error message={query.error.message} /> : predictions}
             </div>
         </div>
     );

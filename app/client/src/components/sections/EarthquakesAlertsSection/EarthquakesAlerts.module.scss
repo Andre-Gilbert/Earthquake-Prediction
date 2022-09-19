@@ -14,15 +14,8 @@
 .card {
     width: 100%;
     padding: 0;
-    overflow-y: auto;
-    max-height: 100rem;
-}
-
-.header {
-    position: sticky;
-    top: 0;
-    z-index: $pt-z-index-content;
-    background-color: inherit;
+    border-radius: 2px;
+    background-color: #fff;
 }
 
 .headerFilters {
@@ -87,7 +80,16 @@
     margin-left: 10px;
 }
 
+.alertList {
+    overflow-y: auto;
+    max-height: calc(100rem - 5.1rem);
+}
+
 .alertLabels {
+    position: sticky;
+    top: 0;
+    z-index: $pt-z-index-content;
+    background-color: #fff;
     padding-block: 1rem;
     padding-left: 31px;
     padding-right: $pt-padding;
