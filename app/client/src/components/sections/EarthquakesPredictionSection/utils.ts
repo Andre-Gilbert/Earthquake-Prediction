@@ -1,4 +1,5 @@
 import { Classes } from '@blueprintjs/core';
+import { Prediction } from './EarthquakesPredictionSection';
 
 export function addScrollbarStyle() {
     const width = getScrollbarWidth();
@@ -22,4 +23,9 @@ function getScrollbarWidth() {
     document.body.removeChild(scrollDiv);
 
     return scrollbarWidth;
+}
+
+/** Filters data points with max distance of 156km to earthquake */
+export function filterCloseCoordinates(entry: Prediction, latitude: number, longitude: number) {
+    return Math.abs(entry.latitude - latitude) <= 0.01 && Math.abs(entry.longitude - longitude) <= 0.01;
 }

@@ -35,7 +35,7 @@ import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { z } from 'zod';
 import styles from './EarthquakesPrediction.module.scss';
-import { addScrollbarStyle } from './utils';
+import { addScrollbarStyle, filterCloseCoordinates } from './utils';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -47,7 +47,7 @@ const chartOptions = {
     },
     plugins: {
         legend: {
-            position: 'bottom' as const,
+            position: 'top' as const,
         },
     },
     stacked: false,
@@ -257,14 +257,17 @@ type FilterProps = {
 
 const Earthquakes = ({ query, ...props }: EarthquakesProps & FilterProps) => {
     const predictions = useMemo(
-        () => query.data?.predictions.map(earthquake => <ListItem key={earthquake.id} earthquake={earthquake} />),
+        () =>
+            query.data?.predictions.map(earthquake => (
+                <ListItem key={earthquake.id} earthquake={earthquake} queryData={query.data} />
+            )),
         [query.data],
     );
 
     return (
         <div className={`${Classes.ELEVATION_0} ${styles.earthquakesList}`}>
             <div className={styles.earthquakesHeaderFilters}>
-                <div className={styles.mapTitle}>
+                <div className={styles.chartTitle}>
                     <Icon icon="area-of-interest" />
                     <H5>Earthquakes Predictions</H5>
                 </div>
@@ -314,6 +317,18 @@ const FilterMenu = ({ handleSubmit, dateRange, handleDateChange }: FilterProps) 
     );
 };
 
+export interface Prediction {
+    time: string;
+    latitude: number;
+    longitude: number;
+    depth: number;
+    mag: number;
+    magType: string;
+    id: string;
+    place: string;
+    prediction: number;
+}
+
 type EarthquakePrediction = {
     earthquake: {
         time: string;
@@ -326,9 +341,12 @@ type EarthquakePrediction = {
         place: string;
         prediction: number;
     };
+    queryData: {
+        predictions: Prediction[];
+    };
 };
 
-const ListItem = ({ earthquake }: EarthquakePrediction) => {
+const ListItem = ({ earthquake, queryData }: EarthquakePrediction) => {
     const [isOpen, setIsOpen] = useState(false);
     const handleOpen = () => setIsOpen(true);
     const handleClose = () => setIsOpen(false);
@@ -355,46 +373,97 @@ const ListItem = ({ earthquake }: EarthquakePrediction) => {
                 isOpen={isOpen}
                 onClose={handleClose}
                 position={Position.RIGHT}
+                size="75%"
                 title={`${earthquake.id} - ${earthquake.place}`}
             >
-                <DrawerContent earthquake={earthquake} />
+                <DrawerContent earthquake={earthquake} queryData={queryData} />
             </Drawer>
         </>
     );
 };
 
-const DrawerContent = ({ earthquake }: EarthquakePrediction) => {
-    return (
-        <div className={`${Classes.DRAWER_BODY} ${styles.drawerBodyBackgroundColor}`}>
-            <div className={Classes.DIALOG_BODY}>
-                <div className={styles.drawerCardKPIFlex}>
-                    <Card className={styles.drawerCardKPI}>
-                        <H1>{earthquake.mag}</H1>
-                        <H5 className={styles.cardSubtitle}>Magnitude for the event</H5>
-                    </Card>
-                    <Card className={styles.drawerCardKPI}>
-                        <H1>{earthquake.prediction}</H1>
-                        <H5 className={styles.cardSubtitle}>Predicted Magnitude for the event</H5>
-                    </Card>
-                    <Card className={styles.drawerCardKPI}>
-                        <H1>{earthquake.depth}</H1>
-                        <H5 className={styles.cardSubtitle}>Depth of the event in kilometers</H5>
-                    </Card>
-                </div>
-                <Card className={styles.cardMap}>
-                    <MapHeader />
-                </Card>
-            </div>
-        </div>
-    );
+const drawerChartOptions = {
+    responsive: true,
+    interaction: {
+        mode: 'index' as const,
+        intersect: false,
+    },
+    plugins: {
+        legend: {
+            display: false,
+        },
+    },
+    scales: {
+        y: {
+            type: 'linear' as const,
+            display: true,
+            position: 'left' as const,
+        },
+    },
+    maintainAspectRatio: false,
 };
 
-const MapHeader = () => {
+const DrawerContent = ({ earthquake, queryData }: EarthquakePrediction) => {
+    const labels = useMemo(
+        () =>
+            queryData?.predictions.flatMap(entry =>
+                filterCloseCoordinates(entry, earthquake.latitude, earthquake.longitude)
+                    ? [moment(entry.time).format('DD/MM/YYYY, hh:mm:ss')]
+                    : [],
+            ),
+        [earthquake.latitude, earthquake.longitude, queryData],
+    );
+
+    const magnitudes = useMemo(
+        () =>
+            queryData?.predictions.flatMap(entry =>
+                filterCloseCoordinates(entry, earthquake.latitude, earthquake.longitude) ? [entry.mag] : [],
+            ),
+        [earthquake.latitude, earthquake.longitude, queryData],
+    );
+
+    const data = {
+        labels,
+        datasets: [
+            {
+                label: 'Magnitude',
+                data: magnitudes,
+                yAxisID: 'y',
+                borderColor: 'rgb(53, 162, 235, 0.75)',
+                backgroundColor: 'rgba(53, 162, 235, 0.5)',
+            },
+        ],
+    };
     return (
-        <div className={styles.mapHeader}>
-            <div className={styles.mapTitle}>
-                <Icon icon="map-marker" />
-                <H5>Location</H5>
+        <div className={`${Classes.DRAWER_BODY} ${styles.drawerContent}`}>
+            <div className={styles.drawerContainer}>
+                <div className={Classes.DIALOG_BODY}>
+                    <div className={styles.drawerCardKPIFlex}>
+                        <Card className={styles.drawerCardKPI}>
+                            <H1>{earthquake.mag}</H1>
+                            <H5 className={styles.cardSubtitle}>Magnitude for the event</H5>
+                        </Card>
+                        <Card className={styles.drawerCardKPI}>
+                            <H1>{earthquake.prediction}</H1>
+                            <H5 className={styles.cardSubtitle}>Predicted Magnitude for the event</H5>
+                        </Card>
+                        <Card className={styles.drawerCardKPI}>
+                            <H1>{earthquake.depth}</H1>
+                            <H5 className={styles.cardSubtitle}>Depth of the event in kilometers</H5>
+                        </Card>
+                    </div>
+                    <Card className={styles.drawerCardChart}>
+                        <div className={styles.drawerCardChartHeader}>
+                            <div className={styles.chartTitle}>
+                                <Icon icon="timeline-line-chart" />
+                                <H5>Magnitude of nearby Earthquakes</H5>
+                            </div>
+                        </div>
+                        <div className={styles.drawerChart}>
+                            <Line options={drawerChartOptions} data={data} height={520} />
+                        </div>
+                    </Card>
+                </div>
             </div>
         </div>
     );

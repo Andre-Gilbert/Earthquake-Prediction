@@ -164,8 +164,13 @@
     margin-left: 10px;
 }
 
-.drawerBodyBackgroundColor {
+.drawerContent {
     background-color: $pt-app-background-color;
+}
+
+.drawerContainer {
+    width: min(100%, 120rem);
+    margin-inline: auto;
 }
 
 .drawerCardKPIFlex {
@@ -183,22 +188,20 @@
     margin-bottom: 0;
 }
 
-.cardMap {
+.drawerCardChart {
     margin-top: 1.5rem;
     padding: 0;
 }
 
-.mapHeader {
+.drawerCardChartHeader {
     display: flex;
     justify-content: space-between;
-}
-
-.mapHeader {
     min-height: 5rem;
     padding: $pt-padding;
+    border-bottom: 1px solid $pt-divider-black;
 }
 
-.mapTitle {
+.chartTitle {
     display: flex;
     align-items: center;
 
@@ -212,10 +215,8 @@
     }
 }
 
-.map {
-    width: 100%;
-    min-height: calc(50rem - 5rem);
-    z-index: 0;
+.drawerChart {
+    padding: $pt-padding;
 }
 
 .listItemLoading {

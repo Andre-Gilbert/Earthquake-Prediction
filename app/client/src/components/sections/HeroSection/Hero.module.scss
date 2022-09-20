@@ -9,10 +9,12 @@
 
 .title {
     text-align: center;
+    margin-bottom: 2rem;
 }
 
 .subtitle {
     text-align: center;
+    margin-bottom: 2rem;
 }
 
 .btn {
@@ -20,7 +22,9 @@
     display: flex;
     justify-content: center;
 }
+
 .login {
+    min-width: 15rem;
     padding: 0;
     display: inline-flex;
     align-items: center;
@@ -44,7 +48,8 @@
 }
 
 .btnText {
-    margin-inline: 1.5rem;
+    flex: 1 1 auto;
+    font-weight: 600;
     margin-bottom: 0;
 }
 
