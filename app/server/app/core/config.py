@@ -1,5 +1,4 @@
 """API configuration."""
-
 from pydantic import AnyHttpUrl, BaseSettings, validator
 
 
