@@ -37,8 +37,9 @@
     padding: 0;
 }
 
-.chartHeader {
-    padding: 1rem $pt-padding;
+.chartHeader,
+.listHeader {
+    padding: $pt-padding;
     border-bottom: 1px solid $pt-divider-black;
 }
 
@@ -46,20 +47,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.chartTitle {
-    display: flex;
-    align-items: center;
-
-    span {
-        color: $pt-text-color-muted;
-    }
-
-    h5 {
-        margin-left: 10px;
-        margin-bottom: 0;
-    }
 }
 
 .chart {
@@ -169,7 +156,7 @@
 }
 
 .drawerContainer {
-    width: min(100%, 120rem);
+    width: min(100%, 160rem);
     margin-inline: auto;
 }
 
@@ -201,7 +188,7 @@
     border-bottom: 1px solid $pt-divider-black;
 }
 
-.chartTitle {
+.cardTitle {
     display: flex;
     align-items: center;
 
@@ -217,6 +204,37 @@
 
 .drawerChart {
     padding: $pt-padding;
+}
+
+.drawerPredictions {
+    margin-top: 1.5rem;
+    padding: 0;
+}
+
+.drawerPredictionsTitle {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid $pt-divider-black;
+    padding: $pt-padding;
+
+    span {
+        color: $pt-text-color-muted;
+    }
+
+    h5 {
+        margin-left: 10px;
+        margin-bottom: 0;
+    }
+}
+
+.drawerListItem {
+    padding: $pt-padding;
+    display: flex;
+    align-items: center;
+
+    &:not(:last-of-type) {
+        border-bottom: 1px solid $pt-divider-black;
+    }
 }
 
 .listItemLoading {

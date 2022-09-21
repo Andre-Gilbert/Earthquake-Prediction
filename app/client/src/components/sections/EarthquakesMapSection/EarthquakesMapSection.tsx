@@ -1,7 +1,7 @@
-import { Button, Card, FormGroup, H5, Icon, Intent, Menu, MenuDivider, NumericInput, Toaster } from '@blueprintjs/core';
+import { Button, Card, FormGroup, H5, Icon, Menu, MenuDivider, NumericInput } from '@blueprintjs/core';
 import { Classes, Popover2 } from '@blueprintjs/popover2';
 import { MAX_DATE, MIN_DATE } from '@common/date';
-
+import { showToast } from '@common/Toast';
 import { usgsInstance } from '@config/axios';
 import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
@@ -12,8 +12,6 @@ import styles from './EarthquakesMap.module.scss';
 const Map = dynamic(() => import('./Map'), {
     ssr: false,
 });
-
-const toaster = typeof window !== 'undefined' ? Toaster.create() : null;
 
 const MIN_LATITUDE = -90;
 const MAX_LATITUDE = 90;
@@ -67,17 +65,6 @@ export const EarthquakesMapSection = () => {
             const { sumlongitude, ...data } = parsed.data;
             setQueryParams(data);
         }
-    };
-
-    const showToast = (path: (string | number)[] | string, message: string) => {
-        toaster?.show({
-            message: (
-                <>
-                    <b>{path}</b>: {message}
-                </>
-            ),
-            intent: Intent.DANGER,
-        });
     };
 
     return (

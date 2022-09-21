@@ -2,6 +2,7 @@ import { Button, Checkbox, Classes, H1, H5, Icon, Menu, MenuDivider } from '@blu
 import { DateRange, DateRangePicker } from '@blueprintjs/datetime';
 import { Classes as Popover2Classes, Popover2, Tooltip2 } from '@blueprintjs/popover2';
 import { MAX_DATE, MIN_DATE } from '@common/date';
+import { showToast } from '@common/Toast';
 import { getMagnitudeTypeTooltip, MagnitudeTooltipContent } from '@common/Tooltip';
 import { usgsInstance } from '@config/axios';
 import { useQueries } from '@tanstack/react-query';
@@ -29,6 +30,10 @@ export const EarthquakesAlertsSection = () => {
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        if (dateRange[0] === null || dateRange[1] === null) {
+            showToast('date range', 'Range must be greater than 1');
+            return;
+        }
         const newAlertLevels = new Set(alertLevels);
         greenAlert ? newAlertLevels.add('green') : newAlertLevels.delete('green');
         yellowAlert ? newAlertLevels.add('yellow') : newAlertLevels.delete('yellow');

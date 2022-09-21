@@ -13,7 +13,7 @@
 
 .card {
     width: 100%;
-    min-height: 100rem;
+    min-height: 80rem;
     padding: 0;
 }
 
@@ -39,7 +39,7 @@
 
 .map {
     width: 100%;
-    min-height: calc(100rem - 5rem);
+    min-height: calc(80rem - 5rem);
     display: grid;
     place-items: center;
     z-index: 0;

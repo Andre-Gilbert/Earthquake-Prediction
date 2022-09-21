@@ -14,9 +14,9 @@ import {
     SpinnerSize,
 } from '@blueprintjs/core';
 import { DateRange, DateRangePicker } from '@blueprintjs/datetime';
-import { Classes as Popover2Classes, MenuItem2, Popover2, Tooltip2 } from '@blueprintjs/popover2';
-import { ItemPredicate, ItemRenderer, Select2 } from '@blueprintjs/select';
+import { Classes as Popover2Classes, Popover2, Tooltip2 } from '@blueprintjs/popover2';
 import { MAX_DATE, MIN_DATE } from '@common/date';
+import { showToast } from '@common/Toast';
 import { getMagnitudeTypeTooltip, MagnitudeTooltipContent } from '@common/Tooltip';
 import { apiInstance } from '@config/axios';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
@@ -31,7 +31,7 @@ import {
     Tooltip,
 } from 'chart.js';
 import moment from 'moment';
-import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { z } from 'zod';
 import styles from './EarthquakesPrediction.module.scss';
@@ -78,6 +78,10 @@ export const EarthquakesPredictionSection = () => {
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        if (dateRange[0] === null || dateRange[1] === null) {
+            showToast('date range', 'Range must be greater than 1');
+            return;
+        }
         setQueryParams([dateRange[0], dateRange[1]]);
     };
 
@@ -124,27 +128,42 @@ export const EarthquakesPredictionSection = () => {
 
     return (
         <>
-            <Header />
+            <div className={`${Classes.ELEVATION_0} ${styles.header}`}>
+                <div className={styles.headerContainer}>
+                    <H1 className={styles.title}>Explore Earthquakes</H1>
+                    <p className={styles.subtitle}>
+                        Earthquakes are a space to explore magnitude predictions and analyze nearby earthquakes by
+                        selecting an object.
+                    </p>
+                    <Popover2
+                        content={
+                            <FilterMenu
+                                dateRange={dateRange}
+                                handleDateChange={handleDateChange}
+                                handleSubmit={handleSubmit}
+                            />
+                        }
+                        placement="bottom"
+                        fill
+                    >
+                        <Button
+                            text={`${moment(dateRange[0]).format('DD/MM/YYYY')} - ${moment(dateRange[1]).format(
+                                'DD/MM/YYYY',
+                            )}`}
+                            type="button"
+                            alignText={Alignment.LEFT}
+                            rightIcon="caret-down"
+                            fill
+                        />
+                    </Popover2>
+                </div>
+            </div>
             <div className={styles.container}>
                 <Card className={styles.earthquakesChart}>
                     <div className={styles.chartHeader}>
-                        <div className={styles.chartFlex}>
-                            <div className={styles.chartTitle}>
-                                <Icon icon="timeline-line-chart" />
-                                <H5>Magnitude vs. Prediction</H5>
-                            </div>
-                            <Popover2
-                                content={
-                                    <FilterMenu
-                                        handleSubmit={handleSubmit}
-                                        dateRange={dateRange}
-                                        handleDateChange={handleDateChange}
-                                    />
-                                }
-                                placement="bottom-end"
-                            >
-                                <Button type="button" icon="filter" minimal />
-                            </Popover2>
+                        <div className={styles.cardTitle}>
+                            <Icon icon="timeline-line-chart" />
+                            <H5>Magnitude vs. Prediction</H5>
                         </div>
                     </div>
                     <div className={styles.chart}>
@@ -161,87 +180,9 @@ export const EarthquakesPredictionSection = () => {
                         )}
                     </div>
                 </Card>
-                <Earthquakes
-                    query={earthquakesPredictionQuery}
-                    handleSubmit={handleSubmit}
-                    dateRange={dateRange}
-                    handleDateChange={handleDateChange}
-                />
+                <Earthquakes query={earthquakesPredictionQuery} />
             </div>
         </>
-    );
-};
-
-interface Region {
-    name: string;
-}
-
-const REGIONS: Region[] = [{ name: 'All Regions' }, { name: 'USA' }, { name: 'Europe' }];
-
-const Header = () => {
-    const [regions, setRegions] = useState([...REGIONS]);
-    const [selectedRegion, setSelectedRegion] = useState(REGIONS[0]);
-
-    const handleItemSelect = useCallback(
-        (region: Region) => {
-            setSelectedRegion(region);
-            setRegions(regions);
-        },
-        [regions],
-    );
-
-    const renderRegion = useCallback<ItemRenderer<Region>>(
-        (region, props) => {
-            if (!props.modifiers.matchesPredicate) return null;
-            return (
-                <MenuItem2
-                    active={props.modifiers.active}
-                    text={region.name}
-                    roleStructure="listoption"
-                    onClick={props.handleClick}
-                    selected={region === selectedRegion}
-                />
-            );
-        },
-        [selectedRegion],
-    );
-
-    const filterRegion: ItemPredicate<Region> = (query, region, _index, exactMatch) => {
-        const normalizedTitle = region.name.toLowerCase();
-        const normalizedQuery = query.toLowerCase();
-
-        if (exactMatch) {
-            return normalizedTitle === normalizedQuery;
-        } else {
-            return `${normalizedTitle}`.indexOf(normalizedQuery) >= 0;
-        }
-    };
-
-    return (
-        <div className={`${Classes.ELEVATION_0} ${styles.header}`}>
-            <div className={styles.headerContainer}>
-                <H1 className={styles.title}>Explore Earthquakes</H1>
-                <p className={styles.subtitle}>Allows one to explore ...</p>
-                <Select2
-                    className={styles.select}
-                    items={regions}
-                    itemPredicate={filterRegion}
-                    itemRenderer={renderRegion}
-                    onItemSelect={handleItemSelect}
-                    noResults={<MenuItem2 disabled text="No results." roleStructure="listoption" />}
-                    popoverProps={{ placement: 'auto', matchTargetWidth: true }}
-                    fill
-                >
-                    <Button
-                        className={styles.btnSelect}
-                        text={selectedRegion ? selectedRegion.name : '(No selection)'}
-                        alignText={Alignment.LEFT}
-                        rightIcon="caret-down"
-                        fill
-                    />
-                </Select2>
-            </div>
-        </div>
     );
 };
 
@@ -249,13 +190,7 @@ type EarthquakesProps = {
     query: UseQueryResult<EarthquakesPrediction, Error>;
 };
 
-type FilterProps = {
-    handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
-    dateRange: DateRange;
-    handleDateChange: (dateRange: DateRange) => void;
-};
-
-const Earthquakes = ({ query, ...props }: EarthquakesProps & FilterProps) => {
+const Earthquakes = ({ query }: EarthquakesProps) => {
     const predictions = useMemo(
         () =>
             query.data?.predictions.map(earthquake => (
@@ -266,14 +201,11 @@ const Earthquakes = ({ query, ...props }: EarthquakesProps & FilterProps) => {
 
     return (
         <div className={`${Classes.ELEVATION_0} ${styles.earthquakesList}`}>
-            <div className={styles.earthquakesHeaderFilters}>
-                <div className={styles.chartTitle}>
+            <div className={styles.listHeader}>
+                <div className={styles.cardTitle}>
                     <Icon icon="area-of-interest" />
                     <H5>Earthquakes Predictions</H5>
                 </div>
-                <Popover2 content={<FilterMenu {...props} />} placement="bottom-end">
-                    <Button type="button" icon="filter" minimal />
-                </Popover2>
             </div>
             <div className={styles.earthquakesListCard}>
                 <div className={styles.earthquakesListLabels}>
@@ -290,6 +222,12 @@ const Earthquakes = ({ query, ...props }: EarthquakesProps & FilterProps) => {
     );
 };
 
+type FilterProps = {
+    handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
+    dateRange: DateRange;
+    handleDateChange: (dateRange: DateRange) => void;
+};
+
 const FilterMenu = ({ handleSubmit, dateRange, handleDateChange }: FilterProps) => {
     return (
         <Menu>
@@ -299,8 +237,6 @@ const FilterMenu = ({ handleSubmit, dateRange, handleDateChange }: FilterProps) 
                     defaultValue={dateRange}
                     minDate={MIN_DATE}
                     maxDate={MAX_DATE}
-                    singleMonthOnly
-                    shortcuts={false}
                     onChange={handleDateChange}
                 />
                 <div className={styles.btnForm}>
@@ -330,17 +266,7 @@ export interface Prediction {
 }
 
 type EarthquakePrediction = {
-    earthquake: {
-        time: string;
-        latitude: number;
-        longitude: number;
-        depth: number;
-        mag: number;
-        magType: string;
-        id: string;
-        place: string;
-        prediction: number;
-    };
+    earthquake: Prediction;
     queryData: {
         predictions: Prediction[];
     };
@@ -350,6 +276,14 @@ const ListItem = ({ earthquake, queryData }: EarthquakePrediction) => {
     const [isOpen, setIsOpen] = useState(false);
     const handleOpen = () => setIsOpen(true);
     const handleClose = () => setIsOpen(false);
+
+    const filteredQueryData = useMemo(
+        () =>
+            queryData?.predictions.flatMap(entry =>
+                filterCloseCoordinates(entry, earthquake.latitude, earthquake.longitude) ? [entry] : [],
+            ),
+        [earthquake.latitude, earthquake.longitude, queryData],
+    );
 
     return (
         <>
@@ -376,7 +310,7 @@ const ListItem = ({ earthquake, queryData }: EarthquakePrediction) => {
                 size="75%"
                 title={`${earthquake.id} - ${earthquake.place}`}
             >
-                <DrawerContent earthquake={earthquake} queryData={queryData} />
+                <DrawerContent earthquake={earthquake} queryData={filteredQueryData} />
             </Drawer>
         </>
     );
@@ -403,24 +337,13 @@ const drawerChartOptions = {
     maintainAspectRatio: false,
 };
 
-const DrawerContent = ({ earthquake, queryData }: EarthquakePrediction) => {
+const DrawerContent = ({ earthquake, queryData }: { earthquake: Prediction; queryData: Prediction[] }) => {
     const labels = useMemo(
-        () =>
-            queryData?.predictions.flatMap(entry =>
-                filterCloseCoordinates(entry, earthquake.latitude, earthquake.longitude)
-                    ? [moment(entry.time).format('DD/MM/YYYY, hh:mm:ss')]
-                    : [],
-            ),
-        [earthquake.latitude, earthquake.longitude, queryData],
+        () => queryData.map(earthquake => moment(earthquake.time).format('DD/MM/YYYY, hh:mm:ss')),
+        [queryData],
     );
 
-    const magnitudes = useMemo(
-        () =>
-            queryData?.predictions.flatMap(entry =>
-                filterCloseCoordinates(entry, earthquake.latitude, earthquake.longitude) ? [entry.mag] : [],
-            ),
-        [earthquake.latitude, earthquake.longitude, queryData],
-    );
+    const magnitudes = useMemo(() => queryData.map(earthquake => earthquake.mag), [queryData]);
 
     const data = {
         labels,
@@ -434,6 +357,12 @@ const DrawerContent = ({ earthquake, queryData }: EarthquakePrediction) => {
             },
         ],
     };
+
+    const predictions = useMemo(
+        () => queryData.map(earthquake => <DrawerListItem key={earthquake.id} earthquake={earthquake} />),
+        [queryData],
+    );
+
     return (
         <div className={`${Classes.DRAWER_BODY} ${styles.drawerContent}`}>
             <div className={styles.drawerContainer}>
@@ -456,15 +385,53 @@ const DrawerContent = ({ earthquake, queryData }: EarthquakePrediction) => {
                         <div className={styles.drawerCardChartHeader}>
                             <div className={styles.chartTitle}>
                                 <Icon icon="timeline-line-chart" />
-                                <H5>Magnitude of nearby Earthquakes</H5>
+                                <H5>Magnitude of Earthquakes within 150km</H5>
                             </div>
                         </div>
                         <div className={styles.drawerChart}>
                             <Line options={drawerChartOptions} data={data} height={520} />
                         </div>
                     </Card>
+                    <Card className={styles.drawerPredictions}>
+                        <div className={styles.drawerPredictionsTitle}>
+                            <Icon icon="area-of-interest" />
+                            <H5>Earthquakes within 150km</H5>
+                        </div>
+                        <div className={styles.earthquakesListCard}>
+                            <div className={styles.earthquakesListLabels}>
+                                <p className={Classes.TEXT_MUTED}>Date</p>
+                                <p className={Classes.TEXT_MUTED}>Place</p>
+                                <p className={Classes.TEXT_MUTED}>Prediction</p>
+                                <p className={Classes.TEXT_MUTED}>Magnitude</p>
+                                <p className={Classes.TEXT_MUTED}>Magnitude Type</p>
+                                <p className={Classes.TEXT_MUTED}>Depth</p>
+                            </div>
+                            {predictions}
+                        </div>
+                    </Card>
                 </div>
             </div>
+        </div>
+    );
+};
+
+const DrawerListItem = ({ earthquake }: { earthquake: Prediction }) => {
+    return (
+        <div className={styles.drawerListItem}>
+            <Icon icon="info-sign" intent="primary" />
+            <div className={styles.listItemContent}>{moment(earthquake.time).format('DD/MM/YYYY, hh:mm:ss')}</div>
+            <div className={styles.listItemContent}>{earthquake.place}</div>
+            <div className={styles.listItemContent}>{earthquake.prediction}</div>
+            <div className={styles.listItemContent}>{earthquake.mag}</div>
+            <div className={styles.listItemContent}>
+                <Tooltip2
+                    position="left"
+                    content={<MagnitudeTooltipContent {...getMagnitudeTypeTooltip(earthquake.magType)} />}
+                >
+                    {earthquake.magType}
+                </Tooltip2>
+            </div>
+            <div className={styles.listItemContent}>{earthquake.depth}</div>
         </div>
     );
 };
