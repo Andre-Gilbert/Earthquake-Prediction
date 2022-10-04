@@ -1,5 +1,6 @@
 import type { NextComponentType, NextPageContext } from 'next';
 import type { Session } from 'next-auth';
+import { DefaultSession } from 'next-auth';
 import type { Router } from 'next/router';
 
 declare module 'next/app' {
@@ -12,4 +13,11 @@ declare module 'next/app' {
             session?: Session;
         };
     };
+}
+declare module 'next-auth' {
+    interface Session {
+        user?: {
+            id: string;
+        } & DefaultSession['user'];
+    }
 }
