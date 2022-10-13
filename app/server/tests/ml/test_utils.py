@@ -14,10 +14,3 @@ def test_normalize_df() -> None:
     for col in normalized_df.columns:
         assert normalized_df[col].min() == 0
         assert normalized_df[col].max() == 1
-
-    denormalized_df = normalize_df(normalized_df, columns=df.columns, revert=True)
-    for col in denormalized_df.columns:
-        assert denormalized_df[col].min() != 0
-        assert denormalized_df[col].max() != 1
-
-    assert denormalized_df.equals(df)

@@ -12,7 +12,6 @@ _SCALER = MinMaxScaler()
 def get_earthquakes_data(base_url: str, date_range: dict[str, str]) -> pd.DataFrame:
     _PARAMS.update(date_range)
     url = build_url(base_url, _PARAMS)
-    print(url)
     return pd.read_csv(url)
 
 
@@ -24,10 +23,6 @@ def parse_df(df: pd.DataFrame) -> dict[str, Any]:
     return df.to_dict(orient='records')
 
 
-def normalize_df(df: pd.DataFrame, columns: list[str], revert: bool = False) -> pd.DataFrame:
-    if revert:
-        df[columns] = _SCALER.inverse_transform(df[columns])
-    else:
-        df[columns] = _SCALER.fit_transform(df[columns])
-
+def normalize_df(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
+    df[columns] = _SCALER.fit_transform(df[columns])
     return df
