@@ -191,7 +191,7 @@ type EarthquakesProps = {
 };
 
 const Earthquakes = ({ query }: EarthquakesProps) => {
-    const predictions = useMemo(
+    const listItems = useMemo(
         () =>
             query.data?.predictions.map(earthquake => (
                 <ListItem key={earthquake.id} earthquake={earthquake} queryData={query.data} />
@@ -216,7 +216,7 @@ const Earthquakes = ({ query }: EarthquakesProps) => {
                     <p className={Classes.TEXT_MUTED}>Magnitude Type</p>
                     <p className={Classes.TEXT_MUTED}>Depth</p>
                 </div>
-                {query.isLoading ? <Loading /> : query.isError ? <Error message={query.error.message} /> : predictions}
+                {query.isLoading ? <Loading /> : query.isError ? <Error message={query.error.message} /> : listItems}
             </div>
         </div>
     );
@@ -316,32 +316,13 @@ const ListItem = ({ earthquake, queryData }: EarthquakePrediction) => {
     );
 };
 
-const drawerChartOptions = {
-    responsive: true,
-    interaction: {
-        mode: 'index' as const,
-        intersect: false,
-    },
-    plugins: {
-        legend: {
-            display: false,
-        },
-    },
-    scales: {
-        y: {
-            type: 'linear' as const,
-            display: true,
-            position: 'left' as const,
-        },
-    },
-    maintainAspectRatio: false,
-};
-
 const DrawerContent = ({ earthquake, queryData }: { earthquake: Prediction; queryData: Prediction[] }) => {
     const labels = useMemo(
         () => queryData.map(earthquake => moment(earthquake.time).format('DD/MM/YYYY, hh:mm:ss')),
         [queryData],
     );
+
+    const predictions = useMemo(() => queryData.map(earthquake => earthquake.prediction), [queryData]);
 
     const magnitudes = useMemo(() => queryData.map(earthquake => earthquake.mag), [queryData]);
 
@@ -349,16 +330,23 @@ const DrawerContent = ({ earthquake, queryData }: { earthquake: Prediction; quer
         labels,
         datasets: [
             {
+                label: 'Prediction',
+                data: predictions,
+                yAxisID: 'y',
+                borderColor: 'rgb(255, 99, 132, 0.75)',
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            },
+            {
                 label: 'Magnitude',
                 data: magnitudes,
-                yAxisID: 'y',
+                yAxisID: 'y1',
                 borderColor: 'rgb(53, 162, 235, 0.75)',
                 backgroundColor: 'rgba(53, 162, 235, 0.5)',
             },
         ],
     };
 
-    const predictions = useMemo(
+    const listItems = useMemo(
         () => queryData.map(earthquake => <DrawerListItem key={earthquake.id} earthquake={earthquake} />),
         [queryData],
     );
@@ -389,7 +377,7 @@ const DrawerContent = ({ earthquake, queryData }: { earthquake: Prediction; quer
                             </div>
                         </div>
                         <div className={styles.drawerChart}>
-                            <Line options={drawerChartOptions} data={data} height={520} />
+                            <Line options={chartOptions} data={data} height={520} />
                         </div>
                     </Card>
                     <Card className={styles.drawerPredictions}>
@@ -406,7 +394,7 @@ const DrawerContent = ({ earthquake, queryData }: { earthquake: Prediction; quer
                                 <p className={Classes.TEXT_MUTED}>Magnitude Type</p>
                                 <p className={Classes.TEXT_MUTED}>Depth</p>
                             </div>
-                            {predictions}
+                            {listItems}
                         </div>
                     </Card>
                 </div>
