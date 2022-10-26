@@ -1,4 +1,5 @@
 """Earthquake endpoint."""
+import datetime
 from typing import Any
 
 from app.core.config import settings
@@ -12,7 +13,7 @@ router = APIRouter()
 
 class Earthquake(BaseModel):
     """List object of the PredictMagnitudes response model."""
-    time: str
+    time: datetime.datetime
     latitude: float
     longitude: float
     depth: float
