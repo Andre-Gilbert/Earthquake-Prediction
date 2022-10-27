@@ -10,48 +10,16 @@ _MODEL_FILE = os.path.join(os.path.dirname(__file__), 'model')
 class MLModel:
     """ML model that predicts the magnitude of earthquakes."""
     _FEATURES = [
-        'dayofyear',
-        'hour',
-        'dayofweek',
-        'month',
-        'season',
-        'year',
-        'mag_5d_lag',
-        'mag_10d_lag',
-        'mag_15d_lag',
-        'mag_5d_avg',
-        'mag_10d_avg',
-        'mag_15d_avg',
-        'mag_5d_min',
-        'mag_10d_min',
-        'mag_15d_min',
-        'mag_5d_max',
-        'mag_10d_max',
-        'mag_15d_max',
-        'mag_5d_std',
-        'mag_10d_std',
-        'mag_15d_std',
-        'depth_5d_lag',
-        'depth_10d_lag',
-        'depth_15d_lag',
-        'depth_5d_avg',
-        'depth_10d_avg',
-        'depth_15d_avg',
-        'depth_5d_min',
-        'depth_10d_min',
-        'depth_15d_min',
-        'depth_5d_max',
-        'depth_10d_max',
-        'depth_15d_max',
-        'depth_5d_std',
-        'depth_10d_std',
-        'depth_15d_std',
-        'latitude',
-        'longitude',
+        'dayofyear', 'hour', 'dayofweek', 'month', 'season', 'year', 'mag_5d_lag', 'mag_10d_lag', 'mag_15d_lag',
+        'mag_5d_avg', 'mag_10d_avg', 'mag_15d_avg', 'mag_5d_min', 'mag_10d_min', 'mag_15d_min', 'mag_5d_max',
+        'mag_10d_max', 'mag_15d_max', 'mag_5d_std', 'mag_10d_std', 'mag_15d_std', 'depth_5d_lag', 'depth_10d_lag',
+        'depth_15d_lag', 'depth_5d_avg', 'depth_10d_avg', 'depth_15d_avg', 'depth_5d_min', 'depth_10d_min',
+        'depth_15d_min', 'depth_5d_max', 'depth_10d_max', 'depth_15d_max', 'depth_5d_std', 'depth_10d_std',
+        'depth_15d_std', 'latitude', 'longitude', 'place'
     ]
 
     def __init__(self):
-        self._model = CatBoostRegressor()
+        self._model = CatBoostRegressor(cat_features='place')
         self._model.load_model(_MODEL_FILE)
 
     def predict(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -63,9 +31,17 @@ class MLModel:
         df = self._preprocess_data(df)
 
         prediction = self._model.predict(df[self._FEATURES]).round(6)
-        df_pred = df[['latitude', 'longitude', 'depth', 'mag', 'magType', 'id', 'place']]
-        df_pred['time'] = df.index.copy()
-        df_pred['prediction'] = prediction
+        df_pred = pd.DataFrame({
+            'time': df.index,
+            'prediction': prediction,
+            'latitude': df.latitude,
+            'longitude': df.longitude,
+            'depth': df.depth,
+            'mag': df.mag,
+            'magType': df.magType,
+            'id': df.id,
+            'place': df.place,
+        })
         return df_pred[::-1]
 
     def _preprocess_data(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -95,51 +71,41 @@ class MLModel:
         return df
 
     def _add_lags(self, df: pd.DataFrame) -> pd.DataFrame:
-        df = pd.concat({f'mag_{i}eq_lag': df.mag.shift(i) for i in range(5, 16, 5)}, axis=1)
-        df = pd.concat({f'depth_{i}eq_lag': df.depth.shift(i) for i in range(5, 16, 5)}, axis=1)
+        df['mag_5d_lag'] = df.mag.shift(5)
+        df['mag_10d_lag'] = df.mag.shift(10)
+        df['mag_15d_lag'] = df.mag.shift(15)
+
+        df['depth_5d_lag'] = df.depth.shift(5)
+        df['depth_10d_lag'] = df.depth.shift(10)
+        df['depth_15d_lag'] = df.depth.shift(15)
         return df
 
     def _add_rolling_windows(self, df: pd.DataFrame) -> pd.DataFrame:
-        df = pd.concat(
-            {f'mag_{i}eq_avg': df.mag.rolling(window=i, center=False).mean() for i in range(5, 16, 5)},
-            axis=1,
-        )
+        df['mag_5d_avg'] = df.mag.rolling(window=5, center=False).mean()
+        df['mag_10d_avg'] = df.mag.rolling(window=10, center=False).mean()
+        df['mag_15d_avg'] = df.mag.rolling(window=15, center=False).mean()
+        df['mag_5d_min'] = df.mag.rolling(window=5, center=False).min()
+        df['mag_10d_min'] = df.mag.rolling(window=10, center=False).min()
+        df['mag_15d_min'] = df.mag.rolling(window=15, center=False).min()
+        df['mag_5d_max'] = df.mag.rolling(window=5, center=False).max()
+        df['mag_10d_max'] = df.mag.rolling(window=10, center=False).max()
+        df['mag_15d_max'] = df.mag.rolling(window=15, center=False).max()
+        df['mag_5d_std'] = df.mag.rolling(window=5, center=False).std()
+        df['mag_10d_std'] = df.mag.rolling(window=10, center=False).std()
+        df['mag_15d_std'] = df.mag.rolling(window=15, center=False).std()
 
-        df = pd.concat(
-            {f'mag_{i}eq_min': df.mag.rolling(window=i, center=False).min() for i in range(5, 16, 5)},
-            axis=1,
-        )
-
-        df = pd.concat(
-            {f'mag_{i}eq_max': df.mag.rolling(window=i, center=False).max() for i in range(5, 16, 5)},
-            axis=1,
-        )
-
-        df = pd.concat(
-            {f'mag_{i}eq_std': df.mag.rolling(window=i, center=False).std() for i in range(5, 16, 5)},
-            axis=1,
-        )
-
-        df = pd.concat(
-            {f'depth_{i}eq_avg': df.depth.rolling(window=i, center=False).mean() for i in range(5, 16, 5)},
-            axis=1,
-        )
-
-        df = pd.concat(
-            {f'depth_{i}eq_min': df.depth.rolling(window=i, center=False).min() for i in range(5, 16, 5)},
-            axis=1,
-        )
-
-        df = pd.concat(
-            {f'depth_{i}eq_max': df.depth.rolling(window=i, center=False).max() for i in range(5, 16, 5)},
-            axis=1,
-        )
-
-        df = pd.concat(
-            {f'depth_{i}eq_std': df.depth.rolling(window=i, center=False).std() for i in range(5, 16, 5)},
-            axis=1,
-        )
-
+        df['depth_5d_avg'] = df.depth.rolling(window=5, center=False).mean()
+        df['depth_10d_avg'] = df.depth.rolling(window=10, center=False).mean()
+        df['depth_15d_avg'] = df.depth.rolling(window=15, center=False).mean()
+        df['depth_5d_min'] = df.depth.rolling(window=5, center=False).min()
+        df['depth_10d_min'] = df.depth.rolling(window=10, center=False).min()
+        df['depth_15d_min'] = df.depth.rolling(window=15, center=False).min()
+        df['depth_5d_max'] = df.depth.rolling(window=5, center=False).max()
+        df['depth_10d_max'] = df.depth.rolling(window=10, center=False).max()
+        df['depth_15d_max'] = df.depth.rolling(window=15, center=False).max()
+        df['depth_5d_std'] = df.depth.rolling(window=5, center=False).std()
+        df['depth_10d_std'] = df.depth.rolling(window=10, center=False).std()
+        df['depth_15d_std'] = df.depth.rolling(window=15, center=False).std()
         return df
 
 
