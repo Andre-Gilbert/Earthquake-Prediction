@@ -3,24 +3,78 @@
 
 .hero {
     width: 100%;
-    min-height: 55rem;
-    padding: 10rem 1.5rem;
+    min-height: 30rem;
+    padding: 8.5rem 1.5rem;
+}
+
+.container {
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: center;
+    min-height: 320px;
+}
+
+.textContainer {
+    align-items: center;
+    display: flex;
+    flex: 1 1 50%;
+
+    @media (min-width: $pt-breakpoint-md) {
+        margin: 0 50px 0 0;
+        padding: 0 0 0 20px;
+    }
+}
+
+.text {
+    max-width: 500px;
+    margin-inline: auto;
+    transition: margin 0.4s;
+    width: 100%;
+
+    @media (min-width: $pt-breakpoint-md) {
+        margin: 0 0 0 auto;
+    }
+}
+
+.appDesign {
+    display: none;
+
+    @media (min-width: $pt-breakpoint-md) {
+        align-items: center;
+        display: flex;
+        flex: 1 1 50%;
+        position: relative;
+    }
 }
 
 .title {
     text-align: center;
     margin-bottom: 2rem;
+
+    @media (min-width: $pt-breakpoint-md) {
+        text-align: left;
+    }
 }
 
 .subtitle {
+    font-size: 1.6rem;
     text-align: center;
     margin-bottom: 2rem;
+    margin-inline: auto;
+
+    @media (min-width: $pt-breakpoint-md) {
+        text-align: left;
+    }
 }
 
 .btn {
     width: 100%;
     display: flex;
     justify-content: center;
+
+    @media (min-width: $pt-breakpoint-md) {
+        justify-content: flex-start;
+    }
 }
 
 .login {
@@ -58,6 +112,6 @@
     position: absolute;
     top: 0;
     width: 100%;
-    height: 60rem;
-    background: linear-gradient(rgb(0, 0, 43) 0%, rgb(53, 20, 148) 100%);
+    height: 54rem;
+    background: linear-gradient(-90deg, #02203c, #001528);
 }

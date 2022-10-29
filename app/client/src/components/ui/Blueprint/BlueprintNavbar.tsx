@@ -2,7 +2,6 @@
 import Profile from '@assets/profile.svg';
 import {
     Alignment,
-    AnchorButton,
     Button,
     Classes,
     Drawer,
@@ -31,7 +30,7 @@ export const BlueprintNavbar = () => {
                 <MobileDrawer pathname={router.pathname} />
                 <Navbar.Heading className={styles.title}>Earthquake Prediction</Navbar.Heading>
                 <Link href="/dashboard" passHref>
-                    <AnchorButton
+                    <Button
                         className={styles.btn}
                         type="button"
                         icon="geolocation"
@@ -41,7 +40,7 @@ export const BlueprintNavbar = () => {
                     />
                 </Link>
                 <Link href="/earthquakes" passHref>
-                    <AnchorButton
+                    <Button
                         className={styles.btn}
                         type="button"
                         icon="globe"
@@ -100,7 +99,7 @@ const MobileDrawer = ({ pathname }: { pathname: string }) => {
                 <div className={Classes.DRAWER_BODY}>
                     <div className={Classes.DIALOG_BODY}>
                         <Link href="/dashboard" passHref>
-                            <AnchorButton
+                            <Button
                                 alignText={Alignment.LEFT}
                                 text="Overview"
                                 icon="geolocation"
@@ -111,7 +110,7 @@ const MobileDrawer = ({ pathname }: { pathname: string }) => {
                             />
                         </Link>
                         <Link href="/earthquakes" passHref>
-                            <AnchorButton
+                            <Button
                                 alignText={Alignment.LEFT}
                                 text="Earthquakes"
                                 icon="globe"

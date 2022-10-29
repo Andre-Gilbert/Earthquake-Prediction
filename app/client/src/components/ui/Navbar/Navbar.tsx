@@ -9,10 +9,8 @@ export const Navbar = () => {
         <div className={styles.navbar}>
             <div className={`${Classes.DARK} ${styles.container}`}>
                 <p className={styles.logo}>Earthquake Prediction</p>
-                <Link href="https://github.com/Andre-Gilbert/Earthquake-Prediction.git">
-                    <a className={styles.github}>
-                        <Image src={GitHub} alt="GitHub Logo" priority />
-                    </a>
+                <Link href="https://github.com/Andre-Gilbert/Earthquake-Prediction.git" className={styles.github}>
+                    <Image src={GitHub} alt="GitHub Logo" priority />
                 </Link>
             </div>
         </div>

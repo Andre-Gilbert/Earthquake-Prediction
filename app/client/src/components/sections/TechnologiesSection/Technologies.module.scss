@@ -1,10 +1,11 @@
-@import '~@blueprintjs/core/lib/scss/variables';
 @import '../../../styles/variables.module.scss';
+
+$cube-background-color: #3e526a;
+$cube-black: #02203c;
 
 .technologies {
     width: 100%;
-    padding-inline: 1.5rem;
-    padding-bottom: 10rem;
+    padding: 10rem 1.5rem;
 }
 
 .container {
@@ -96,10 +97,10 @@
 .cubeFaceRight {
     width: 200px;
     height: 200px;
-    outline: 1px solid $black;
+    outline: 1px solid $cube-black;
     position: absolute;
     opacity: 0.8;
-    box-shadow: inset 0px 0px 100px $black;
+    box-shadow: inset 0px 0px 100px $cube-black;
     display: grid;
     place-items: center;
 
@@ -111,7 +112,7 @@
 
 .cubeFaceFront {
     transform: translateZ(100px);
-    background: $pt-intent-primary;
+    background: $cube-background-color;
 
     @media (min-width: $pt-breakpoint-md) {
         transform: translateZ(125px);
@@ -120,7 +121,7 @@
 
 .cubeFaceBack {
     transform: translateZ(-100px) rotateY(180deg);
-    background: $pt-intent-primary;
+    background: $cube-background-color;
 
     @media (min-width: $pt-breakpoint-md) {
         transform: translateZ(-125px) rotateY(180deg);
@@ -130,7 +131,7 @@
 .cubeFaceLeft {
     transform: rotateY(270deg) translateX(-100px);
     transform-origin: center left;
-    background: $pt-intent-primary;
+    background: $cube-background-color;
 
     @media (min-width: $pt-breakpoint-md) {
         transform: rotateY(270deg) translateX(-125px);
@@ -140,7 +141,7 @@
 .cubeFaceRight {
     transform: rotateY(-270deg) translateX(100px);
     transform-origin: top right;
-    background: $pt-intent-primary;
+    background: $cube-background-color;
 
     @media (min-width: $pt-breakpoint-md) {
         transform: rotateY(-270deg) translateX(125px);
@@ -150,7 +151,7 @@
 .cubeFaceTop {
     transform: rotateX(-90deg) translateY(-100px);
     transform-origin: top center;
-    background-color: $pt-intent-primary;
+    background-color: $cube-background-color;
 
     @media (min-width: $pt-breakpoint-md) {
         transform: rotateX(-90deg) translateY(-125px);
@@ -160,7 +161,7 @@
 .cubeFaceBottom {
     transform: rotateX(90deg) translateY(100px);
     transform-origin: bottom center;
-    background-color: $pt-intent-primary;
+    background-color: $cube-background-color;
 
     @media (min-width: $pt-breakpoint-md) {
         transform: rotateX(90deg) translateY(125px);
@@ -183,7 +184,7 @@
         position: absolute;
         top: 0px;
         opacity: 0.98;
-        box-shadow: 0px 0px 100px $pt-intent-primary;
+        box-shadow: 0px 0px 100px $cube-background-color;
         transform-origin: bottom center;
 
         @media (min-width: $pt-breakpoint-md) {
