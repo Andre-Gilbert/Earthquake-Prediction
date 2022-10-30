@@ -86,16 +86,16 @@
     cursor: pointer;
     outline: none;
     border: none;
+    background: linear-gradient(rgba(99, 106, 150, 0.4) 0%, rgba(182, 186, 214, 0.25) 100%);
+    border: none;
     border-radius: 2px;
-
-    background-color: $pt-intent-primary;
-    box-shadow: 0 10px 20px rgb(0, 0, 0, 0.15);
+    box-shadow: rgb(0 0 0 / 15%) 0px 20px 40px, rgb(255 255 255 / 30%) 0px 0px 0px 0.5px inset;
 }
 
 .google {
     padding: 0.5rem;
     border-radius: 2px;
-    background-color: $pt-app-background-color;
+    background-color: rgba(255, 255, 255, 0.8);
 
     display: grid;
     place-items: center;

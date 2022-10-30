@@ -22,7 +22,7 @@ export const HeroSection = () => {
                             <div className={styles.btn}>
                                 <button className={styles.login} onClick={handleSignIn}>
                                     <div className={styles.google}>
-                                        <Image src={Google} alt="Google Logo" />
+                                        <Image src={Google} alt="Google Logo" priority />
                                     </div>
                                     <p className={styles.btnText}>Google</p>
                                 </button>
