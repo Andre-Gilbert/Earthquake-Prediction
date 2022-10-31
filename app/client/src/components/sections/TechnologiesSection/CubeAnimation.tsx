@@ -35,10 +35,10 @@ const CubeAnimation = () => {
                         }}
                     >
                         <div className={styles.cubeFaceFront}>
-                            <Image src={TypeScript} alt="typescript" fill />
+                            <Image src={TypeScript} alt="typescript" fill sizes="200" priority />
                         </div>
                         <div className={styles.cubeFaceBack}>
-                            <Image src={Python} alt="python" fill />
+                            <Image src={Python} alt="python" priority sizes="200" fill />
                         </div>
                         <div className={styles.cubeFaceTop}>
                             <div>&nbsp;</div>
@@ -47,10 +47,10 @@ const CubeAnimation = () => {
                             <div>&nbsp;</div>
                         </div>
                         <div className={styles.cubeFaceLeft}>
-                            <Image src={NextJS} alt="nextjs" fill />
+                            <Image src={NextJS} alt="nextjs" priority sizes="200" fill />
                         </div>
                         <div className={styles.cubeFaceRight}>
-                            <Image src={FastAPI} alt="fastapi" fill />
+                            <Image src={FastAPI} alt="fastapi" priority sizes="200" fill />
                         </div>
                     </motion.div>
                 </div>

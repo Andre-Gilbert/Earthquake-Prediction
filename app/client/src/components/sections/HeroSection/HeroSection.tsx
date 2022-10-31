@@ -1,11 +1,92 @@
 import Google from '@assets/google-logo.svg';
 import { Classes, H1 } from '@blueprintjs/core';
+import {
+    CategoryScale,
+    Chart as ChartJS,
+    Legend,
+    LinearScale,
+    LineElement,
+    PointElement,
+    Title,
+    Tooltip,
+} from 'chart.js';
 import { signIn } from 'next-auth/react';
 import Image from 'next/image';
+import { Line } from 'react-chartjs-2';
 import styles from './Hero.module.scss';
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+
+const chartOptions = {
+    responsive: true,
+    interaction: {
+        mode: 'index' as const,
+        intersect: false,
+    },
+    plugins: {
+        legend: {
+            position: 'top' as const,
+            labels: { color: 'rgb(255, 255, 255, 0.4)' },
+        },
+    },
+    stacked: false,
+    scales: {
+        y: {
+            type: 'linear' as const,
+            display: true,
+            position: 'left' as const,
+            grid: { color: 'rgb(255, 255, 255, 0.2)' },
+            ticks: {
+                color: 'rgb(255, 255, 255, 0.4)',
+                fontSize: 12,
+            },
+        },
+        y1: {
+            type: 'linear' as const,
+            display: true,
+            position: 'right' as const,
+            grid: {
+                drawOnChartArea: false,
+            },
+            ticks: {
+                color: 'rgb(255, 255, 255, 0.4)',
+                fontSize: 12,
+            },
+        },
+        xAxes: {
+            grid: { color: 'rgb(255, 255, 255, 0.2)' },
+            ticks: {
+                beginAtZero: true,
+                color: 'rgb(255, 255, 255, 0.4)',
+                fontSize: 12,
+            },
+        },
+    },
+    maintainAspectRatio: false,
+};
 
 export const HeroSection = () => {
     const handleSignIn = () => signIn('google', { callbackUrl: '/dashboard' });
+
+    const data = {
+        labels: ['01/01/2022', '02/01/2022', '03/01/2022', '04/01/2022', '05/01/2022', '06/01/2022', '07/01/2022'],
+        datasets: [
+            {
+                label: 'Prediction',
+                data: [0.5, 2.0, 3.5, 3.0, 7.0, 4.0, 1.5],
+                yAxisID: 'y',
+                borderColor: 'rgb(255, 99, 132, 0.75)',
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            },
+            {
+                label: 'Magnitude',
+                data: [0.0, 2.5, 3.0, 2.0, 4.0, 4.5, 1.0],
+                yAxisID: 'y1',
+                borderColor: 'rgb(53, 162, 235, 0.75)',
+                backgroundColor: 'rgba(53, 162, 235, 0.5)',
+            },
+        ],
+    };
 
     return (
         <>
@@ -29,7 +110,51 @@ export const HeroSection = () => {
                             </div>
                         </div>
                     </div>
-                    <div className={styles.appDesign}>Hello</div>
+                    <div className={styles.appDesign}>
+                        <div className={styles.appDesignContainer}>
+                            <div className={styles.appDesignPerspective}>
+                                <div className={styles.app}>
+                                    <div className={styles.appComponents}>
+                                        <div className={styles.appNavbar}>
+                                            <div className={styles.close} />
+                                            <div className={styles.minimize} />
+                                            <div className={styles.maximize} />
+                                        </div>
+                                        <div className={styles.appChart}>
+                                            <Line options={chartOptions} data={data} height={200} />
+                                        </div>
+                                        <div className={styles.appPrediction}>
+                                            <div className={styles.appListItem}>
+                                                <div />
+                                                <div />
+                                                <div />
+                                            </div>
+                                            <div className={styles.appListItem}>
+                                                <div />
+                                                <div />
+                                                <div />
+                                            </div>
+                                            <div className={styles.appListItem}>
+                                                <div />
+                                                <div />
+                                                <div />
+                                            </div>
+                                            <div className={styles.appListItem}>
+                                                <div />
+                                                <div />
+                                                <div />
+                                            </div>
+                                            <div className={styles.appListItem}>
+                                                <div />
+                                                <div />
+                                                <div />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </>
