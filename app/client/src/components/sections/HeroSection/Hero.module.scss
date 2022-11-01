@@ -203,7 +203,7 @@
 
 .login {
     min-width: 200px;
-    height: 40px;
+    height: 44px;
     padding: 0;
     display: inline-flex;
     align-items: center;
@@ -213,12 +213,12 @@
     border: none;
     background: linear-gradient(rgba(99, 106, 150, 0.4) 0%, rgba(182, 186, 214, 0.25) 100%);
     border-radius: 4px;
-    box-shadow: rgb(0 0 0 / 15%) 0px 20px 40px, rgb(255 255 255 / 30%) 0px 0px 0px 0.5px inset;
+    box-shadow: rgb(0 0 0 / 15%) 0px 20px 40px, rgb(255 255 255 / 30%) 0px 0px 0px 1px inset;
 }
 
 .google {
-    padding: 8px;
-    border-radius: 2px;
+    padding: 10px;
+    border-radius: 4px;
     background-color: rgba(255, 255, 255, 0.8);
 
     display: grid;
