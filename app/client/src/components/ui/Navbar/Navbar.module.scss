@@ -1,14 +1,16 @@
 @import '../../../styles/variables.module.scss';
+@import '~@blueprintjs/core/lib/scss/variables';
 
 .navbar {
     position: absolute;
     top: 0;
     width: 100%;
     padding-inline: $pt-padding;
+    z-index: $pt-z-index-overlay;
 }
 
 .container {
-    width: min(100%, 110rem);
+    width: min(100%, 112.5rem);
     min-height: 5rem;
     margin-inline: auto;
 
