@@ -11,7 +11,7 @@ import {
     MenuDivider,
     Position,
     Spinner,
-    SpinnerSize
+    SpinnerSize,
 } from '@blueprintjs/core';
 import { DateRange, DateRangePicker } from '@blueprintjs/datetime';
 import { Classes as Popover2Classes, Popover2 } from '@blueprintjs/popover2';
@@ -27,7 +27,7 @@ import {
     LineElement,
     PointElement,
     Title,
-    Tooltip
+    Tooltip,
 } from 'chart.js';
 import moment from 'moment';
 import { FormEvent, useEffect, useMemo, useState } from 'react';
