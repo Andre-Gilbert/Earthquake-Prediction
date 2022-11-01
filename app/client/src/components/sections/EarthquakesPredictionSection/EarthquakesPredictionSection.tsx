@@ -11,13 +11,12 @@ import {
     MenuDivider,
     Position,
     Spinner,
-    SpinnerSize,
+    SpinnerSize
 } from '@blueprintjs/core';
 import { DateRange, DateRangePicker } from '@blueprintjs/datetime';
-import { Classes as Popover2Classes, Popover2, Tooltip2 } from '@blueprintjs/popover2';
+import { Classes as Popover2Classes, Popover2 } from '@blueprintjs/popover2';
 import { MAX_DATE, MIN_DATE } from '@common/date';
 import { showToast } from '@common/Toast';
-import { getMagnitudeTypeTooltip, MagnitudeTooltipContent } from '@common/Tooltip';
 import { apiInstance } from '@config/axios';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import {
@@ -28,14 +27,14 @@ import {
     LineElement,
     PointElement,
     Title,
-    Tooltip,
+    Tooltip
 } from 'chart.js';
 import moment from 'moment';
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { z } from 'zod';
 import styles from './EarthquakesPrediction.module.scss';
-import { addScrollbarStyle, filterCloseCoordinates } from './utils';
+import { addScrollbarStyle } from './utils';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -254,14 +253,13 @@ const FilterMenu = ({ handleSubmit, dateRange, handleDateChange }: FilterProps) 
 };
 
 export interface Prediction {
-    time: string;
+    time: Date;
     latitude: number;
     longitude: number;
-    depth: number;
     mag: number;
-    magType: string;
     id: string;
     place: string;
+    location: string;
     prediction: number;
 }
 
@@ -278,11 +276,8 @@ const ListItem = ({ earthquake, queryData }: EarthquakePrediction) => {
     const handleClose = () => setIsOpen(false);
 
     const filteredQueryData = useMemo(
-        () =>
-            queryData?.predictions.flatMap(entry =>
-                filterCloseCoordinates(entry, earthquake.latitude, earthquake.longitude) ? [entry] : [],
-            ),
-        [earthquake.latitude, earthquake.longitude, queryData],
+        () => queryData?.predictions.filter(entry => entry.location == earthquake.location),
+        [earthquake.location, queryData],
     );
 
     return (
@@ -293,15 +288,6 @@ const ListItem = ({ earthquake, queryData }: EarthquakePrediction) => {
                 <div className={styles.listItemContent}>{earthquake.place}</div>
                 <div className={styles.listItemContent}>{earthquake.prediction}</div>
                 <div className={styles.listItemContent}>{earthquake.mag}</div>
-                <div className={styles.listItemContent}>
-                    <Tooltip2
-                        position="left"
-                        content={<MagnitudeTooltipContent {...getMagnitudeTypeTooltip(earthquake.magType)} />}
-                    >
-                        {earthquake.magType}
-                    </Tooltip2>
-                </div>
-                <div className={styles.listItemContent}>{earthquake.depth}</div>
             </div>
             <Drawer
                 isOpen={isOpen}
@@ -364,10 +350,6 @@ const DrawerContent = ({ earthquake, queryData }: { earthquake: Prediction; quer
                             <H1>{earthquake.prediction}</H1>
                             <H5 className={styles.cardSubtitle}>Predicted Magnitude for the event</H5>
                         </Card>
-                        <Card className={styles.drawerCardKPI}>
-                            <H1>{earthquake.depth}</H1>
-                            <H5 className={styles.cardSubtitle}>Depth of the event in kilometers</H5>
-                        </Card>
                     </div>
                     <Card className={styles.drawerCardChart}>
                         <div className={styles.drawerCardChartHeader}>
@@ -411,15 +393,6 @@ const DrawerListItem = ({ earthquake }: { earthquake: Prediction }) => {
             <div className={styles.listItemContent}>{earthquake.place}</div>
             <div className={styles.listItemContent}>{earthquake.prediction}</div>
             <div className={styles.listItemContent}>{earthquake.mag}</div>
-            <div className={styles.listItemContent}>
-                <Tooltip2
-                    position="left"
-                    content={<MagnitudeTooltipContent {...getMagnitudeTypeTooltip(earthquake.magType)} />}
-                >
-                    {earthquake.magType}
-                </Tooltip2>
-            </div>
-            <div className={styles.listItemContent}>{earthquake.depth}</div>
         </div>
     );
 };
@@ -427,14 +400,13 @@ const DrawerListItem = ({ earthquake }: { earthquake: Prediction }) => {
 const earthquakesPredictionValidator = z.object({
     predictions: z
         .object({
-            time: z.string(),
+            time: z.date(),
             latitude: z.number().gte(-90).lte(90),
             longitude: z.number().gte(-360).lte(360),
-            depth: z.number(),
             mag: z.number(),
-            magType: z.string(),
             id: z.string(),
             place: z.string(),
+            location: z.string(),
             prediction: z.number(),
         })
         .array(),

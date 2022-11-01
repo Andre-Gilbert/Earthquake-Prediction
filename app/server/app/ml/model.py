@@ -16,36 +16,36 @@ class MLModel:
         'month',
         'season',
         'year',
-        'mag_5d_lag',
-        'mag_10d_lag',
-        'mag_15d_lag',
-        'mag_5d_avg',
-        'mag_10d_avg',
-        'mag_15d_avg',
-        'mag_5d_min',
-        'mag_10d_min',
-        'mag_15d_min',
-        'mag_5d_max',
-        'mag_10d_max',
-        'mag_15d_max',
-        'mag_5d_std',
-        'mag_10d_std',
-        'mag_15d_std',
-        'depth_5d_lag',
-        'depth_10d_lag',
-        'depth_15d_lag',
-        'depth_5d_avg',
-        'depth_10d_avg',
-        'depth_15d_avg',
-        'depth_5d_min',
-        'depth_10d_min',
-        'depth_15d_min',
-        'depth_5d_max',
-        'depth_10d_max',
-        'depth_15d_max',
-        'depth_5d_std',
-        'depth_10d_std',
-        'depth_15d_std',
+        'mag_5eq_lag',
+        'mag_10eq_lag',
+        'mag_15eq_lag',
+        'mag_5eq_avg',
+        'mag_10eq_avg',
+        'mag_15eq_avg',
+        'mag_5eq_min',
+        'mag_10eq_min',
+        'mag_15eq_min',
+        'mag_5eq_max',
+        'mag_10eq_max',
+        'mag_15eq_max',
+        'mag_5eq_std',
+        'mag_10eq_std',
+        'mag_15eq_std',
+        'depth_5eq_lag',
+        'depth_10eq_lag',
+        'depth_15eq_lag',
+        'depth_5eq_avg',
+        'depth_10eq_avg',
+        'depth_15eq_avg',
+        'depth_5eq_min',
+        'depth_10eq_min',
+        'depth_15eq_min',
+        'depth_5eq_max',
+        'depth_10eq_max',
+        'depth_15eq_max',
+        'depth_5eq_std',
+        'depth_10eq_std',
+        'depth_15eq_std',
         'latitude',
         'longitude',
         'place',
@@ -58,7 +58,7 @@ class MLModel:
     def predict(self, df: pd.DataFrame) -> pd.DataFrame:
         df = df.set_index('time')
         df.index = pd.to_datetime(df.index)
-        df.place = df.place.str.split(', ', expand=True)[1]
+        df['location'] = df.place.str.split(', ', expand=True)[1]
         df = df[::-1]
         df = df.ffill()
         df = self._preprocess_data(df)
@@ -69,11 +69,10 @@ class MLModel:
             'prediction': prediction,
             'latitude': df.latitude,
             'longitude': df.longitude,
-            'depth': df.depth,
             'mag': df.mag,
-            'magType': df.magType,
             'id': df.id,
             'place': df.place,
+            'location': df.location,
         })
         return df_pred[::-1]
 
@@ -104,41 +103,41 @@ class MLModel:
         return df
 
     def _add_lags(self, df: pd.DataFrame) -> pd.DataFrame:
-        df['mag_5d_lag'] = df.mag.shift(5)
-        df['mag_10d_lag'] = df.mag.shift(10)
-        df['mag_15d_lag'] = df.mag.shift(15)
+        df['mag_5eq_lag'] = df.mag.shift(5)
+        df['mag_10eq_lag'] = df.mag.shift(10)
+        df['mag_15eq_lag'] = df.mag.shift(15)
 
-        df['depth_5d_lag'] = df.depth.shift(5)
-        df['depth_10d_lag'] = df.depth.shift(10)
-        df['depth_15d_lag'] = df.depth.shift(15)
+        df['depth_5eq_lag'] = df.depth.shift(5)
+        df['depth_10eq_lag'] = df.depth.shift(10)
+        df['depth_15eq_lag'] = df.depth.shift(15)
         return df
 
     def _add_rolling_windows(self, df: pd.DataFrame) -> pd.DataFrame:
-        df['mag_5d_avg'] = df.mag.rolling(window=5, center=False).mean()
-        df['mag_10d_avg'] = df.mag.rolling(window=10, center=False).mean()
-        df['mag_15d_avg'] = df.mag.rolling(window=15, center=False).mean()
-        df['mag_5d_min'] = df.mag.rolling(window=5, center=False).min()
-        df['mag_10d_min'] = df.mag.rolling(window=10, center=False).min()
-        df['mag_15d_min'] = df.mag.rolling(window=15, center=False).min()
-        df['mag_5d_max'] = df.mag.rolling(window=5, center=False).max()
-        df['mag_10d_max'] = df.mag.rolling(window=10, center=False).max()
-        df['mag_15d_max'] = df.mag.rolling(window=15, center=False).max()
-        df['mag_5d_std'] = df.mag.rolling(window=5, center=False).std()
-        df['mag_10d_std'] = df.mag.rolling(window=10, center=False).std()
-        df['mag_15d_std'] = df.mag.rolling(window=15, center=False).std()
+        df['mag_5eq_avg'] = df.mag.rolling(window=5, center=False).mean()
+        df['mag_10eq_avg'] = df.mag.rolling(window=10, center=False).mean()
+        df['mag_15eq_avg'] = df.mag.rolling(window=15, center=False).mean()
+        df['mag_5eq_min'] = df.mag.rolling(window=5, center=False).min()
+        df['mag_10eq_min'] = df.mag.rolling(window=10, center=False).min()
+        df['mag_15eq_min'] = df.mag.rolling(window=15, center=False).min()
+        df['mag_5eq_max'] = df.mag.rolling(window=5, center=False).max()
+        df['mag_10eq_max'] = df.mag.rolling(window=10, center=False).max()
+        df['mag_15eq_max'] = df.mag.rolling(window=15, center=False).max()
+        df['mag_5eq_std'] = df.mag.rolling(window=5, center=False).std()
+        df['mag_10eq_std'] = df.mag.rolling(window=10, center=False).std()
+        df['mag_15eq_std'] = df.mag.rolling(window=15, center=False).std()
 
-        df['depth_5d_avg'] = df.depth.rolling(window=5, center=False).mean()
-        df['depth_10d_avg'] = df.depth.rolling(window=10, center=False).mean()
-        df['depth_15d_avg'] = df.depth.rolling(window=15, center=False).mean()
-        df['depth_5d_min'] = df.depth.rolling(window=5, center=False).min()
-        df['depth_10d_min'] = df.depth.rolling(window=10, center=False).min()
-        df['depth_15d_min'] = df.depth.rolling(window=15, center=False).min()
-        df['depth_5d_max'] = df.depth.rolling(window=5, center=False).max()
-        df['depth_10d_max'] = df.depth.rolling(window=10, center=False).max()
-        df['depth_15d_max'] = df.depth.rolling(window=15, center=False).max()
-        df['depth_5d_std'] = df.depth.rolling(window=5, center=False).std()
-        df['depth_10d_std'] = df.depth.rolling(window=10, center=False).std()
-        df['depth_15d_std'] = df.depth.rolling(window=15, center=False).std()
+        df['depth_5eq_avg'] = df.depth.rolling(window=5, center=False).mean()
+        df['depth_10eq_avg'] = df.depth.rolling(window=10, center=False).mean()
+        df['depth_15eq_avg'] = df.depth.rolling(window=15, center=False).mean()
+        df['depth_5eq_min'] = df.depth.rolling(window=5, center=False).min()
+        df['depth_10eq_min'] = df.depth.rolling(window=10, center=False).min()
+        df['depth_15eq_min'] = df.depth.rolling(window=15, center=False).min()
+        df['depth_5eq_max'] = df.depth.rolling(window=5, center=False).max()
+        df['depth_10eq_max'] = df.depth.rolling(window=10, center=False).max()
+        df['depth_15eq_max'] = df.depth.rolling(window=15, center=False).max()
+        df['depth_5eq_std'] = df.depth.rolling(window=5, center=False).std()
+        df['depth_10eq_std'] = df.depth.rolling(window=10, center=False).std()
+        df['depth_15eq_std'] = df.depth.rolling(window=15, center=False).std()
         return df
 
 

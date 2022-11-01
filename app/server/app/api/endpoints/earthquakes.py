@@ -16,11 +16,10 @@ class Earthquake(BaseModel):
     time: datetime.datetime
     latitude: float
     longitude: float
-    depth: float
     mag: float
-    magType: str  # pylint: disable=invalid-name
     id: str
     place: str
+    location: str
     prediction: float
 
 
