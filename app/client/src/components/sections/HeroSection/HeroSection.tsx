@@ -98,14 +98,14 @@ export const HeroSection = () => {
                             <H1 className={styles.title}>Earthquake Prediction</H1>
                             <p className={`${styles.subtitle} ${Classes.RUNNING_TEXT}`}>
                                 This website monitors earthquakes in real time and uses machine learning to forecast the
-                                magnitudes of earthquakes. Sign-in with Google. We won&apos;t post anything anywhere.
+                                magnitudes of earthquakes. Try it out. We won&apos;t post anything anywhere.
                             </p>
                             <div className={styles.btn}>
                                 <button className={styles.login} onClick={handleSignIn}>
                                     <div className={styles.google}>
                                         <Image src={Google} alt="Google Logo" priority />
                                     </div>
-                                    <p className={styles.btnText}>Google</p>
+                                    <p className={styles.btnText}>Sign in with Google</p>
                                 </button>
                             </div>
                         </div>
