@@ -1,4 +1,3 @@
-/** The landing page. */
 import { Layout } from '@layout/Layout';
 import { HeroSection } from '@sections/HeroSection/HeroSection';
 import { TechnologiesSection } from '@sections/TechnologiesSection/TechnologiesSection';

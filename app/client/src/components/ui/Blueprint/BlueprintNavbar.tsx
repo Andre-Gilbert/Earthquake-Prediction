@@ -1,4 +1,3 @@
-/** The earthquake prediction app navbar. */
 import Profile from '@assets/profile.svg';
 import {
     Alignment,

@@ -1,4 +1,3 @@
-/** The dashboard page. */
 import { Layout } from '@layout/Layout';
 import { EarthquakesAlertsSection } from '@sections/EarthquakesAlertsSection/EarthquakesAlertsSection';
 import { EarthquakesKPIsSection } from '@sections/EarthquakesKPIsSection/EarthquakesKPIsSection';

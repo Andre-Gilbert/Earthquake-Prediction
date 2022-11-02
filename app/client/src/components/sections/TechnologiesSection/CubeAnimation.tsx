@@ -1,4 +1,3 @@
-/** The cube spinning animation of the tech overview section. */
 import FastAPI from '@assets/fastapi.svg';
 import NextJS from '@assets/nextjs.svg';
 import Python from '@assets/python.svg';

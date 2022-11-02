@@ -1,8 +1,9 @@
-/** The layout component of the app. */
 import { Footer } from '@ui/Footer/Footer';
 import { ReactNode } from 'react';
 
-export const Layout = ({ children }: { children: ReactNode }) => {
+type LayoutProps = { children: ReactNode };
+
+export const Layout = ({ children }: LayoutProps) => {
     return (
         <>
             {children}
