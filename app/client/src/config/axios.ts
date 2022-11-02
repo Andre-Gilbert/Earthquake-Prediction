@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const USGS_EARTHQUAKE_API_URL = 'https://earthquake.usgs.gov/fdsnws/event/1';
-const EARTHQUAKE_API_URL = process.env.NEXT_PUBLIC_EARTHQUAKE_API_URL ?? 'http://localhost:8000';
+const EARTHQUAKE_API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
 export const usgsInstance = axios.create({
     baseURL: USGS_EARTHQUAKE_API_URL,
