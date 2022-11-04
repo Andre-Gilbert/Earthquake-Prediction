@@ -17,5 +17,5 @@ def build_url(base_url: str, params: dict[str, str]) -> str:
     return base_url + parse.urlencode(params)
 
 
-def parse_df(df: pd.DataFrame) -> dict[str, Any]:
+def parse_df(df: pd.DataFrame) -> list[dict[str, Any]]:
     return df.to_dict(orient='records')
