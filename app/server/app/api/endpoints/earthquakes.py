@@ -2,11 +2,12 @@
 import datetime
 from typing import Any
 
+from fastapi import APIRouter
+from pydantic import BaseModel
+
 from app.core.config import settings
 from app.ml.model import ml_model
 from app.ml.utils import get_earthquakes_data, parse_df
-from fastapi import APIRouter
-from pydantic import BaseModel
 
 router = APIRouter()
 
@@ -19,7 +20,7 @@ class Earthquake(BaseModel):
     mag: float
     id: str
     place: str
-    location: str
+    location: str | None
     prediction: float
 
 
