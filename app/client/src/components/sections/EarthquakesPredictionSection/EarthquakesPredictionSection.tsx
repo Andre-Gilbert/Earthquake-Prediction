@@ -15,7 +15,7 @@ import {
 } from '@blueprintjs/core';
 import { DateRange, DateRangePicker } from '@blueprintjs/datetime';
 import { Classes as Popover2Classes, Popover2 } from '@blueprintjs/popover2';
-import { MAX_DATE, MIN_DATE } from '@common/date';
+import { MAX_DATE } from '@common/date';
 import { showToast } from '@common/Toast';
 import { apiInstance } from '@config/axios';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
@@ -67,6 +67,8 @@ const chartOptions = {
     },
     maintainAspectRatio: false,
 };
+
+const MIN_DATE = moment().add(-5, 'days').toDate();
 
 export const EarthquakesPredictionSection = () => {
     const [dateRange, setDateRange] = useState<DateRange>([MIN_DATE, MAX_DATE]);
@@ -235,6 +237,8 @@ const FilterMenu = ({ handleSubmit, dateRange, handleDateChange }: FilterProps) 
                     minDate={MIN_DATE}
                     maxDate={MAX_DATE}
                     onChange={handleDateChange}
+                    singleMonthOnly
+                    shortcuts={false}
                 />
                 <div className={styles.btnForm}>
                     <Button
