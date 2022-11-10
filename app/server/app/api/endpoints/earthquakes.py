@@ -35,7 +35,7 @@ class DateRange(BaseModel):
 
 
 @router.post('/predict-magnitudes', response_model=PredictMagnitudes)
-async def predict_magnitudes(date_range: DateRange) -> Any:
-    df = await get_earthquakes_data(settings.USGS_EARTHQUAKE_API_URL, date_range)
+def predict_magnitudes(date_range: DateRange) -> Any:
+    df = get_earthquakes_data(settings.USGS_EARTHQUAKE_API_URL, date_range)
     df_pred = ml_model.predict(df)
     return {'predictions': parse_df(df_pred)}
