@@ -261,7 +261,7 @@ export interface Prediction {
     mag: number;
     id: string;
     place: string;
-    location: string;
+    location: string | null;
     prediction: number;
 }
 
@@ -406,7 +406,7 @@ const earthquakesPredictionValidator = z.object({
             mag: z.number(),
             id: z.string(),
             place: z.string(),
-            location: z.string(),
+            location: z.string().nullable(),
             prediction: z.number(),
         })
         .array(),
