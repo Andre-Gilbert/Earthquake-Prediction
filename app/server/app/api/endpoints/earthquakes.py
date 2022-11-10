@@ -2,12 +2,11 @@
 import datetime
 from typing import Any
 
-from fastapi import APIRouter
-from pydantic import BaseModel
-
 from app.core.config import settings
 from app.ml.model import ml_model
 from app.ml.utils import get_earthquakes_data, parse_df
+from fastapi import APIRouter
+from pydantic import BaseModel
 
 router = APIRouter()
 
@@ -36,7 +35,7 @@ class DateRange(BaseModel):
 
 
 @router.post('/predict-magnitudes', response_model=PredictMagnitudes)
-def predict_magnitudes(date_range: DateRange) -> Any:
-    df = get_earthquakes_data(settings.USGS_EARTHQUAKE_API_URL, date_range)
+async def predict_magnitudes(date_range: DateRange) -> Any:
+    df = await get_earthquakes_data(settings.USGS_EARTHQUAKE_API_URL, date_range)
     df_pred = ml_model.predict(df)
     return {'predictions': parse_df(df_pred)}

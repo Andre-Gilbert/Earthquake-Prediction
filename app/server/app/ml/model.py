@@ -78,7 +78,7 @@ class MLModel:
 
     def _preprocess_data(self, df: pd.DataFrame) -> pd.DataFrame:
         data = []
-        for place in set(df.place):
+        for place in df.place.unique():
             temp = df.loc[df.place == place]
             temp = self._create_features(temp)
             temp = self._add_lags(temp)
