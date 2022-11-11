@@ -48,18 +48,17 @@ class MLModel:
         'depth_15eq_std',
         'latitude',
         'longitude',
-        'place',
+        'location',
     ]
 
     def __init__(self):
-        self._model = CatBoostRegressor(cat_features='place')
+        self._model = CatBoostRegressor(cat_features='location')
         self._model.load_model(_MODEL_FILE)
 
     def predict(self, df: pd.DataFrame) -> pd.DataFrame:
         df.time = pd.to_datetime(df.time)
         df['location'] = df.place.str.split(', ', expand=True)[1]
         df = df[::-1]
-        df = df.ffill()
         df = self._preprocess_data(df)
 
         prediction = self._model.predict(df[self._FEATURES]).round(6)
@@ -77,8 +76,8 @@ class MLModel:
 
     def _preprocess_data(self, df: pd.DataFrame) -> pd.DataFrame:
         data = []
-        for place in df.place.unique():
-            temp = df.loc[df.place == place]
+        for location in df.location.unique():
+            temp = df.loc[df.location == location]
             temp = self._create_features(temp)
             temp = self._add_lags(temp)
             temp = self._add_rolling_windows(temp)
@@ -90,14 +89,14 @@ class MLModel:
 
     def _create_features(self, df: pd.DataFrame) -> pd.DataFrame:
         df = df.copy()
-        df['hour'] = df.time.hour
-        df['dayofweek'] = df.time.dayofweek
-        df['month'] = df.time.month
-        df['year'] = df.time.year
-        df['dayofyear'] = df.time.dayofyear
-        df['dayofmonth'] = df.time.day
-        df['weekofyear'] = df.time.isocalendar().week
-        df['quarter'] = df.time.quarter
+        df['hour'] = df.time.dt.hour
+        df['dayofweek'] = df.time.dt.dayofweek
+        df['month'] = df.time.dt.month
+        df['year'] = df.time.dt.year
+        df['dayofyear'] = df.time.dt.dayofyear
+        df['dayofmonth'] = df.time.dt.day
+        df['weekofyear'] = df.time.dt.isocalendar().week
+        df['quarter'] = df.time.dt.quarter
         df['season'] = df.month % 12 // 3 + 1
         return df
 
