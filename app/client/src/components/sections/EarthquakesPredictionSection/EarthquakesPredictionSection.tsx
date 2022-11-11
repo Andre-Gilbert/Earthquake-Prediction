@@ -68,7 +68,7 @@ const chartOptions = {
     maintainAspectRatio: false,
 };
 
-const MIN_DATE = moment().add(-5, 'days').toDate();
+const MIN_DATE = moment().add(-7, 'days').toDate();
 
 export const EarthquakesPredictionSection = () => {
     const [dateRange, setDateRange] = useState<DateRange>([MIN_DATE, MAX_DATE]);
