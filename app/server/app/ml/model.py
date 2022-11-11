@@ -74,7 +74,7 @@ class MLModel:
             'place': df.place,
             'location': df.location,
         })
-        return df_pred[::-1]
+        return df_pred.sort_values(by='time')
 
     def _preprocess_data(self, df: pd.DataFrame) -> pd.DataFrame:
         data = []
