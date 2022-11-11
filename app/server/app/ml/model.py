@@ -56,8 +56,7 @@ class MLModel:
         self._model.load_model(_MODEL_FILE)
 
     def predict(self, df: pd.DataFrame) -> pd.DataFrame:
-        df = df.set_index('time')
-        df.index = pd.to_datetime(df.index)
+        df.time = pd.to_datetime(df.time)
         df['location'] = df.place.str.split(', ', expand=True)[1]
         df = df[::-1]
         df = df.ffill()
@@ -65,7 +64,7 @@ class MLModel:
 
         prediction = self._model.predict(df[self._FEATURES]).round(6)
         df_pred = pd.DataFrame({
-            'time': df.index,
+            'time': df.time,
             'prediction': prediction,
             'latitude': df.latitude,
             'longitude': df.longitude,
@@ -91,14 +90,14 @@ class MLModel:
 
     def _create_features(self, df: pd.DataFrame) -> pd.DataFrame:
         df = df.copy()
-        df['hour'] = df.index.hour
-        df['dayofweek'] = df.index.dayofweek
-        df['month'] = df.index.month
-        df['year'] = df.index.year
-        df['dayofyear'] = df.index.dayofyear
-        df['dayofmonth'] = df.index.day
-        df['weekofyear'] = df.index.isocalendar().week
-        df['quarter'] = df.index.quarter
+        df['hour'] = df.time.hour
+        df['dayofweek'] = df.time.dayofweek
+        df['month'] = df.time.month
+        df['year'] = df.time.year
+        df['dayofyear'] = df.time.dayofyear
+        df['dayofmonth'] = df.time.day
+        df['weekofyear'] = df.time.isocalendar().week
+        df['quarter'] = df.time.quarter
         df['season'] = df.month % 12 // 3 + 1
         return df
 
