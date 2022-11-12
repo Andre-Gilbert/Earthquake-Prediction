@@ -52,17 +52,17 @@ const chartOptions = {
     stacked: false,
     scales: {
         y: {
-            type: 'linear' as const,
             display: true,
-            position: 'left' as const,
+            min: -1,
+            max: 10,
+            ticks: {
+                stepSize: 0.5,
+            },
         },
         y1: {
-            type: 'linear' as const,
-            display: true,
-            position: 'right' as const,
-            grid: {
-                drawOnChartArea: false,
-            },
+            display: false,
+            min: -1,
+            max: 10,
         },
     },
     maintainAspectRatio: false,

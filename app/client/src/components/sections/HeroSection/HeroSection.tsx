@@ -31,36 +31,23 @@ const chartOptions = {
     },
     stacked: false,
     scales: {
-        y: {
-            type: 'linear' as const,
-            display: true,
-            position: 'left' as const,
-            grid: { color: 'rgb(255, 255, 255, 0.2)' },
-            ticks: {
-                color: 'rgb(255, 255, 255, 0.4)',
-                fontSize: 12,
-            },
-        },
-        y1: {
-            type: 'linear' as const,
-            display: true,
-            position: 'right' as const,
-            grid: {
-                drawOnChartArea: false,
-            },
-            ticks: {
-                color: 'rgb(255, 255, 255, 0.4)',
-                fontSize: 12,
-            },
-        },
         xAxes: {
             grid: { color: 'rgb(255, 255, 255, 0.2)' },
             ticks: {
-                beginAtZero: true,
                 color: 'rgb(255, 255, 255, 0.4)',
-                fontSize: 12,
             },
         },
+        y: {
+            display: true,
+            min: -1,
+            max: 10,
+            grid: { color: 'rgb(255, 255, 255, 0.2)' },
+            ticks: {
+                color: 'rgb(255, 255, 255, 0.4)',
+                stepSize: 0.5,
+            },
+        },
+        y1: { display: false, min: -1, max: 10 },
     },
     maintainAspectRatio: false,
 };
@@ -73,14 +60,14 @@ export const HeroSection = () => {
         datasets: [
             {
                 label: 'Prediction',
-                data: [0.5, 2.0, 3.5, 3.0, 7.0, 4.0, 1.5],
+                data: [-0.5, 2.0, 4.0, 2.0, 6.0, 3.5, 2.0],
                 yAxisID: 'y',
                 borderColor: 'rgb(255, 99, 132, 0.75)',
                 backgroundColor: 'rgba(255, 99, 132, 0.5)',
             },
             {
                 label: 'Magnitude',
-                data: [0.0, 2.5, 3.0, 2.0, 4.0, 4.5, 1.0],
+                data: [0.5, 3.0, 3.0, 2.0, 4.0, 4.5, 1.0],
                 yAxisID: 'y1',
                 borderColor: 'rgb(53, 162, 235, 0.75)',
                 backgroundColor: 'rgba(53, 162, 235, 0.5)',
