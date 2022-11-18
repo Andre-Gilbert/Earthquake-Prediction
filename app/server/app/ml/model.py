@@ -56,7 +56,8 @@ class MLModel:
         self._model.load_model(_MODEL_FILE)
 
     def predict(self, df: pd.DataFrame) -> pd.DataFrame:
-        df = df[df.mag.notna()].copy()
+        df = df.copy()
+        df = df[df.mag.notna()]
         df.time = pd.to_datetime(df.time)
         df['location'] = df.place.str.split(', ', expand=True)[1]
         df = df[::-1]
