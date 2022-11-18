@@ -56,11 +56,11 @@ class MLModel:
         self._model.load_model(_MODEL_FILE)
 
     def predict(self, df: pd.DataFrame) -> pd.DataFrame:
+        df = df[df.mag.notna()]
         df.time = pd.to_datetime(df.time)
         df['location'] = df.place.str.split(', ', expand=True)[1]
         df = df[::-1]
         df = self._preprocess_data(df)
-
         prediction = self._model.predict(df[self._FEATURES]).round(6)
         df_pred = pd.DataFrame({
             'time': df.time,
@@ -81,9 +81,7 @@ class MLModel:
             temp = self._create_features(temp)
             temp = self._add_lags(temp)
             temp = self._add_rolling_windows(temp)
-
             data.append(temp)
-
         df = pd.concat(data)
         return df
 
@@ -104,7 +102,6 @@ class MLModel:
         df['mag_5eq_lag'] = df.mag.shift(5)
         df['mag_10eq_lag'] = df.mag.shift(10)
         df['mag_15eq_lag'] = df.mag.shift(15)
-
         df['depth_5eq_lag'] = df.depth.shift(5)
         df['depth_10eq_lag'] = df.depth.shift(10)
         df['depth_15eq_lag'] = df.depth.shift(15)
@@ -123,7 +120,6 @@ class MLModel:
         df['mag_5eq_std'] = df.mag.rolling(window=5, center=False).std()
         df['mag_10eq_std'] = df.mag.rolling(window=10, center=False).std()
         df['mag_15eq_std'] = df.mag.rolling(window=15, center=False).std()
-
         df['depth_5eq_avg'] = df.depth.rolling(window=5, center=False).mean()
         df['depth_10eq_avg'] = df.depth.rolling(window=10, center=False).mean()
         df['depth_15eq_avg'] = df.depth.rolling(window=15, center=False).mean()
