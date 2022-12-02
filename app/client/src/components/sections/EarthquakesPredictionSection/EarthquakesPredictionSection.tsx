@@ -134,7 +134,8 @@ export const EarthquakesPredictionSection = () => {
                     <H1 className={styles.title}>Explore Earthquakes</H1>
                     <p className={styles.subtitle}>
                         Earthquakes are a space to explore magnitude predictions and analyze nearby earthquakes by
-                        selecting an object.
+                        selecting an object. To compare the forecasts with the actual magnitudes, the present has been
+                        adjusted to the previous month.
                     </p>
                     <Popover2
                         content={
